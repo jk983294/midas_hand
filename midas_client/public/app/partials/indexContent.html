@@ -1,0 +1,43 @@
+<div id="Index_Content" style="width: 100%; margin: 0 auto;">
+    <div class="row">
+        <div class="col-md-3 col-lg-2">
+            <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{datepicker.format}}" ng-model="datepicker.dt1"
+                       is-open="datepicker.opened1" min-date="datepicker.minDay" max-date="datepicker.maxDay"
+                       datepicker-options="datepicker.dateOptions" date-disabled="disabled(date, mode)"
+                       ng-required="true" close-text="Close" ng-change="updateDatePick()" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="open1($event)">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                    </button>
+                </span>
+            </p>
+        </div>
+
+        <div class="col-md-6 col-lg-8">
+            <ui-select multiple ng-model="multipleChoice.indexes" theme="bootstrap" ng-change="updateDatePick()" >
+                <ui-select-match placeholder="Select indexes...">{{$item}}</ui-select-match>
+                <ui-select-choices repeat="index in multipleChoice.availableIndexes | filter:$select.search">
+                    {{index}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+
+        <div class="col-md-3 col-lg-2">
+            <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{datepicker.format}}" ng-model="datepicker.dt2"
+                       is-open="datepicker.opened2" min-date="datepicker.minDay" max-date="datepicker.maxDay"
+                       datepicker-options="datepicker.dateOptions" date-disabled="disabled(date, mode)"
+                       ng-required="true" close-text="Close" ng-change="updateDatePick()" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="open2($event)">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                    </button>
+                </span>
+            </p>
+        </div>
+
+    </div>
+
+    <flot-chart ng-model="plotData" chart-type="stocks" chart-height="800"></flot-chart>
+</div>

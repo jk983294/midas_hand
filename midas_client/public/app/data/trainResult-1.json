@@ -1,0 +1,2426 @@
+{
+    "trainId": 21,
+    "strategyName": "KLineStrategyS",
+    "items": [
+        {
+            "parameter": {
+                "priceMaShort": 5,
+                "priceMaMedium": 10,
+                "priceMaLong": 30,
+                "priceMaYear": 250,
+                "volumeMaShort": 5,
+                "volumeMaMedium": 10,
+                "volumeMaLong": 30,
+                "volumeMaYear": 250,
+                "bullLine": -0.002,
+                "bearLine": 0.002,
+                "trainStartDate": 20050101,
+                "trainEndDate": 20141107,
+                "backTestStartDate": 20110101,
+                "backTestEndDate": 20141107,
+                "exceptionDays": 10,
+                "tradeTaxRate": 0.003
+            },
+            "history": [
+                {
+                    "stockName": "SZ000005",
+                    "buyDate": 20060112,
+                    "sellDate": 20060209,
+                    "buyPrice": 1.02,
+                    "sellPrice": 1.09,
+                    "count": 488700,
+                    "r": 0.06862745098039214
+                },
+                {
+                    "stockName": "SZ000005",
+                    "buyDate": 20060921,
+                    "sellDate": 20060927,
+                    "buyPrice": 2.68,
+                    "sellPrice": 2.65,
+                    "count": 197500,
+                    "r": -0.011194029850746356
+                },
+                {
+                    "stockName": "SZ000005",
+                    "buyDate": 20080116,
+                    "sellDate": 20080117,
+                    "buyPrice": 7.59,
+                    "sellPrice": 7.22,
+                    "count": 68500,
+                    "r": -0.0487483530961792
+                },
+                {
+                    "stockName": "SZ000005",
+                    "buyDate": 20090806,
+                    "sellDate": 20090807,
+                    "buyPrice": 4.87,
+                    "sellPrice": 4.72,
+                    "count": 101000,
+                    "r": -0.030800821355236208
+                },
+                {
+                    "stockName": "SZ000005",
+                    "buyDate": 20100331,
+                    "sellDate": 20100412,
+                    "buyPrice": 5.94,
+                    "sellPrice": 5.68,
+                    "count": 79800,
+                    "r": -0.043771043771043905
+                },
+                {
+                    "stockName": "SZ000005",
+                    "buyDate": 20100517,
+                    "sellDate": 20100518,
+                    "buyPrice": 4.45,
+                    "sellPrice": 4.19,
+                    "count": 101200,
+                    "r": -0.05842696629213473
+                },
+                {
+                    "stockName": "SZ000005",
+                    "buyDate": 20140731,
+                    "sellDate": 20140806,
+                    "buyPrice": 2.44,
+                    "sellPrice": 2.59,
+                    "count": 172800,
+                    "r": 0.061475409836065475
+                },
+                {
+                    "stockName": "SZ000005",
+                    "buyDate": 20140815,
+                    "sellDate": 20140911,
+                    "buyPrice": 2.58,
+                    "sellPrice": 2.78,
+                    "count": 172500,
+                    "r": 0.07751937984496116
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20070112,
+                    "sellDate": 20070117,
+                    "buyPrice": 2.52,
+                    "sellPrice": 2.63,
+                    "count": 197800,
+                    "r": 0.043650793650793496
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20070309,
+                    "sellDate": 20070315,
+                    "buyPrice": 3.98,
+                    "sellPrice": 4.77,
+                    "count": 129900,
+                    "r": 0.1984924623115576
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20071217,
+                    "sellDate": 20071218,
+                    "buyPrice": 7.12,
+                    "sellPrice": 6.89,
+                    "count": 86500,
+                    "r": -0.032303370786516905
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20080421,
+                    "sellDate": 20080422,
+                    "buyPrice": 7.54,
+                    "sellPrice": 7.33,
+                    "count": 78500,
+                    "r": -0.02785145888594165
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20100113,
+                    "sellDate": 20100118,
+                    "buyPrice": 7,
+                    "sellPrice": 7.7,
+                    "count": 81800,
+                    "r": 0.10000000000000009
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20100208,
+                    "sellDate": 20100212,
+                    "buyPrice": 6.8,
+                    "sellPrice": 7.27,
+                    "count": 92000,
+                    "r": 0.0691176470588235
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20100423,
+                    "sellDate": 20100426,
+                    "buyPrice": 7.64,
+                    "sellPrice": 7.98,
+                    "count": 87000,
+                    "r": 0.04450261780104725
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20100712,
+                    "sellDate": 20100715,
+                    "buyPrice": 7.16,
+                    "sellPrice": 6.94,
+                    "count": 96400,
+                    "r": -0.030726256983240163
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20100730,
+                    "sellDate": 20100818,
+                    "buyPrice": 7.38,
+                    "sellPrice": 7.73,
+                    "count": 90100,
+                    "r": 0.04742547425474264
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20101224,
+                    "sellDate": 20101228,
+                    "buyPrice": 8.74,
+                    "sellPrice": 8.29,
+                    "count": 79200,
+                    "r": -0.05148741418764313
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20110819,
+                    "sellDate": 20110919,
+                    "buyPrice": 7.67,
+                    "sellPrice": 8.2,
+                    "count": 85100,
+                    "r": 0.06910039113428934
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20120227,
+                    "sellDate": 20120305,
+                    "buyPrice": 9.08,
+                    "sellPrice": 9.87,
+                    "count": 76400,
+                    "r": 0.08700440528634346
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20121122,
+                    "sellDate": 20121126,
+                    "buyPrice": 14.1,
+                    "sellPrice": 13.55,
+                    "count": 53200,
+                    "r": -0.03900709219858145
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20121228,
+                    "sellDate": 20130108,
+                    "buyPrice": 13.99,
+                    "sellPrice": 15.23,
+                    "count": 51200,
+                    "r": 0.08863473909935671
+                },
+                {
+                    "stockName": "SZ000007",
+                    "buyDate": 20130618,
+                    "sellDate": 20130619,
+                    "buyPrice": 16.38,
+                    "sellPrice": 15.75,
+                    "count": 47300,
+                    "r": -0.038461538461538436
+                },
+                {
+                    "stockName": "SZ000008",
+                    "buyDate": 20070323,
+                    "sellDate": 20070326,
+                    "buyPrice": 3.65,
+                    "sellPrice": 3.85,
+                    "count": 136500,
+                    "r": 0.0547945205479452
+                },
+                {
+                    "stockName": "SZ000008",
+                    "buyDate": 20090713,
+                    "sellDate": 20090714,
+                    "buyPrice": 4.55,
+                    "sellPrice": 4.87,
+                    "count": 114800,
+                    "r": 0.0703296703296703
+                },
+                {
+                    "stockName": "SZ000008",
+                    "buyDate": 20100223,
+                    "sellDate": 20100226,
+                    "buyPrice": 5.11,
+                    "sellPrice": 5.55,
+                    "count": 108800,
+                    "r": 0.08610567514677103
+                },
+                {
+                    "stockName": "SZ000008",
+                    "buyDate": 20100413,
+                    "sellDate": 20100419,
+                    "buyPrice": 7.1,
+                    "sellPrice": 6.95,
+                    "count": 84500,
+                    "r": -0.021126760563380254
+                },
+                {
+                    "stockName": "SZ000008",
+                    "buyDate": 20101129,
+                    "sellDate": 20101130,
+                    "buyPrice": 6.49,
+                    "sellPrice": 6.2,
+                    "count": 90000,
+                    "r": -0.044684129429892194
+                },
+                {
+                    "stockName": "SZ000008",
+                    "buyDate": 20110107,
+                    "sellDate": 20110120,
+                    "buyPrice": 5.92,
+                    "sellPrice": 6,
+                    "count": 93600,
+                    "r": 0.013513513513513598
+                },
+                {
+                    "stockName": "SZ000008",
+                    "buyDate": 20110422,
+                    "sellDate": 20110425,
+                    "buyPrice": 6.53,
+                    "sellPrice": 6.21,
+                    "count": 85500,
+                    "r": -0.049004594180704464
+                },
+                {
+                    "stockName": "SZ000008",
+                    "buyDate": 20110506,
+                    "sellDate": 20110513,
+                    "buyPrice": 6.11,
+                    "sellPrice": 6.4,
+                    "count": 86400,
+                    "r": 0.04746317512274967
+                },
+                {
+                    "stockName": "SZ000008",
+                    "buyDate": 20131206,
+                    "sellDate": 20131210,
+                    "buyPrice": 9.41,
+                    "sellPrice": 9.79,
+                    "count": 58400,
+                    "r": 0.040382571732199724
+                },
+                {
+                    "stockName": "SZ000008",
+                    "buyDate": 20140408,
+                    "sellDate": 20140410,
+                    "buyPrice": 9.7,
+                    "sellPrice": 10.04,
+                    "count": 58600,
+                    "r": 0.035051546391752675
+                },
+                {
+                    "stockName": "SZ000008",
+                    "buyDate": 20140612,
+                    "sellDate": 20140618,
+                    "buyPrice": 8.67,
+                    "sellPrice": 8.45,
+                    "count": 67400,
+                    "r": -0.025374855824682907
+                },
+                {
+                    "stockName": "SZ000011",
+                    "buyDate": 20070511,
+                    "sellDate": 20070518,
+                    "buyPrice": 7.07,
+                    "sellPrice": 8.09,
+                    "count": 70500,
+                    "r": 0.14427157001414415
+                },
+                {
+                    "stockName": "SZ000011",
+                    "buyDate": 20080215,
+                    "sellDate": 20080222,
+                    "buyPrice": 6.75,
+                    "sellPrice": 6.5,
+                    "count": 84000,
+                    "r": -0.03703703703703709
+                },
+                {
+                    "stockName": "SZ000011",
+                    "buyDate": 20091203,
+                    "sellDate": 20091204,
+                    "buyPrice": 11.84,
+                    "sellPrice": 11.39,
+                    "count": 45800,
+                    "r": -0.03800675675675669
+                },
+                {
+                    "stockName": "SZ000011",
+                    "buyDate": 20100224,
+                    "sellDate": 20100225,
+                    "buyPrice": 9.35,
+                    "sellPrice": 9.78,
+                    "count": 55500,
+                    "r": 0.04598930481283414
+                },
+                {
+                    "stockName": "SZ000011",
+                    "buyDate": 20100915,
+                    "sellDate": 20100916,
+                    "buyPrice": 8.38,
+                    "sellPrice": 8.62,
+                    "count": 64300,
+                    "r": 0.028639618138424527
+                },
+                {
+                    "stockName": "SZ000011",
+                    "buyDate": 20130925,
+                    "sellDate": 20130926,
+                    "buyPrice": 8.6,
+                    "sellPrice": 8.2,
+                    "count": 64100,
+                    "r": -0.04651162790697683
+                },
+                {
+                    "stockName": "SZ000011",
+                    "buyDate": 20131104,
+                    "sellDate": 20131108,
+                    "buyPrice": 7.67,
+                    "sellPrice": 7.47,
+                    "count": 68100,
+                    "r": -0.026075619295958252
+                },
+                {
+                    "stockName": "SZ000011",
+                    "buyDate": 20140103,
+                    "sellDate": 20140106,
+                    "buyPrice": 7.56,
+                    "sellPrice": 7.11,
+                    "count": 66900,
+                    "r": -0.05952380952380942
+                },
+                {
+                    "stockName": "SZ002320",
+                    "buyDate": 20140102,
+                    "sellDate": 20140106,
+                    "buyPrice": 9.1,
+                    "sellPrice": 8.63,
+                    "count": 54700,
+                    "r": -0.051648351648351576
+                },
+                {
+                    "stockName": "SZ002320",
+                    "buyDate": 20141010,
+                    "sellDate": 20141013,
+                    "buyPrice": 11.74,
+                    "sellPrice": 11.34,
+                    "count": 40000,
+                    "r": -0.03407155025553665
+                },
+                {
+                    "stockName": "SZ002321",
+                    "buyDate": 20110518,
+                    "sellDate": 20110523,
+                    "buyPrice": 11.66,
+                    "sellPrice": 10.86,
+                    "count": 42700,
+                    "r": -0.06861063464837058
+                },
+                {
+                    "stockName": "SZ002321",
+                    "buyDate": 20110616,
+                    "sellDate": 20110617,
+                    "buyPrice": 9.1,
+                    "sellPrice": 8.69,
+                    "count": 50700,
+                    "r": -0.04505494505494512
+                },
+                {
+                    "stockName": "SZ002321",
+                    "buyDate": 20110712,
+                    "sellDate": 20110713,
+                    "buyPrice": 9.47,
+                    "sellPrice": 9.72,
+                    "count": 46200,
+                    "r": 0.026399155227032622
+                },
+                {
+                    "stockName": "SZ002321",
+                    "buyDate": 20131022,
+                    "sellDate": 20131023,
+                    "buyPrice": 6.4,
+                    "sellPrice": 6.18,
+                    "count": 69800,
+                    "r": -0.034375000000000044
+                },
+                {
+                    "stockName": "SZ002321",
+                    "buyDate": 20140704,
+                    "sellDate": 20140707,
+                    "buyPrice": 5.5,
+                    "sellPrice": 5.34,
+                    "count": 78000,
+                    "r": -0.029090909090909167
+                },
+                {
+                    "stockName": "SZ002321",
+                    "buyDate": 20140825,
+                    "sellDate": 20140826,
+                    "buyPrice": 6.84,
+                    "sellPrice": 6.7,
+                    "count": 60500,
+                    "r": -0.020467836257309857
+                },
+                {
+                    "stockName": "SZ002321",
+                    "buyDate": 20140905,
+                    "sellDate": 20140909,
+                    "buyPrice": 6.92,
+                    "sellPrice": 6.77,
+                    "count": 58200,
+                    "r": -0.021676300578034713
+                },
+                {
+                    "stockName": "SZ002321",
+                    "buyDate": 20141010,
+                    "sellDate": 20141013,
+                    "buyPrice": 8.18,
+                    "sellPrice": 7.67,
+                    "count": 47900,
+                    "r": -0.062347188264058606
+                },
+                {
+                    "stockName": "SZ002323",
+                    "buyDate": 20100106,
+                    "sellDate": 20100120,
+                    "buyPrice": 29.97,
+                    "sellPrice": 30.2,
+                    "count": 16600,
+                    "r": 0.007674341007674279
+                },
+                {
+                    "stockName": "SZ002323",
+                    "buyDate": 20100331,
+                    "sellDate": 20100413,
+                    "buyPrice": 29,
+                    "sellPrice": 28.43,
+                    "count": 17200,
+                    "r": -0.01965517241379311
+                },
+                {
+                    "stockName": "SZ002323",
+                    "buyDate": 20131231,
+                    "sellDate": 20140106,
+                    "buyPrice": 14.15,
+                    "sellPrice": 13.66,
+                    "count": 34300,
+                    "r": -0.034628975265017736
+                },
+                {
+                    "stockName": "SZ002323",
+                    "buyDate": 20140122,
+                    "sellDate": 20140123,
+                    "buyPrice": 14.39,
+                    "sellPrice": 14.9,
+                    "count": 32400,
+                    "r": 0.035441278665740095
+                },
+                {
+                    "stockName": "SZ002323",
+                    "buyDate": 20140523,
+                    "sellDate": 20140526,
+                    "buyPrice": 13.68,
+                    "sellPrice": 14.19,
+                    "count": 35100,
+                    "r": 0.037280701754385914
+                },
+                {
+                    "stockName": "SZ002323",
+                    "buyDate": 20140801,
+                    "sellDate": 20140807,
+                    "buyPrice": 15.9,
+                    "sellPrice": 16.31,
+                    "count": 31100,
+                    "r": 0.025786163522012462
+                },
+                {
+                    "stockName": "SZ002324",
+                    "buyDate": 20110802,
+                    "sellDate": 20110808,
+                    "buyPrice": 14.9,
+                    "sellPrice": 14.06,
+                    "count": 33400,
+                    "r": -0.05637583892617448
+                },
+                {
+                    "stockName": "SZ002324",
+                    "buyDate": 20130304,
+                    "sellDate": 20130312,
+                    "buyPrice": 14.6,
+                    "sellPrice": 13.85,
+                    "count": 32000,
+                    "r": -0.05136986301369861
+                },
+                {
+                    "stockName": "SZ002324",
+                    "buyDate": 20130510,
+                    "sellDate": 20130514,
+                    "buyPrice": 15.7,
+                    "sellPrice": 15.2,
+                    "count": 28000,
+                    "r": -0.031847133757961776
+                },
+                {
+                    "stockName": "SZ002324",
+                    "buyDate": 20131113,
+                    "sellDate": 20131114,
+                    "buyPrice": 16.14,
+                    "sellPrice": 15.45,
+                    "count": 26200,
+                    "r": -0.04275092936802982
+                },
+                {
+                    "stockName": "SZ002324",
+                    "buyDate": 20140102,
+                    "sellDate": 20140103,
+                    "buyPrice": 17.4,
+                    "sellPrice": 16.98,
+                    "count": 23200,
+                    "r": -0.024137931034482696
+                },
+                {
+                    "stockName": "SZ002324",
+                    "buyDate": 20140813,
+                    "sellDate": 20140818,
+                    "buyPrice": 15.87,
+                    "sellPrice": 16.25,
+                    "count": 24600,
+                    "r": 0.02394454946439839
+                },
+                {
+                    "stockName": "SZ002326",
+                    "buyDate": 20110228,
+                    "sellDate": 20110303,
+                    "buyPrice": 30.45,
+                    "sellPrice": 29.46,
+                    "count": 16300,
+                    "r": -0.0325123152709359
+                },
+                {
+                    "stockName": "SZ002326",
+                    "buyDate": 20110520,
+                    "sellDate": 20110524,
+                    "buyPrice": 27.13,
+                    "sellPrice": 26.01,
+                    "count": 17600,
+                    "r": -0.0412827128639881
+                },
+                {
+                    "stockName": "SZ002326",
+                    "buyDate": 20140120,
+                    "sellDate": 20140121,
+                    "buyPrice": 11.62,
+                    "sellPrice": 11.23,
+                    "count": 39300,
+                    "r": -0.033562822719449104
+                },
+                {
+                    "stockName": "SZ002326",
+                    "buyDate": 20140124,
+                    "sellDate": 20140127,
+                    "buyPrice": 11.52,
+                    "sellPrice": 11.9,
+                    "count": 38100,
+                    "r": 0.03298611111111116
+                },
+                {
+                    "stockName": "SZ002326",
+                    "buyDate": 20140324,
+                    "sellDate": 20140327,
+                    "buyPrice": 14.45,
+                    "sellPrice": 14.35,
+                    "count": 31200,
+                    "r": -0.00692041522491349
+                },
+                {
+                    "stockName": "SZ002326",
+                    "buyDate": 20140717,
+                    "sellDate": 20140718,
+                    "buyPrice": 14.6,
+                    "sellPrice": 13.73,
+                    "count": 30400,
+                    "r": -0.05958904109589036
+                },
+                {
+                    "stockName": "SZ002327",
+                    "buyDate": 20100329,
+                    "sellDate": 20100330,
+                    "buyPrice": 8.83,
+                    "sellPrice": 9.41,
+                    "count": 56400,
+                    "r": 0.0656851642129106
+                },
+                {
+                    "stockName": "SZ002327",
+                    "buyDate": 20110802,
+                    "sellDate": 20110808,
+                    "buyPrice": 15.32,
+                    "sellPrice": 15.07,
+                    "count": 34400,
+                    "r": -0.01631853785900783
+                },
+                {
+                    "stockName": "SZ002327",
+                    "buyDate": 20111102,
+                    "sellDate": 20111107,
+                    "buyPrice": 15.84,
+                    "sellPrice": 17.12,
+                    "count": 32500,
+                    "r": 0.08080808080808088
+                },
+                {
+                    "stockName": "SZ002327",
+                    "buyDate": 20111128,
+                    "sellDate": 20111130,
+                    "buyPrice": 16.13,
+                    "sellPrice": 16.48,
+                    "count": 34300,
+                    "r": 0.021698698078115308
+                },
+                {
+                    "stockName": "SZ002327",
+                    "buyDate": 20111209,
+                    "sellDate": 20111212,
+                    "buyPrice": 16.43,
+                    "sellPrice": 15.8,
+                    "count": 34200,
+                    "r": -0.03834449178332311
+                },
+                {
+                    "stockName": "SZ002327",
+                    "buyDate": 20120113,
+                    "sellDate": 20120116,
+                    "buyPrice": 13.35,
+                    "sellPrice": 12.12,
+                    "count": 40300,
+                    "r": -0.09213483146067414
+                },
+                {
+                    "stockName": "SZ002327",
+                    "buyDate": 20120806,
+                    "sellDate": 20120807,
+                    "buyPrice": 15.91,
+                    "sellPrice": 15.85,
+                    "count": 30500,
+                    "r": -0.0037712130735386706
+                },
+                {
+                    "stockName": "SZ002327",
+                    "buyDate": 20140715,
+                    "sellDate": 20140716,
+                    "buyPrice": 11.38,
+                    "sellPrice": 11.41,
+                    "count": 42200,
+                    "r": 0.002636203866432263
+                },
+                {
+                    "stockName": "SZ002327",
+                    "buyDate": 20140820,
+                    "sellDate": 20140825,
+                    "buyPrice": 12.75,
+                    "sellPrice": 12.76,
+                    "count": 37600,
+                    "r": 0.0007843137254901489
+                },
+                {
+                    "stockName": "SZ002327",
+                    "buyDate": 20140905,
+                    "sellDate": 20140926,
+                    "buyPrice": 13,
+                    "sellPrice": 13.54,
+                    "count": 36700,
+                    "r": 0.041538461538461524
+                },
+                {
+                    "stockName": "SZ002322",
+                    "buyDate": 20140123,
+                    "sellDate": 20140210,
+                    "buyPrice": 12.15,
+                    "sellPrice": 13.22,
+                    "count": 41000,
+                    "r": 0.08806584362139924
+                },
+                {
+                    "stockName": "SZ002322",
+                    "buyDate": 20140408,
+                    "sellDate": 20140421,
+                    "buyPrice": 11.35,
+                    "sellPrice": 11.12,
+                    "count": 47500,
+                    "r": -0.02026431718061683
+                },
+                {
+                    "stockName": "SZ002322",
+                    "buyDate": 20140512,
+                    "sellDate": 20140523,
+                    "buyPrice": 10.08,
+                    "sellPrice": 10.56,
+                    "count": 52000,
+                    "r": 0.04761904761904767
+                },
+                {
+                    "stockName": "SZ002328",
+                    "buyDate": 20100329,
+                    "sellDate": 20100330,
+                    "buyPrice": 15.53,
+                    "sellPrice": 15.27,
+                    "count": 32000,
+                    "r": -0.016741790083708907
+                },
+                {
+                    "stockName": "SZ002328",
+                    "buyDate": 20110804,
+                    "sellDate": 20110808,
+                    "buyPrice": 10.71,
+                    "sellPrice": 10.07,
+                    "count": 45400,
+                    "r": -0.05975723622782447
+                },
+                {
+                    "stockName": "SZ002328",
+                    "buyDate": 20130207,
+                    "sellDate": 20130221,
+                    "buyPrice": 6.41,
+                    "sellPrice": 6.44,
+                    "count": 71000,
+                    "r": 0.004680187207488418
+                },
+                {
+                    "stockName": "SZ002328",
+                    "buyDate": 20130819,
+                    "sellDate": 20130820,
+                    "buyPrice": 5.71,
+                    "sellPrice": 6.04,
+                    "count": 79600,
+                    "r": 0.05779334500875666
+                },
+                {
+                    "stockName": "SZ002328",
+                    "buyDate": 20131028,
+                    "sellDate": 20131101,
+                    "buyPrice": 8.01,
+                    "sellPrice": 8.57,
+                    "count": 59700,
+                    "r": 0.0699126092384521
+                },
+                {
+                    "stockName": "SZ002328",
+                    "buyDate": 20140212,
+                    "sellDate": 20140213,
+                    "buyPrice": 10.29,
+                    "sellPrice": 11.3,
+                    "count": 49400,
+                    "r": 0.09815354713313917
+                },
+                {
+                    "stockName": "SZ002328",
+                    "buyDate": 20140220,
+                    "sellDate": 20140221,
+                    "buyPrice": 11.79,
+                    "sellPrice": 11.52,
+                    "count": 47000,
+                    "r": -0.022900763358778553
+                },
+                {
+                    "stockName": "SZ002328",
+                    "buyDate": 20141027,
+                    "sellDate": 20141031,
+                    "buyPrice": 10.17,
+                    "sellPrice": 10.68,
+                    "count": 53000,
+                    "r": 0.05014749262536866
+                },
+                {
+                    "stockName": "SZ002329",
+                    "buyDate": 20100901,
+                    "sellDate": 20100903,
+                    "buyPrice": 19.46,
+                    "sellPrice": 19.05,
+                    "count": 25600,
+                    "r": -0.02106885919835566
+                },
+                {
+                    "stockName": "SZ002329",
+                    "buyDate": 20100910,
+                    "sellDate": 20100916,
+                    "buyPrice": 18.4,
+                    "sellPrice": 18.18,
+                    "count": 26300,
+                    "r": -0.011956521739130421
+                },
+                {
+                    "stockName": "SZ002329",
+                    "buyDate": 20110216,
+                    "sellDate": 20110225,
+                    "buyPrice": 22.61,
+                    "sellPrice": 24.1,
+                    "count": 21000,
+                    "r": 0.0659000442282176
+                },
+                {
+                    "stockName": "SZ002329",
+                    "buyDate": 20110303,
+                    "sellDate": 20110304,
+                    "buyPrice": 23.76,
+                    "sellPrice": 25.55,
+                    "count": 21200,
+                    "r": 0.07533670033670026
+                },
+                {
+                    "stockName": "SZ002329",
+                    "buyDate": 20110610,
+                    "sellDate": 20110614,
+                    "buyPrice": 16.77,
+                    "sellPrice": 17.05,
+                    "count": 32100,
+                    "r": 0.016696481812760844
+                },
+                {
+                    "stockName": "SZ002329",
+                    "buyDate": 20110707,
+                    "sellDate": 20110714,
+                    "buyPrice": 18.27,
+                    "sellPrice": 20.3,
+                    "count": 29800,
+                    "r": 0.11111111111111116
+                },
+                {
+                    "stockName": "SZ002329",
+                    "buyDate": 20130905,
+                    "sellDate": 20130916,
+                    "buyPrice": 13.03,
+                    "sellPrice": 12.84,
+                    "count": 46200,
+                    "r": -0.014581734458940843
+                },
+                {
+                    "stockName": "SZ002329",
+                    "buyDate": 20131211,
+                    "sellDate": 20131217,
+                    "buyPrice": 12.63,
+                    "sellPrice": 12.25,
+                    "count": 46600,
+                    "r": -0.03008709422011091
+                },
+                {
+                    "stockName": "SZ002329",
+                    "buyDate": 20140220,
+                    "sellDate": 20140221,
+                    "buyPrice": 12.85,
+                    "sellPrice": 13.45,
+                    "count": 44200,
+                    "r": 0.04669260700389111
+                },
+                {
+                    "stockName": "SZ000010",
+                    "buyDate": 20061206,
+                    "sellDate": 20061207,
+                    "buyPrice": 1.2,
+                    "sellPrice": 1.15,
+                    "count": 415400,
+                    "r": -0.04166666666666674
+                },
+                {
+                    "stockName": "SZ000010",
+                    "buyDate": 20070727,
+                    "sellDate": 20070730,
+                    "buyPrice": 2.34,
+                    "sellPrice": 2.51,
+                    "count": 202900,
+                    "r": 0.07264957264957261
+                },
+                {
+                    "stockName": "SZ000010",
+                    "buyDate": 20090916,
+                    "sellDate": 20090918,
+                    "buyPrice": 2.13,
+                    "sellPrice": 2.26,
+                    "count": 237700,
+                    "r": 0.06103286384976525
+                },
+                {
+                    "stockName": "SZ000010",
+                    "buyDate": 20120530,
+                    "sellDate": 20120531,
+                    "buyPrice": 3.02,
+                    "sellPrice": 3.16,
+                    "count": 176800,
+                    "r": 0.04635761589403975
+                },
+                {
+                    "stockName": "SZ000010",
+                    "buyDate": 20121022,
+                    "sellDate": 20121031,
+                    "buyPrice": 3.63,
+                    "sellPrice": 3.64,
+                    "count": 153000,
+                    "r": 0.0027548209366392573
+                },
+                {
+                    "stockName": "SZ000010",
+                    "buyDate": 20140408,
+                    "sellDate": 20140416,
+                    "buyPrice": 6.39,
+                    "sellPrice": 6.11,
+                    "count": 86600,
+                    "r": -0.04381846635367748
+                },
+                {
+                    "stockName": "SZ000010",
+                    "buyDate": 20140515,
+                    "sellDate": 20140516,
+                    "buyPrice": 5.52,
+                    "sellPrice": 5.35,
+                    "count": 95300,
+                    "r": -0.030797101449275388
+                },
+                {
+                    "stockName": "SZ000010",
+                    "buyDate": 20140623,
+                    "sellDate": 20140627,
+                    "buyPrice": 5.75,
+                    "sellPrice": 6.27,
+                    "count": 88100,
+                    "r": 0.09043478260869553
+                },
+                {
+                    "stockName": "SZ000010",
+                    "buyDate": 20140807,
+                    "sellDate": 20140818,
+                    "buyPrice": 6.8,
+                    "sellPrice": 7.34,
+                    "count": 80800,
+                    "r": 0.07941176470588229
+                },
+                {
+                    "stockName": "SZ000002",
+                    "buyDate": 20070730,
+                    "sellDate": 20070803,
+                    "buyPrice": 15.79,
+                    "sellPrice": 20.12,
+                    "count": 31500,
+                    "r": 0.274224192526916
+                },
+                {
+                    "stockName": "SZ000002",
+                    "buyDate": 20120817,
+                    "sellDate": 20120821,
+                    "buyPrice": 8.04,
+                    "sellPrice": 7.73,
+                    "count": 78400,
+                    "r": -0.038557213930348055
+                },
+                {
+                    "stockName": "SZ000002",
+                    "buyDate": 20121101,
+                    "sellDate": 20121115,
+                    "buyPrice": 7.71,
+                    "sellPrice": 7.66,
+                    "count": 78200,
+                    "r": -0.006485084306095956
+                },
+                {
+                    "stockName": "SZ000002",
+                    "buyDate": 20121127,
+                    "sellDate": 20121130,
+                    "buyPrice": 7.79,
+                    "sellPrice": 8.16,
+                    "count": 76400,
+                    "r": 0.047496790757381335
+                },
+                {
+                    "stockName": "SZ000002",
+                    "buyDate": 20130913,
+                    "sellDate": 20130916,
+                    "buyPrice": 9.8,
+                    "sellPrice": 9.51,
+                    "count": 63200,
+                    "r": -0.02959183673469401
+                },
+                {
+                    "stockName": "SZ000002",
+                    "buyDate": 20131202,
+                    "sellDate": 20131212,
+                    "buyPrice": 8.29,
+                    "sellPrice": 8.12,
+                    "count": 72100,
+                    "r": -0.020506634499396825
+                },
+                {
+                    "stockName": "SZ000002",
+                    "buyDate": 20140915,
+                    "sellDate": 20141008,
+                    "buyPrice": 9.36,
+                    "sellPrice": 9.44,
+                    "count": 62200,
+                    "r": 0.008547008547008517
+                },
+                {
+                    "stockName": "SZ000006",
+                    "buyDate": 20070620,
+                    "sellDate": 20070622,
+                    "buyPrice": 4.86,
+                    "sellPrice": 4.62,
+                    "count": 102500,
+                    "r": -0.04938271604938271
+                },
+                {
+                    "stockName": "SZ000006",
+                    "buyDate": 20100908,
+                    "sellDate": 20100909,
+                    "buyPrice": 4.27,
+                    "sellPrice": 4.09,
+                    "count": 110300,
+                    "r": -0.042154566744730615
+                },
+                {
+                    "stockName": "SZ000006",
+                    "buyDate": 20110128,
+                    "sellDate": 20110211,
+                    "buyPrice": 3.68,
+                    "sellPrice": 3.8,
+                    "count": 121800,
+                    "r": 0.032608695652173836
+                },
+                {
+                    "stockName": "SZ000006",
+                    "buyDate": 20110222,
+                    "sellDate": 20110301,
+                    "buyPrice": 3.74,
+                    "sellPrice": 3.84,
+                    "count": 123000,
+                    "r": 0.026737967914438387
+                },
+                {
+                    "stockName": "SZ000006",
+                    "buyDate": 20110415,
+                    "sellDate": 20110425,
+                    "buyPrice": 4.31,
+                    "sellPrice": 4.15,
+                    "count": 109000,
+                    "r": -0.03712296983758678
+                },
+                {
+                    "stockName": "SZ000006",
+                    "buyDate": 20110511,
+                    "sellDate": 20110516,
+                    "buyPrice": 4.04,
+                    "sellPrice": 4.38,
+                    "count": 111300,
+                    "r": 0.08415841584158423
+                },
+                {
+                    "stockName": "SZ000006",
+                    "buyDate": 20140415,
+                    "sellDate": 20140421,
+                    "buyPrice": 5.03,
+                    "sellPrice": 4.82,
+                    "count": 96300,
+                    "r": -0.041749502982107334
+                },
+                {
+                    "stockName": "SZ000006",
+                    "buyDate": 20140625,
+                    "sellDate": 20140626,
+                    "buyPrice": 4.43,
+                    "sellPrice": 4.57,
+                    "count": 104200,
+                    "r": 0.031602708803611934
+                },
+                {
+                    "stockName": "SZ000012",
+                    "buyDate": 20070227,
+                    "sellDate": 20070228,
+                    "buyPrice": 6.33,
+                    "sellPrice": 6.93,
+                    "count": 78700,
+                    "r": 0.09478672985781977
+                },
+                {
+                    "stockName": "SZ000012",
+                    "buyDate": 20070405,
+                    "sellDate": 20070411,
+                    "buyPrice": 7.39,
+                    "sellPrice": 8.68,
+                    "count": 73400,
+                    "r": 0.1745602165087956
+                },
+                {
+                    "stockName": "SZ000012",
+                    "buyDate": 20070717,
+                    "sellDate": 20070723,
+                    "buyPrice": 6.42,
+                    "sellPrice": 7.71,
+                    "count": 98600,
+                    "r": 0.2009345794392523
+                },
+                {
+                    "stockName": "SZ000012",
+                    "buyDate": 20080529,
+                    "sellDate": 20080530,
+                    "buyPrice": 10.37,
+                    "sellPrice": 9.71,
+                    "count": 72900,
+                    "r": -0.06364513018322071
+                },
+                {
+                    "stockName": "SZ000012",
+                    "buyDate": 20090717,
+                    "sellDate": 20090722,
+                    "buyPrice": 9.07,
+                    "sellPrice": 9.17,
+                    "count": 77500,
+                    "r": 0.011025358324145529
+                },
+                {
+                    "stockName": "SZ000012",
+                    "buyDate": 20100211,
+                    "sellDate": 20100223,
+                    "buyPrice": 9.21,
+                    "sellPrice": 10.12,
+                    "count": 76700,
+                    "r": 0.09880564603691622
+                },
+                {
+                    "stockName": "SZ000012",
+                    "buyDate": 20110805,
+                    "sellDate": 20110808,
+                    "buyPrice": 15.67,
+                    "sellPrice": 14.92,
+                    "count": 49200,
+                    "r": -0.04786215698787488
+                },
+                {
+                    "stockName": "SZ000012",
+                    "buyDate": 20131106,
+                    "sellDate": 20131108,
+                    "buyPrice": 8.55,
+                    "sellPrice": 8.37,
+                    "count": 85400,
+                    "r": -0.021052631578947545
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20060818,
+                    "sellDate": 20060821,
+                    "buyPrice": 2.05,
+                    "sellPrice": 1.97,
+                    "count": 243100,
+                    "r": -0.03902439024390236
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20060907,
+                    "sellDate": 20060914,
+                    "buyPrice": 1.96,
+                    "sellPrice": 1.91,
+                    "count": 242900,
+                    "r": -0.025510204081632626
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20070917,
+                    "sellDate": 20070919,
+                    "buyPrice": 4.42,
+                    "sellPrice": 4.76,
+                    "count": 104300,
+                    "r": 0.07692307692307687
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20071210,
+                    "sellDate": 20071211,
+                    "buyPrice": 3.78,
+                    "sellPrice": 3.94,
+                    "count": 130600,
+                    "r": 0.042328042328042326
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20071218,
+                    "sellDate": 20071224,
+                    "buyPrice": 3.88,
+                    "sellPrice": 4.1,
+                    "count": 131800,
+                    "r": 0.05670103092783507
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20080729,
+                    "sellDate": 20080730,
+                    "buyPrice": 4.25,
+                    "sellPrice": 4.09,
+                    "count": 126400,
+                    "r": -0.03764705882352948
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20090624,
+                    "sellDate": 20090703,
+                    "buyPrice": 4.85,
+                    "sellPrice": 4.9,
+                    "count": 105900,
+                    "r": 0.01030927835051565
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20100531,
+                    "sellDate": 20100601,
+                    "buyPrice": 5.32,
+                    "sellPrice": 5.04,
+                    "count": 97000,
+                    "r": -0.052631578947368474
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20100728,
+                    "sellDate": 20100824,
+                    "buyPrice": 5.13,
+                    "sellPrice": 5.62,
+                    "count": 94700,
+                    "r": 0.09551656920077978
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20130206,
+                    "sellDate": 20130221,
+                    "buyPrice": 3.47,
+                    "sellPrice": 3.4,
+                    "count": 152500,
+                    "r": -0.02017291066282434
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20130829,
+                    "sellDate": 20130830,
+                    "buyPrice": 3.4,
+                    "sellPrice": 3.51,
+                    "count": 151600,
+                    "r": 0.03235294117647047
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20130903,
+                    "sellDate": 20130911,
+                    "buyPrice": 3.51,
+                    "sellPrice": 3.61,
+                    "count": 150700,
+                    "r": 0.028490028490028463
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20131009,
+                    "sellDate": 20131010,
+                    "buyPrice": 3.46,
+                    "sellPrice": 3.49,
+                    "count": 156300,
+                    "r": 0.00867052023121384
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20131226,
+                    "sellDate": 20140108,
+                    "buyPrice": 3.7,
+                    "sellPrice": 3.86,
+                    "count": 146500,
+                    "r": 0.043243243243243246
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20140616,
+                    "sellDate": 20140617,
+                    "buyPrice": 4.13,
+                    "sellPrice": 4.26,
+                    "count": 136100,
+                    "r": 0.03147699757869238
+                },
+                {
+                    "stockName": "SZ000016",
+                    "buyDate": 20140813,
+                    "sellDate": 20140826,
+                    "buyPrice": 4.71,
+                    "sellPrice": 4.67,
+                    "count": 122400,
+                    "r": -0.00849256900212314
+                },
+                {
+                    "stockName": "SZ000014",
+                    "buyDate": 20060317,
+                    "sellDate": 20060320,
+                    "buyPrice": 2.28,
+                    "sellPrice": 2.34,
+                    "count": 218600,
+                    "r": 0.026315789473684292
+                },
+                {
+                    "stockName": "SZ000014",
+                    "buyDate": 20060412,
+                    "sellDate": 20060413,
+                    "buyPrice": 2.69,
+                    "sellPrice": 2.54,
+                    "count": 189000,
+                    "r": -0.055762081784386575
+                },
+                {
+                    "stockName": "SZ000014",
+                    "buyDate": 20061101,
+                    "sellDate": 20061106,
+                    "buyPrice": 4.26,
+                    "sellPrice": 4.1,
+                    "count": 112000,
+                    "r": -0.03755868544600938
+                },
+                {
+                    "stockName": "SZ000014",
+                    "buyDate": 20080222,
+                    "sellDate": 20080225,
+                    "buyPrice": 10.06,
+                    "sellPrice": 9.25,
+                    "count": 45300,
+                    "r": -0.08051689860834998
+                },
+                {
+                    "stockName": "SZ000014",
+                    "buyDate": 20100222,
+                    "sellDate": 20100225,
+                    "buyPrice": 12.87,
+                    "sellPrice": 13.4,
+                    "count": 32400,
+                    "r": 0.04118104118104138
+                },
+                {
+                    "stockName": "SZ000014",
+                    "buyDate": 20100311,
+                    "sellDate": 20100312,
+                    "buyPrice": 13.67,
+                    "sellPrice": 13.26,
+                    "count": 31600,
+                    "r": -0.029992684711046103
+                },
+                {
+                    "stockName": "SZ000014",
+                    "buyDate": 20130110,
+                    "sellDate": 20130111,
+                    "buyPrice": 8.44,
+                    "sellPrice": 7.95,
+                    "count": 49300,
+                    "r": -0.05805687203791465
+                },
+                {
+                    "stockName": "SZ000014",
+                    "buyDate": 20130411,
+                    "sellDate": 20130417,
+                    "buyPrice": 8.76,
+                    "sellPrice": 9.14,
+                    "count": 44500,
+                    "r": 0.04337899543378998
+                },
+                {
+                    "stockName": "SZ000014",
+                    "buyDate": 20130619,
+                    "sellDate": 20130620,
+                    "buyPrice": 8.81,
+                    "sellPrice": 7.97,
+                    "count": 45900,
+                    "r": -0.09534619750283779
+                },
+                {
+                    "stockName": "SZ000014",
+                    "buyDate": 20131022,
+                    "sellDate": 20131023,
+                    "buyPrice": 11.62,
+                    "sellPrice": 10.66,
+                    "count": 31300,
+                    "r": -0.08261617900172114
+                },
+                {
+                    "stockName": "SZ000014",
+                    "buyDate": 20140815,
+                    "sellDate": 20140820,
+                    "buyPrice": 11.62,
+                    "sellPrice": 12.8,
+                    "count": 28500,
+                    "r": 0.10154905335628239
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20100315,
+                    "sellDate": 20100318,
+                    "buyPrice": 5.47,
+                    "sellPrice": 5.36,
+                    "count": 91100,
+                    "r": -0.02010968921389389
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20100713,
+                    "sellDate": 20100715,
+                    "buyPrice": 6.11,
+                    "sellPrice": 5.97,
+                    "count": 79400,
+                    "r": -0.022913256955810257
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20110311,
+                    "sellDate": 20110321,
+                    "buyPrice": 7.82,
+                    "sellPrice": 7.76,
+                    "count": 60300,
+                    "r": -0.007672634271099765
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20110328,
+                    "sellDate": 20110406,
+                    "buyPrice": 7.45,
+                    "sellPrice": 7.14,
+                    "count": 62400,
+                    "r": -0.041610738255033586
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20110520,
+                    "sellDate": 20110523,
+                    "buyPrice": 6.94,
+                    "sellPrice": 6.74,
+                    "count": 63800,
+                    "r": -0.028818443804034644
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20110906,
+                    "sellDate": 20110908,
+                    "buyPrice": 8.48,
+                    "sellPrice": 8.15,
+                    "count": 50400,
+                    "r": -0.0389150943396227
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20120628,
+                    "sellDate": 20120706,
+                    "buyPrice": 9.9,
+                    "sellPrice": 10.43,
+                    "count": 41200,
+                    "r": 0.05353535353535355
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20120723,
+                    "sellDate": 20120725,
+                    "buyPrice": 10.14,
+                    "sellPrice": 9.58,
+                    "count": 42200,
+                    "r": -0.05522682445759375
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20120921,
+                    "sellDate": 20120925,
+                    "buyPrice": 10.11,
+                    "sellPrice": 10.54,
+                    "count": 39700,
+                    "r": 0.04253214638971303
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20121102,
+                    "sellDate": 20121106,
+                    "buyPrice": 11.04,
+                    "sellPrice": 10.81,
+                    "count": 37700,
+                    "r": -0.02083333333333326
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20121108,
+                    "sellDate": 20121109,
+                    "buyPrice": 10.78,
+                    "sellPrice": 9.83,
+                    "count": 37600,
+                    "r": -0.08812615955473091
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20130123,
+                    "sellDate": 20130124,
+                    "buyPrice": 11.32,
+                    "sellPrice": 10.68,
+                    "count": 32400,
+                    "r": -0.0565371024734983
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20130906,
+                    "sellDate": 20130909,
+                    "buyPrice": 10.91,
+                    "sellPrice": 11.13,
+                    "count": 31500,
+                    "r": 0.02016498625114571
+                },
+                {
+                    "stockName": "SZ002325",
+                    "buyDate": 20130911,
+                    "sellDate": 20130912,
+                    "buyPrice": 11.04,
+                    "sellPrice": 10.85,
+                    "count": 31600,
+                    "r": -0.017210144927536142
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20070716,
+                    "sellDate": 20070723,
+                    "buyPrice": 1.99,
+                    "sellPrice": 2.3,
+                    "count": 250500,
+                    "r": 0.1557788944723617
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20090916,
+                    "sellDate": 20090922,
+                    "buyPrice": 2.14,
+                    "sellPrice": 2.02,
+                    "count": 267600,
+                    "r": -0.05607476635514019
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20091120,
+                    "sellDate": 20091124,
+                    "buyPrice": 2.18,
+                    "sellPrice": 2.17,
+                    "count": 246400,
+                    "r": -0.004587155963302836
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20110221,
+                    "sellDate": 20110224,
+                    "buyPrice": 2.21,
+                    "sellPrice": 2.31,
+                    "count": 240500,
+                    "r": 0.045248868778280604
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20110804,
+                    "sellDate": 20110805,
+                    "buyPrice": 2.56,
+                    "sellPrice": 2.41,
+                    "count": 215700,
+                    "r": -0.05859375
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20120411,
+                    "sellDate": 20120423,
+                    "buyPrice": 2.45,
+                    "sellPrice": 2.46,
+                    "count": 211000,
+                    "r": 0.004081632653061051
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20120614,
+                    "sellDate": 20120615,
+                    "buyPrice": 2.48,
+                    "sellPrice": 2.37,
+                    "count": 208000,
+                    "r": -0.04435483870967738
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20130205,
+                    "sellDate": 20130219,
+                    "buyPrice": 3.58,
+                    "sellPrice": 3.89,
+                    "count": 136900,
+                    "r": 0.08659217877094982
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20130409,
+                    "sellDate": 20130419,
+                    "buyPrice": 3.3,
+                    "sellPrice": 3.41,
+                    "count": 160400,
+                    "r": 0.03333333333333344
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20130913,
+                    "sellDate": 20130918,
+                    "buyPrice": 3.04,
+                    "sellPrice": 2.97,
+                    "count": 178800,
+                    "r": -0.023026315789473673
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20131211,
+                    "sellDate": 20131213,
+                    "buyPrice": 3.33,
+                    "sellPrice": 3.22,
+                    "count": 158500,
+                    "r": -0.033033033033032955
+                },
+                {
+                    "stockName": "SZ600039",
+                    "buyDate": 20140731,
+                    "sellDate": 20140801,
+                    "buyPrice": 2.92,
+                    "sellPrice": 2.89,
+                    "count": 173800,
+                    "r": -0.010273972602739656
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20050302,
+                    "sellDate": 20050315,
+                    "buyPrice": 1303.31,
+                    "sellPrice": 1269.14,
+                    "count": 300,
+                    "r": -0.02621786067781251
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20050818,
+                    "sellDate": 20050923,
+                    "buyPrice": 1148.04,
+                    "sellPrice": 1151.98,
+                    "count": 400,
+                    "r": 0.003431936169471461
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20060111,
+                    "sellDate": 20060329,
+                    "buyPrice": 1219.81,
+                    "sellPrice": 1305.57,
+                    "count": 300,
+                    "r": 0.07030603126716461
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20060331,
+                    "sellDate": 20060510,
+                    "buyPrice": 1291.52,
+                    "sellPrice": 1545.69,
+                    "count": 300,
+                    "r": 0.1967991204162538
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20060512,
+                    "sellDate": 20060515,
+                    "buyPrice": 1532.88,
+                    "sellPrice": 1664.09,
+                    "count": 300,
+                    "r": 0.08559704608318963
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20060601,
+                    "sellDate": 20060607,
+                    "buyPrice": 1639.67,
+                    "sellPrice": 1589.55,
+                    "count": 300,
+                    "r": -0.03056712631200187
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20060622,
+                    "sellDate": 20060713,
+                    "buyPrice": 1593.1,
+                    "sellPrice": 1655.77,
+                    "count": 300,
+                    "r": 0.03933839683635676
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20060719,
+                    "sellDate": 20060731,
+                    "buyPrice": 1681.77,
+                    "sellPrice": 1612.73,
+                    "count": 300,
+                    "r": -0.04105198689475964
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20060814,
+                    "sellDate": 20060828,
+                    "buyPrice": 1605.2,
+                    "sellPrice": 1650.44,
+                    "count": 300,
+                    "r": 0.0281834039372042
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20061011,
+                    "sellDate": 20061204,
+                    "buyPrice": 1784.52,
+                    "sellPrice": 2161.65,
+                    "count": 300,
+                    "r": 0.21133414027301467
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20070212,
+                    "sellDate": 20070227,
+                    "buyPrice": 2729.84,
+                    "sellPrice": 2771.79,
+                    "count": 200,
+                    "r": 0.015367201008117615
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20070314,
+                    "sellDate": 20070328,
+                    "buyPrice": 2933.68,
+                    "sellPrice": 3173.02,
+                    "count": 200,
+                    "r": 0.08158354012707592
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20070330,
+                    "sellDate": 20070430,
+                    "buyPrice": 3178.5,
+                    "sellPrice": 3841.27,
+                    "count": 200,
+                    "r": 0.20851659587855909
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20070511,
+                    "sellDate": 20070515,
+                    "buyPrice": 4024.42,
+                    "sellPrice": 3899.18,
+                    "count": 200,
+                    "r": -0.031120012324757362
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20070525,
+                    "sellDate": 20070530,
+                    "buyPrice": 4133.19,
+                    "sellPrice": 4053.09,
+                    "count": 200,
+                    "r": -0.019379704296197287
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20070809,
+                    "sellDate": 20070911,
+                    "buyPrice": 4658.59,
+                    "sellPrice": 5113.97,
+                    "count": 100,
+                    "r": 0.09775060694330251
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20070917,
+                    "sellDate": 20071012,
+                    "buyPrice": 5309.06,
+                    "sellPrice": 5903.26,
+                    "count": 100,
+                    "r": 0.11192188447672469
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20071018,
+                    "sellDate": 20071019,
+                    "buyPrice": 6031.92,
+                    "sellPrice": 5818.05,
+                    "count": 100,
+                    "r": -0.03545637210042574
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20080107,
+                    "sellDate": 20080117,
+                    "buyPrice": 5357.45,
+                    "sellPrice": 5151.63,
+                    "count": 100,
+                    "r": -0.03841753072823817
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20090708,
+                    "sellDate": 20090729,
+                    "buyPrice": 3057.46,
+                    "sellPrice": 3266.43,
+                    "count": 200,
+                    "r": 0.06834758263395102
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20091120,
+                    "sellDate": 20091124,
+                    "buyPrice": 3309.38,
+                    "sellPrice": 3223.53,
+                    "count": 200,
+                    "r": -0.025941415008249202
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20091204,
+                    "sellDate": 20091217,
+                    "buyPrice": 3256.61,
+                    "sellPrice": 3179.08,
+                    "count": 200,
+                    "r": -0.023806964911364914
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20100310,
+                    "sellDate": 20100315,
+                    "buyPrice": 3067.15,
+                    "sellPrice": 2976.94,
+                    "count": 200,
+                    "r": -0.02941166881306756
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20100325,
+                    "sellDate": 20100329,
+                    "buyPrice": 3051.36,
+                    "sellPrice": 3123.8,
+                    "count": 200,
+                    "r": 0.023740233862933335
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20100407,
+                    "sellDate": 20100419,
+                    "buyPrice": 3156.31,
+                    "sellPrice": 2980.3,
+                    "count": 200,
+                    "r": -0.055764484477126675
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20100506,
+                    "sellDate": 20100507,
+                    "buyPrice": 2838.95,
+                    "sellPrice": 2688.38,
+                    "count": 200,
+                    "r": -0.05303721446309362
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20101022,
+                    "sellDate": 20101112,
+                    "buyPrice": 2976.75,
+                    "sellPrice": 2985.44,
+                    "count": 200,
+                    "r": 0.0029192911732593974
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20110602,
+                    "sellDate": 20110617,
+                    "buyPrice": 2715.32,
+                    "sellPrice": 2642.82,
+                    "count": 200,
+                    "r": -0.026700352076366674
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20110623,
+                    "sellDate": 20110624,
+                    "buyPrice": 2640.66,
+                    "sellPrice": 2746.21,
+                    "count": 200,
+                    "r": 0.03997106783910098
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20110729,
+                    "sellDate": 20110805,
+                    "buyPrice": 2706.5,
+                    "sellPrice": 2626.42,
+                    "count": 200,
+                    "r": -0.029588028819508616
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20130107,
+                    "sellDate": 20130226,
+                    "buyPrice": 2271.66,
+                    "sellPrice": 2293.34,
+                    "count": 300,
+                    "r": 0.009543681712932628
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20130925,
+                    "sellDate": 20130926,
+                    "buyPrice": 2206.23,
+                    "sellPrice": 2155.81,
+                    "count": 300,
+                    "r": -0.02285346496058893
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20131009,
+                    "sellDate": 20131025,
+                    "buyPrice": 2191.39,
+                    "sellPrice": 2132.96,
+                    "count": 300,
+                    "r": -0.02666344192498815
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20131126,
+                    "sellDate": 20131219,
+                    "buyPrice": 2184.33,
+                    "sellPrice": 2127.79,
+                    "count": 300,
+                    "r": -0.025884367288825372
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20131226,
+                    "sellDate": 20140106,
+                    "buyPrice": 2102.66,
+                    "sellPrice": 2045.71,
+                    "count": 300,
+                    "r": -0.027084740281357766
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20140704,
+                    "sellDate": 20140728,
+                    "buyPrice": 2062.36,
+                    "sellPrice": 2177.95,
+                    "count": 300,
+                    "r": 0.05604744079598123
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20140807,
+                    "sellDate": 20141031,
+                    "buyPrice": 2216.66,
+                    "sellPrice": 2420.18,
+                    "count": 300,
+                    "r": 0.0918138099663457
+                },
+                {
+                    "stockName": "SZ999999",
+                    "buyDate": 20141104,
+                    "sellDate": 20141107,
+                    "buyPrice": 2428.27,
+                    "sellPrice": 2418.17,
+                    "count": 300,
+                    "r": -0.0041593397768781015
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20070824,
+                    "sellDate": 20070829,
+                    "buyPrice": 15.07,
+                    "sellPrice": 14.47,
+                    "count": 33000,
+                    "r": -0.039814200398141986
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20070904,
+                    "sellDate": 20070905,
+                    "buyPrice": 14.86,
+                    "sellPrice": 14.45,
+                    "count": 32000,
+                    "r": -0.02759084791386268
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20090713,
+                    "sellDate": 20090716,
+                    "buyPrice": 11.52,
+                    "sellPrice": 12,
+                    "count": 39900,
+                    "r": 0.04166666666666674
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20100416,
+                    "sellDate": 20100419,
+                    "buyPrice": 11.33,
+                    "sellPrice": 10.18,
+                    "count": 42000,
+                    "r": -0.10150044130626656
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20130201,
+                    "sellDate": 20130207,
+                    "buyPrice": 10.73,
+                    "sellPrice": 10.64,
+                    "count": 39600,
+                    "r": -0.008387698042870428
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20130510,
+                    "sellDate": 20130514,
+                    "buyPrice": 10.19,
+                    "sellPrice": 9.83,
+                    "count": 41100,
+                    "r": -0.035328753680078484
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20130808,
+                    "sellDate": 20130812,
+                    "buyPrice": 8.08,
+                    "sellPrice": 8.48,
+                    "count": 49700,
+                    "r": 0.04950495049504955
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20140117,
+                    "sellDate": 20140120,
+                    "buyPrice": 9.55,
+                    "sellPrice": 9.28,
+                    "count": 43900,
+                    "r": -0.028272251308900653
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20140630,
+                    "sellDate": 20140709,
+                    "buyPrice": 9.8,
+                    "sellPrice": 9.65,
+                    "count": 41300,
+                    "r": -0.015306122448979664
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20140718,
+                    "sellDate": 20140722,
+                    "buyPrice": 9.55,
+                    "sellPrice": 9.73,
+                    "count": 41500,
+                    "r": 0.01884816753926688
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20140820,
+                    "sellDate": 20140821,
+                    "buyPrice": 10.57,
+                    "sellPrice": 10.34,
+                    "count": 37900,
+                    "r": -0.021759697256386046
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20140909,
+                    "sellDate": 20140910,
+                    "buyPrice": 10.55,
+                    "sellPrice": 10.33,
+                    "count": 37000,
+                    "r": -0.020853080568720483
+                },
+                {
+                    "stockName": "SZ000001",
+                    "buyDate": 20140922,
+                    "sellDate": 20140923,
+                    "buyPrice": 10.33,
+                    "sellPrice": 10.1,
+                    "count": 36800,
+                    "r": -0.022265246853823806
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20090805,
+                    "sellDate": 20090810,
+                    "buyPrice": 8.05,
+                    "sellPrice": 8.6,
+                    "count": 61900,
+                    "r": 0.06832298136645942
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20100628,
+                    "sellDate": 20100629,
+                    "buyPrice": 9.28,
+                    "sellPrice": 8.79,
+                    "count": 57000,
+                    "r": -0.05280172413793105
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20100712,
+                    "sellDate": 20100719,
+                    "buyPrice": 8.62,
+                    "sellPrice": 9.07,
+                    "count": 57800,
+                    "r": 0.05220417633410679
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20100728,
+                    "sellDate": 20100809,
+                    "buyPrice": 9.52,
+                    "sellPrice": 10.28,
+                    "count": 54700,
+                    "r": 0.07983193277310918
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20100914,
+                    "sellDate": 20100915,
+                    "buyPrice": 11.63,
+                    "sellPrice": 11.26,
+                    "count": 48100,
+                    "r": -0.03181427343078258
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20110121,
+                    "sellDate": 20110124,
+                    "buyPrice": 12.5,
+                    "sellPrice": 12.4,
+                    "count": 43000,
+                    "r": -0.008000000000000007
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20110221,
+                    "sellDate": 20110222,
+                    "buyPrice": 12.8,
+                    "sellPrice": 13.02,
+                    "count": 41400,
+                    "r": 0.01718749999999991
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20110224,
+                    "sellDate": 20110228,
+                    "buyPrice": 13.06,
+                    "sellPrice": 13.75,
+                    "count": 41100,
+                    "r": 0.05283307810107196
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20110325,
+                    "sellDate": 20110330,
+                    "buyPrice": 13.78,
+                    "sellPrice": 13.25,
+                    "count": 40700,
+                    "r": -0.038461538461538436
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20110505,
+                    "sellDate": 20110512,
+                    "buyPrice": 12.9,
+                    "sellPrice": 13.58,
+                    "count": 41600,
+                    "r": 0.05271317829457356
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20110624,
+                    "sellDate": 20110721,
+                    "buyPrice": 11.76,
+                    "sellPrice": 13.59,
+                    "count": 47700,
+                    "r": 0.1556122448979591
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20110803,
+                    "sellDate": 20110805,
+                    "buyPrice": 13.45,
+                    "sellPrice": 12.65,
+                    "count": 47900,
+                    "r": -0.059479553903345694
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20110905,
+                    "sellDate": 20110906,
+                    "buyPrice": 11.83,
+                    "sellPrice": 12.22,
+                    "count": 51000,
+                    "r": 0.03296703296703307
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20140103,
+                    "sellDate": 20140106,
+                    "buyPrice": 11.7,
+                    "sellPrice": 12.3,
+                    "count": 52900,
+                    "r": 0.05128205128205132
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20140409,
+                    "sellDate": 20140415,
+                    "buyPrice": 13,
+                    "sellPrice": 13.07,
+                    "count": 49800,
+                    "r": 0.005384615384615321
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20140521,
+                    "sellDate": 20140527,
+                    "buyPrice": 12.7,
+                    "sellPrice": 12.92,
+                    "count": 50900,
+                    "r": 0.017322834645669305
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20140605,
+                    "sellDate": 20140626,
+                    "buyPrice": 13.01,
+                    "sellPrice": 13.58,
+                    "count": 50200,
+                    "r": 0.043812451960030696
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20140709,
+                    "sellDate": 20140728,
+                    "buyPrice": 13.87,
+                    "sellPrice": 14.2,
+                    "count": 48900,
+                    "r": 0.023792357606344572
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20140807,
+                    "sellDate": 20140812,
+                    "buyPrice": 14.88,
+                    "sellPrice": 14.59,
+                    "count": 46400,
+                    "r": -0.019489247311827995
+                },
+                {
+                    "stockName": "SZ000004",
+                    "buyDate": 20140820,
+                    "sellDate": 20140826,
+                    "buyPrice": 14.86,
+                    "sellPrice": 14.38,
+                    "count": 45300,
+                    "r": -0.03230148048452208
+                },
+                {
+                    "stockName": "SZ000009",
+                    "buyDate": 20070227,
+                    "sellDate": 20070308,
+                    "buyPrice": 2.7,
+                    "sellPrice": 3.09,
+                    "count": 184600,
+                    "r": 0.14444444444444438
+                },
+                {
+                    "stockName": "SZ000009",
+                    "buyDate": 20070530,
+                    "sellDate": 20070531,
+                    "buyPrice": 7.33,
+                    "sellPrice": 6.96,
+                    "count": 77300,
+                    "r": -0.05047748976807642
+                },
+                {
+                    "stockName": "SZ000009",
+                    "buyDate": 20080107,
+                    "sellDate": 20080108,
+                    "buyPrice": 8.31,
+                    "sellPrice": 7.88,
+                    "count": 64400,
+                    "r": -0.05174488567990376
+                },
+                {
+                    "stockName": "SZ000009",
+                    "buyDate": 20080215,
+                    "sellDate": 20080222,
+                    "buyPrice": 7.44,
+                    "sellPrice": 7.55,
+                    "count": 67800,
+                    "r": 0.014784946236559016
+                },
+                {
+                    "stockName": "SZ000009",
+                    "buyDate": 20090722,
+                    "sellDate": 20090729,
+                    "buyPrice": 9.49,
+                    "sellPrice": 8.82,
+                    "count": 53600,
+                    "r": -0.07060063224446789
+                },
+                {
+                    "stockName": "SZ000009",
+                    "buyDate": 20100222,
+                    "sellDate": 20100302,
+                    "buyPrice": 7.67,
+                    "sellPrice": 8.26,
+                    "count": 61300,
+                    "r": 0.07692307692307687
+                },
+                {
+                    "stockName": "SZ000009",
+                    "buyDate": 20111107,
+                    "sellDate": 20111108,
+                    "buyPrice": 12.08,
+                    "sellPrice": 13.31,
+                    "count": 41600,
+                    "r": 0.10182119205298013
+                },
+                {
+                    "stockName": "SZ000009",
+                    "buyDate": 20130828,
+                    "sellDate": 20130830,
+                    "buyPrice": 8.52,
+                    "sellPrice": 8.24,
+                    "count": 64600,
+                    "r": -0.032863849765258135
+                },
+                {
+                    "stockName": "SZ000009",
+                    "buyDate": 20131106,
+                    "sellDate": 20131107,
+                    "buyPrice": 8.12,
+                    "sellPrice": 7.65,
+                    "count": 65200,
+                    "r": -0.05788177339901468
+                },
+                {
+                    "stockName": "SZ000009",
+                    "buyDate": 20131202,
+                    "sellDate": 20131211,
+                    "buyPrice": 7.98,
+                    "sellPrice": 7.6,
+                    "count": 62100,
+                    "r": -0.04761904761904767
+                }
+            ],
+            "fitness": 0.42386194160001384,
+            "winProbability": 0.4471672771672771,
+            "opportunity": 10,
+            "r": 0.04238619416000138
+        }
+    ]
+}

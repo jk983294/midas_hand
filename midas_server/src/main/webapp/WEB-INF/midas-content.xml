@@ -1,0 +1,55 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:cache="http://www.springframework.org/schema/cache"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/cache
+        http://www.springframework.org/schema/cache/spring-cache.xsd
+        http://www.springframework.org/schema/beans
+	    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	    http://www.springframework.org/schema/context
+	    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	    http://www.springframework.org/schema/util
+	    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <cache:annotation-driven />
+	<context:annotation-config />
+	<context:component-scan base-package="com.victor.midas" />
+
+    <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="allStocks"/>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="stocks"/>
+            </set>
+        </property>
+    </bean>
+    
+    <!-- static properties , read from property files-->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:/local.properties</value>
+			</list>
+		</property>
+	</bean>
+
+    <util:map id="filepath2prefix" map-class="java.util.HashMap" >
+        <entry key="${MktDataLoader.StockSZDirPath}" value="SZ"/>
+        <entry key="${MktDataLoader.StockSHDirPath}" value="SH"/>
+        <entry key="${MktDataLoader.StockIndexDirPath}" value="IDX"/>
+    </util:map>
+
+<!-- Loads MongoDB configuraton -->
+	<import resource="mongo-config.xml"/>
+
+	<!-- thread pool for tasks -->  
+	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="5" />
+		<property name="maxPoolSize" value="10" />
+		<property name="queueCapacity" value="25" />
+	</bean>
+
+ 
+</beans>

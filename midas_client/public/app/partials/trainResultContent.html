@@ -1,0 +1,102 @@
+<div id="TrainResult_Content">
+    <div class="row">
+
+        <div class="col-md-1 col-lg-1">
+            <h4><span class="label label-primary">Train ID : {{trainResult.trainId}}</span></h4>
+        </div>
+        <div class="col-md-2 col-lg-2">
+            <h4><span class="label label-primary">Strategy Name : {{trainResult.strategyName}}</span></h4>
+        </div>
+        <div class="col-md-3 col-lg-3">
+            <ui-select ng-model="subRunSelected" theme="bootstrap" ng-disabled="disabled" reset-search-input="false">
+                <ui-select-match placeholder="Select an sub run">{{$select.selected.subRunDesp}}</ui-select-match>
+                <ui-select-choices repeat="subRun in subRunSelectData | filter: $select.search">
+                    <span> {{subRun.subRunDesp}}</span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+
+        <div class="col-md-1 col-lg-1">
+            <button class="btn btn-default" ng-click="collapseCtrl.isCollapsed1 = !collapseCtrl.isCollapsed1">Parameter</button>
+        </div>
+        <div class="col-md-1 col-lg-1">
+            <button class="btn btn-default" ng-click="collapseCtrl.isCollapsed2 = !collapseCtrl.isCollapsed2">StockGroup</button>
+        </div>
+        <div class="col-md-1 col-lg-1">
+            <button class="btn btn-default" ng-click="collapseCtrl.isCollapsed3 = !collapseCtrl.isCollapsed3">History</button>
+        </div>
+    </div>
+
+    <div id="parameterTable" collapse="collapseCtrl.isCollapsed1">
+        <div class="well well-lg">
+            <table ng-table="parameterTableParams" class="table table-bordered table-hover">
+                <tr ng-repeat="parameter in $data">
+                    <td data-title="'Despcription'" filter="{ 'name': 'text' }" sortable="'name'">{{parameter.name}}</td>
+                    <td data-title="'Value'" filter="{ 'value': 'text' }" sortable="'value'">{{parameter.value}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="stockGroupTable" collapse="collapseCtrl.isCollapsed2">
+        <div class="well well-lg">
+            <table ng-table="groupHistoryTableParams" template-pagination="custom/pager" show-filter="true" class="table table-bordered table-hover">
+                <tr ng-repeat="groupItem in $data"
+                    class="{{groupItem.r | changePctLevel}}">
+                    <td data-title="'stockName'" filter="{ 'stockName': 'text' }" sortable="'stockName'">
+                        <a href="#/Index/{{groupItem.stockName}}">{{groupItem.stockName}}</a>
+                    </td>
+                    <td data-title="'Count'" filter="{ 'recordCount': 'text' }" sortable="'recordCount'">{{groupItem.recordCount | number }}</td>
+                    <td data-title="'Win Probability(%)'" filter="{ 'winProbability': 'text' }" sortable="'winProbability'">{{groupItem.winProbability * 100 | number: 2 | addPct}}</td>
+                    <td data-title="'Avg Return(%)'" filter="{ 'r': 'text' }" sortable="'r'">{{groupItem.r * 100 | number: 2 | addPct }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="historyTable" collapse="collapseCtrl.isCollapsed3">
+        <table ng-table="historyStatisticsTableParams" class="table table-bordered table-hover">
+            <tr ng-repeat="statistic in $data">
+                <td data-title="'Despcription'" filter="{ 'name': 'text' }" sortable="'name'">{{statistic.name}}</td>
+                <td data-title="'Value'" filter="{ 'value': 'text' }" sortable="'value'">{{statistic.value}}</td>
+            </tr>
+        </table>
+
+        <table ng-table="historyTableParams" template-pagination="custom/pager" show-filter="true" class="table table-bordered table-hover">
+            <tr ng-repeat="historyItem in $data"
+                class="{{historyItem.r | changePctLevel}}" ng-dblclick="rowDoubleClick(historyItem)">
+                <td data-title="'stockName'" filter="{ 'stockName': 'text' }" sortable="'stockName'">
+                    <a href="#/Index/{{historyItem.stockName}}">{{historyItem.stockName}}</a>
+                </td>
+                <td data-title="'buyDate'" filter="{ 'buyDate': 'text' }" sortable="'buyDate'">{{historyItem.buyDate}}</td>
+                <td data-title="'sellDate'" filter="{ 'sellDate': 'text' }" sortable="'sellDate'">{{historyItem.sellDate}}</td>
+                <td data-title="'buyPrice'" filter="{ 'buyPrice': 'text' }" sortable="'buyPrice'">{{historyItem.buyPrice}}</td>
+                <td data-title="'sellPrice'" filter="{ 'sellPrice': 'text' }" sortable="'sellPrice'">{{historyItem.sellPrice}}</td>
+                <td data-title="'Buy Reason'" filter="{ 'buyDecision': 'text' }" sortable="'buyDecision'">{{historyItem.buyDecision}}</td>
+                <td data-title="'sell Reason'" filter="{ 'sellDecision': 'text' }" sortable="'sellDecision'">{{historyItem.sellDecision}}</td>
+                <td data-title="'count'" filter="{ 'count': 'text' }" sortable="'count'">{{historyItem.count | number }}</td>
+                <td data-title="'Return(%)'" filter="{ 'r': 'text' }" sortable="'r'">{{historyItem.r * 100 | number: 2 | addPct }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <script type="text/ng-template" id="custom/pager">
+        <ul class="pager ng-cloak">
+            <li ng-repeat="page in pages"
+                ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
+                ng-show="page.type == 'prev' || page.type == 'next'" ng-switch="page.type">
+                <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo; Previous</a>
+                <a ng-switch-when="next" ng-click="params.page(page.number)" href="">Next &raquo;</a>
+            </li>
+            <li>
+                <div class="btn-group">
+                    <button type="button" ng-class="{'active':params.count() == 10}" ng-click="params.count(10)" class="btn btn-default">10</button>
+                    <button type="button" ng-class="{'active':params.count() == 25}" ng-click="params.count(25)" class="btn btn-default">25</button>
+                    <button type="button" ng-class="{'active':params.count() == 50}" ng-click="params.count(50)" class="btn btn-default">50</button>
+                    <button type="button" ng-class="{'active':params.count() == 100}" ng-click="params.count(100)" class="btn btn-default">100</button>
+                </div>
+            </li>
+        </ul>
+    </script>
+
+</div>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html ng-app="midasApp">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="jk">
+
+    <title>Midas</title>
+    <script src="bootup.js"></script>
+</head>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand navicon">
+                    <img class="img-responsive" alt="Responsive image" src="Content/images/midas-touch.png">
+                </a>
+                <a class="navbar-brand" >&nbsp;   MIDAS</a>
+            </div>
+
+            <div class="col-lg-6" ng-controller="TypeaheadCtrl">
+                <form class="navbar-form navbar-right" role="search">
+                    <div class="input-group" style="width: 100%; margin: 0 auto;">
+                        <input type="text" ng-model="typeahead.queryStr" placeholder="have a try..."
+                               typeahead="tip for tip in getTips($viewValue)"
+                               typeahead-loading="typeahead.loadingTips"
+                               typeahead-editable="true"
+                               ng-keydown="inputKeyPress($event)"
+                               class="form-control" >
+                        <div class="input-group-btn">
+                            <button type="submit" class="btn btn-success" ng-click="getAction(typeahead.queryStr)"><span class="glyphicon glyphicon-search"></span></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-md-1 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li id="Index"><a href="#/Index/IDX000001">Index</a></li>
+                    <li id="Overview"><a href="#/Overview">Overview</a></li>
+                    <li id="Comparison"><a href="#/Comparison/IDX000001_SZ002320">Comparison</a></li>
+                    <li id="TrainResult"><a href="#/TrainResult/-1">TrainResult</a></li>
+                    <li id="Plan"><a href="#/Plan">Plan</a></li>
+                    <li id="Score"><a href="#/Score">Score</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-11 col-md-offset-1 col-lg-11 col-lg-offset-1  ">
+                <!-- ng-view handles loading partials into it based upon routes -->
+                <div ng-view class="main view-container fade">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alerts-container" ng-controller="alertCtrl">
+        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)"><strong>{{alert.msg}}</strong></alert>
+    </div>
+
+
+</body>
+</html>
