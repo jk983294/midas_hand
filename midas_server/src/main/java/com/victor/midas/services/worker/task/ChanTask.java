@@ -1,26 +1,17 @@
 package com.victor.midas.services.worker.task;
 
-import com.victor.midas.calculator.chan.ChanMorphology;
 import com.victor.midas.calculator.chan.ChanMorphologyExtend;
 import com.victor.midas.calculator.chan.model.ChanResults;
-import com.victor.midas.calculator.common.IndexCalcbase;
 import com.victor.midas.dao.ConceptScoreDao;
 import com.victor.midas.dao.ScoreDao;
 import com.victor.midas.dao.TaskDao;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.model.vo.concept.StockCrawlData;
 import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
-import com.victor.midas.train.ChanManager;
-import com.victor.midas.train.ScoreManager;
-import com.victor.midas.util.MidasException;
-import com.victor.midas.util.PerformanceUtil;
 import com.victor.utilities.utils.IoHelper;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
