@@ -1,7 +1,8 @@
 package com.victor.spider.core.selector;
 
 import com.alibaba.fastjson.JSON;
-import us.codecraft.xsoup.XTokenQueue;
+import us.codecraft.xsoup.xevaluator.XTokenQueue;
+
 
 import java.util.List;
 
