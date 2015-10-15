@@ -34,7 +34,7 @@ public class ProxyPool {
     private boolean isEnable = false;
     private boolean validateWhenInit = false;
     // private boolean isUseLastProxy = true;
-    private String proxyFilePath = "/data/webmagic/lastUse.proxy";
+    private String proxyFilePath = "/data/spider/lastUse.proxy";
 
     private FilePersistentBase fBase = new FilePersistentBase();
 
@@ -71,9 +71,9 @@ public class ProxyPool {
 
     private void setFilePath() {
         String tmpDir = System.getProperty("java.io.tmpdir");
-        String path = tmpDir + FilePersistentBase.PATH_SEPERATOR + "webmagic" + FilePersistentBase.PATH_SEPERATOR + "lastUse.proxy";
+        String path = tmpDir + FilePersistentBase.PATH_SEPERATOR + "spider" + FilePersistentBase.PATH_SEPERATOR + "lastUse.proxy";
         if (tmpDir != null && new File(tmpDir).isDirectory()) {
-            fBase.setPath(tmpDir + FilePersistentBase.PATH_SEPERATOR + "webmagic");
+            fBase.setPath(tmpDir + FilePersistentBase.PATH_SEPERATOR + "spider");
             File f = fBase.getFile(path);
             if (!f.exists()) {
                 try {

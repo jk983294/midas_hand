@@ -90,7 +90,7 @@ public class ProxyUtils {
 
 	private static String getNetworkInterface() {
 
-		String networkInterfaceName = ">>>> modify networkInterface in us.codecraft.webmagic.utils.ProxyUtils";
+		String networkInterfaceName = ">>>> modify networkInterface in ProxyUtils";
 		Enumeration<NetworkInterface> enumeration = null;
 		try {
 			enumeration = NetworkInterface.getNetworkInterfaces();

@@ -43,13 +43,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * Store results to files by FilePipeline: <br>
  * Spider.create(new SimplePageProcessor("http://my.oschina.net/",
  * "http://my.oschina.net/*blog/*")) <br>
- * .pipeline(new FilePipeline("/data/temp/webmagic/")).run(); <br>
+ * .pipeline(new FilePipeline("/data/temp/spider/")).run(); <br>
  * <br>
  * Use FileCacheQueueScheduler to store urls and cursor in files, so that a
  * Spider can resume the status when shutdown. <br>
  * Spider.create(new SimplePageProcessor("http://my.oschina.net/",
  * "http://my.oschina.net/*blog/*")) <br>
- * .scheduler(new FileCacheQueueScheduler("/data/temp/webmagic/cache/")).run(); <br>
+ * .scheduler(new FileCacheQueueScheduler("/data/temp/spider/cache/")).run(); <br>
  */
 public class Spider implements Runnable, Task {
 
