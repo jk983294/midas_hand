@@ -3,7 +3,7 @@ package com.victor.spider.core.selector;
 import java.util.List;
 
 /**
- * Selector(extractor) for text.<br>
+ * Selector(extractor) for text.
  */
 public interface Selector {
 

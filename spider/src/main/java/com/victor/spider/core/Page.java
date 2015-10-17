@@ -23,6 +23,9 @@ public class Page {
 
     private Request request;
 
+    /**
+     * extracted results
+     */
     private ResultItems resultItems = new ResultItems();
 
     private Html html;
@@ -37,6 +40,9 @@ public class Page {
 
     private boolean needCycleRetry;
 
+    /**
+     * urls to fetch
+     */
     private List<Request> targetRequests = new ArrayList<Request>();
 
     public Page() {

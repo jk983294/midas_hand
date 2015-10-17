@@ -3,7 +3,7 @@ package com.victor.spider.core.selector;
 import java.util.List;
 
 /**
- * Selectable text.<br>
+ * Selectable object. like plain text, json, html
  */
 public interface Selectable {
 
