@@ -14,7 +14,11 @@ public class GuBaPageProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        List<String> links = page.getHtml().links().regex("http://my\\.oschina\\.net/flashsword/blog/\\d+").all();
+        String topicNumberString = page.getHtml().css("div.pager/text()").toString();
+        List<String> urls = page.getHtml().css("span.pagernums").links().all();
+        urls = page.getHtml().css("span.pagernums").links().regex(".*/list,\\d{6}_\\d+.html").all();
+
+        List<String> links = page.getHtml().xpath("//*[@id=\"articlelistnew\"]/div[87]/span").all();
         page.addTargetRequests(links);
         page.putField("title", page.getHtml().xpath("//div[@class='BlogEntity']/div[@class='BlogTitle']/h1/text()").toString());
         if (page.getResultItems().get("title") == null) {
