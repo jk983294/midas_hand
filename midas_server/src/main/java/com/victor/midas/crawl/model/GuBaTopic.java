@@ -1,4 +1,4 @@
-package com.victor.spider.app.work.model;
+package com.victor.midas.crawl.model;
 
 import java.sql.Timestamp;
 

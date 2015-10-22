@@ -2,7 +2,7 @@ package com.victor.spider.core.downloader;
 
 import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -207,7 +207,6 @@ public class HttpClientDownloader extends AbstractDownloader {
         String value = httpResponse.getEntity().getContentType().getValue();
         charset = UrlUtils.getCharset(value);
         if (StringUtils.isNotBlank(charset)) {
-            logger.debug("Auto get charset: {}", charset);
             return charset;
         }
         // use default charset to decode first time
@@ -233,7 +232,6 @@ public class HttpClientDownloader extends AbstractDownloader {
                 }
             }
         }
-        logger.debug("Auto get charset: {}", charset);
         // 3、todo use tools as cpdetector for content decode
         return charset;
     }

@@ -1,5 +1,6 @@
 package com.victor.utilities.utils;
 
+import com.victor.utilities.algorithm.strings.RegExpUsage;
 import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
 import org.junit.Test;
 
@@ -225,31 +226,31 @@ public class RegExpHelperTest {
 
     @Test
     public void testCalculator(){
-        assertEquals(false, RegExpHelper.calculateWithLogicalOperator("50", "12", "Number"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator("50", "70", "Number"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator("50", "50", "Number"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator("< 50", "12", "Number"));
-        assertEquals(false, RegExpHelper.calculateWithLogicalOperator(">= 50", "12", "Number"));
-        assertEquals(false, RegExpHelper.calculateWithLogicalOperator("< 50 or > 100", "80", "Number"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator(">= 50 and <= 100", "80", "Number"));
-        assertEquals(false, RegExpHelper.calculateWithLogicalOperator(">= 25", "1Q = 13", "Number"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator(">= 25 and <= 30", "1Q = 27", "Number"));
+        assertEquals(false, RegExpUsage.calculateWithLogicalOperator("50", "12", "Number"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator("50", "70", "Number"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator("50", "50", "Number"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator("< 50", "12", "Number"));
+        assertEquals(false, RegExpUsage.calculateWithLogicalOperator(">= 50", "12", "Number"));
+        assertEquals(false, RegExpUsage.calculateWithLogicalOperator("< 50 or > 100", "80", "Number"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator(">= 50 and <= 100", "80", "Number"));
+        assertEquals(false, RegExpUsage.calculateWithLogicalOperator(">= 25", "1Q = 13", "Number"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator(">= 25 and <= 30", "1Q = 27", "Number"));
 
-        assertEquals(false, RegExpHelper.calculateWithLogicalOperator("50%", "12%", "Percentage"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator("50%", "70%", "Percentage"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator("50%", "50%", "Percentage"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator("< 50%", "12%", "Percentage"));
-        assertEquals(false, RegExpHelper.calculateWithLogicalOperator(">= 50%", "12%", "Percentage"));
-        assertEquals(false, RegExpHelper.calculateWithLogicalOperator("< 50% or > 100%", "80%", "Percentage"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator(">= 50% and <= 100%", "80%", "Percentage"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator(">= 25% and <= 30%", "1Q = 27%", "Percentage"));
+        assertEquals(false, RegExpUsage.calculateWithLogicalOperator("50%", "12%", "Percentage"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator("50%", "70%", "Percentage"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator("50%", "50%", "Percentage"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator("< 50%", "12%", "Percentage"));
+        assertEquals(false, RegExpUsage.calculateWithLogicalOperator(">= 50%", "12%", "Percentage"));
+        assertEquals(false, RegExpUsage.calculateWithLogicalOperator("< 50% or > 100%", "80%", "Percentage"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator(">= 50% and <= 100%", "80%", "Percentage"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator(">= 25% and <= 30%", "1Q = 27%", "Percentage"));
 
-        assertEquals(false, RegExpHelper.calculateWithLogicalOperator("$50M", "$12m", "$$MM"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator("$50M", "$70m", "$$MM"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator("$50m", "$50m", "$$MM"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator("< $50m", "$12m", "$$MM"));
-        assertEquals(false, RegExpHelper.calculateWithLogicalOperator(">= $50m", "$12m", "$$MM"));
-        assertEquals(false, RegExpHelper.calculateWithLogicalOperator("< $50m or > $100m", "$80m", "$$MM"));
-        assertEquals(true, RegExpHelper.calculateWithLogicalOperator(">= $50m and <= $100m", "$80m", "$$MM"));
+        assertEquals(false, RegExpUsage.calculateWithLogicalOperator("$50M", "$12m", "$$MM"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator("$50M", "$70m", "$$MM"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator("$50m", "$50m", "$$MM"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator("< $50m", "$12m", "$$MM"));
+        assertEquals(false, RegExpUsage.calculateWithLogicalOperator(">= $50m", "$12m", "$$MM"));
+        assertEquals(false, RegExpUsage.calculateWithLogicalOperator("< $50m or > $100m", "$80m", "$$MM"));
+        assertEquals(true, RegExpUsage.calculateWithLogicalOperator(">= $50m and <= $100m", "$80m", "$$MM"));
     }
 }

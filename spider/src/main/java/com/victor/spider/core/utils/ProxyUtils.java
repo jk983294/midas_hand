@@ -72,7 +72,6 @@ public class ProxyUtils {
 			socket.bind(new InetSocketAddress(localAddr, 0));
 			InetSocketAddress endpointSocketAddr = new InetSocketAddress(p.getAddress().getHostAddress(), p.getPort());
 			socket.connect(endpointSocketAddr, 3000);
-			logger.debug("SUCCESS - connection established! Local: " + localAddr.getHostAddress() + " remote: " + p);
 			isReachable = true;
 		} catch (IOException e) {
 			logger.warn("FAILRE - CAN not connect! Local: " + localAddr.getHostAddress() + " remote: " + p);
