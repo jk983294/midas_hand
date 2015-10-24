@@ -60,6 +60,6 @@ public class GuBaPageProcessor implements PageProcessor {
     }
 
     public static void main(String[] args) {
-        Spider.create(new GuBaPageProcessor()).addUrl("http://guba.eastmoney.com/list,000702.html").run();
+        Spider.create(new GuBaPageProcessor()).addUrl("http://guba.eastmoney.com/list,000702_1.html").run();
     }
 }
