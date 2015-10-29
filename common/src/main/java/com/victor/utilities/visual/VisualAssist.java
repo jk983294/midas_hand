@@ -53,4 +53,58 @@ public class VisualAssist {
 		System.out.println(description);
 		print(a);
 	}
+
+    public static void print(short[] a) {
+        System.out.println(ArrayUtils.toString(a));
+    }
+
+    public static void print(String description, short[] a) {
+        System.out.println(description);
+        print(a);
+    }
+
+    public static void print(byte[] a) {
+        System.out.println(ArrayUtils.toString(a));
+    }
+
+    public static void print(String description, byte[] a) {
+        System.out.println(description);
+        print(a);
+    }
+
+    public static void print(long[] a) {
+        System.out.println(ArrayUtils.toString(a));
+    }
+
+    public static void print(String description, long[] a) {
+        System.out.println(description);
+        print(a);
+    }
+
+    public static void print(float[] a) {
+        System.out.println(ArrayUtils.toString(a));
+    }
+
+    public static void print(String description, float[] a) {
+        System.out.println(description);
+        print(a);
+    }
+
+    public static void print(char[] a) {
+        System.out.println(ArrayUtils.toString(a));
+    }
+
+    public static void print(String description, char[] a) {
+        System.out.println(description);
+        print(a);
+    }
+
+    public static void print(boolean[] a) {
+        System.out.println(ArrayUtils.toString(a));
+    }
+
+    public static void print(String description, boolean[] a) {
+        System.out.println(description);
+        print(a);
+    }
 }
