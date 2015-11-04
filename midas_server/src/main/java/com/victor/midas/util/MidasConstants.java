@@ -69,7 +69,7 @@ public class MidasConstants {
     public static final String SH_INDEX_NAME = "IDX000001";
 
     /**
-     * typeahead actions
+     * type ahead actions
      */
     public static List<String> actions;
 
@@ -78,5 +78,15 @@ public class MidasConstants {
         for(CmdType cmdType : CmdType.values()){
             actions.add(cmdType.toString());
         }
+    }
+
+
+    /**
+     * spider related
+     */
+    public static final String gubaUrlTemplate = "http://guba.eastmoney.com/list,%s_%d.html";
+
+    public static enum GubaPageType{
+        list, news
     }
 }
