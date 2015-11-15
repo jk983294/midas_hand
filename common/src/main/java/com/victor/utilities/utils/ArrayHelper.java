@@ -1,5 +1,6 @@
 package com.victor.utilities.utils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math3.util.MathArrays;
 
 import java.lang.reflect.Array;
@@ -117,6 +118,13 @@ public class ArrayHelper {
             }
         }
         return false;
+    }
+
+    public static <T> T get(List<T> data, int index){
+        if(CollectionUtils.isNotEmpty(data) && data.size() > index){
+            return data.get(index);
+        }
+        return null;
     }
 
 }

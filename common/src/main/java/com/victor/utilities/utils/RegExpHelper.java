@@ -29,10 +29,8 @@ public class RegExpHelper {
     private static final Pattern numberPattern = Pattern.compile(numberPatternStr);
     private static final Pattern percentPattern = Pattern.compile(percentPatternStr);
     private static final Pattern percentOrNumberPattern = Pattern.compile(percentOrNumberPatternStr);
-    private static final Pattern currencyNumberUnitHintPattern = Pattern.compile("\\$.*(k|m)");
-    private static final Pattern currencyNumberUnitPattern = Pattern.compile("\\$.*(" + numberPatternStr + ").*(k|m)");
     private static final Pattern variablePattern = Pattern.compile("(\\w+(\\s*\\w+)*)\\s*=\\s*(" + percentOrNumberPatternStr + ")");
-    private static final Pattern textPattern = Pattern.compile(".*text.*\\(.*red.*amber.*green\\).*");
+    private static final Pattern timePattern = Pattern.compile(".*(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}).*");
 
     /**
      * operator pattern
@@ -82,6 +80,10 @@ public class RegExpHelper {
      */
     public static String extractNumberStr(String str){
         return extract(str, numberExtractPattern);
+    }
+
+    public static String extractTimeStr(String str){
+        return extract(str, timePattern);
     }
 
     /**
@@ -178,6 +180,10 @@ public class RegExpHelper {
         return contains(str, digitPattern);
     }
 
+    public static boolean containTime(String str){
+        return containDigit(str) && contains(str, timePattern);
+    }
+
     /**
      * get occurrence count for reg exp pattern
      */
@@ -197,10 +203,6 @@ public class RegExpHelper {
         return count(str, relationalOperatorPattern);
     }
 
-    public static int currencyNumberUnitCount(String str){
-        return containDigit(str) ? count(str, currencyNumberUnitPattern) : 0;
-    }
-
     /**
      * check if it matches reg exp pattern
      */
@@ -216,20 +218,8 @@ public class RegExpHelper {
         return str != null && percentOrNumberPattern.matcher(str).matches();
     }
 
-    public static boolean isCurrencyNumberUnitHint(String str){
-        return str != null && currencyNumberUnitHintPattern.matcher(str).matches();
-    }
-
-    public static boolean isCurrencyNumberUnit(String str){
-        return str != null && currencyNumberUnitPattern.matcher(str).matches();
-    }
-
     public static boolean isVariable(String str){
         return str != null && variablePattern.matcher(str).matches();
-    }
-
-    public static boolean isText(String str){
-        return str != null && textPattern.matcher(str).matches();
     }
 
     /**

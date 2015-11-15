@@ -85,8 +85,4 @@ public class MidasConstants {
      * spider related
      */
     public static final String gubaUrlTemplate = "http://guba.eastmoney.com/list,%s_%d.html";
-
-    public static enum GubaPageType{
-        list, news
-    }
 }

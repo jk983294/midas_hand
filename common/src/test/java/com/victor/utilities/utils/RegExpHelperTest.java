@@ -155,24 +155,6 @@ public class RegExpHelperTest {
     }
 
     @Test
-    public void testIsCurrencyNumberUnitHint(){
-        assertEquals(true, RegExpHelper.isCurrencyNumberUnitHint("$$mm"));
-        assertEquals(true, RegExpHelper.isCurrencyNumberUnitHint("$$k"));
-        assertEquals(true, RegExpHelper.isCurrencyNumberUnitHint("$k"));
-        assertEquals(false, RegExpHelper.isCurrencyNumberUnitHint("$"));
-        assertEquals(false, RegExpHelper.isCurrencyNumberUnitHint("k"));
-    }
-
-    @Test
-    public void testIsCurrencyNumberUnit(){
-        assertEquals(true, RegExpHelper.isCurrencyNumberUnit("$$3432mm"));
-        assertEquals(true, RegExpHelper.isCurrencyNumberUnit("$$3432k"));
-        assertEquals(true, RegExpHelper.isCurrencyNumberUnit("$3432k"));
-        assertEquals(false, RegExpHelper.isCurrencyNumberUnit("$3432"));
-        assertEquals(false, RegExpHelper.isCurrencyNumberUnit("3432k"));
-    }
-
-    @Test
     public void testIsVariable(){
         assertEquals(true, RegExpHelper.isVariable("x=1"));
         assertEquals(true, RegExpHelper.isVariable("y = 3.14"));
@@ -204,14 +186,13 @@ public class RegExpHelperTest {
     }
 
     @Test
-    public void testIsText(){
-        assertEquals(true, RegExpHelper.isText("abc Text (Red, Amber, Green)".toLowerCase()));
-        assertEquals(true, RegExpHelper.isText(" Text (Red,  Amber, Green)  ".toLowerCase()));
-        assertEquals(true, RegExpHelper.isText("Text (Red, abc  Amber, Green)".toLowerCase()));
-        assertEquals(false, RegExpHelper.isText("Text (Red, abc, Green)".toLowerCase()));
-        assertEquals(false, RegExpHelper.isText("Text Red, Amber, Green)".toLowerCase()));
-        assertEquals(false, RegExpHelper.isText(null));
-        assertEquals(true, RegExpHelper.isText("Text (Red, Amber, Green)".toLowerCase()));
+    public void testIsTime(){
+        assertEquals(true, RegExpHelper.containTime("2015-11-09 20:59:05"));
+        assertEquals(true, RegExpHelper.containTime("475934 2015-11-09 20:59:05 45943875"));
+        assertEquals(true, RegExpHelper.containTime("gdfg 2015-11-09 20:59:05 sdgdsg"));
+        assertEquals("2015-11-09 20:59:05", RegExpHelper.extractTimeStr("2015-11-09 20:59:05"));
+        assertEquals("2015-11-09 20:59:05", RegExpHelper.extractTimeStr("475934 2015-11-09 20:59:05 45943875"));
+        assertEquals("2015-11-09 20:59:05", RegExpHelper.extractTimeStr("gdfg 2015-11-09 20:59:05 sdgdsg"));
     }
 
     @Test

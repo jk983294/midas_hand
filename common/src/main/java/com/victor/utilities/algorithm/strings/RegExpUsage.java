@@ -89,38 +89,9 @@ public class RegExpUsage {
         return null;
     }
 
-    /**
-     * deal with currency number unit case ( $$MM $$K )
-     * @param threshold
-     * @param level
-     * @param hint
-     * @return
-     */
-    private static Boolean calculateCurrencyNumberCase(String threshold, String level, String hint){
-        Double levelValue = RegExpHelper.getNumber(level), thresholdValue;
-        if(levelValue == null){
-            return null;
-        }
-        int relationalOperatorCount = RegExpHelper.numberRelationalOperatorCount(threshold);
-        int currencyNumberUnitCount = RegExpHelper.currencyNumberUnitCount(threshold);
-        if(currencyNumberUnitCount == 1){
-            String a = RegExpHelper.extractCurrencyNumberUnitStr(threshold);
-            thresholdValue = RegExpHelper.getNumber(threshold);
-            if(relationalOperatorCount == 0){
-                return compare(null, thresholdValue, levelValue);
-            } else if(relationalOperatorCount == 1){
-                String operator = RegExpHelper.extractRelationalOperatorStr(threshold);
-                return compare(operator, thresholdValue, levelValue);
-            }
-        }
-        return null;
-    }
-
     private static Boolean calculateWithoutLogicalOperator(String threshold, String level, String hint){
         if(hint.startsWith("percentage") || hint.startsWith("number")){
             return calculateNumberCase(threshold, level);
-        } else if(hint.contains("$$mm") || hint.contains("$$k")){
-            return calculateCurrencyNumberCase(threshold, level, hint);
         }
         return null;
     }

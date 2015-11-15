@@ -1,5 +1,8 @@
 package com.victor.utilities.utils;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,5 +19,9 @@ public class StringHelper {
             results.add(str);
         }
         return results;
+    }
+
+    public static List<String> split(String str, String delimters){
+        return toList(Splitter.on(CharMatcher.anyOf(delimters)).trimResults().omitEmptyStrings().split(str).iterator());
     }
 }

@@ -1,10 +1,16 @@
 package com.victor.midas.crawl;
 
+import com.victor.midas.crawl.model.GuBaPagerInfo;
+import com.victor.midas.crawl.model.GuBaTopic;
+import com.victor.midas.crawl.model.GuBaTopicSnapshot;
+import com.victor.midas.crawl.model.GuBaUrlInfo;
+import com.victor.midas.util.MidasConstants;
 import com.victor.spider.core.Page;
 import com.victor.spider.core.Site;
 import com.victor.spider.core.Spider;
 import com.victor.spider.core.processor.PageProcessor;
-import com.victor.utilities.utils.RegExpHelper;
+import com.victor.spider.core.selector.Selectable;
+import com.victor.utilities.utils.StringHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -14,44 +20,67 @@ import java.util.regex.Pattern;
 
 public class GuBaPageProcessor implements PageProcessor {
 
-    private static final Pattern pagerNumberPattern = Pattern.compile("(list),(\\d{6})_\\|(\\d+)\\|(\\d+)\\|(\\d+)");
-
     private Site site = Site.me().setDomain("guba.eastmoney.com");
+    /** pager section info */
+    //private GuBaPagerInfo pagerInfo;
+    /** crawl stock code */
+    private String stockCode, targetStockCode;
 
-    private int topicTotalCnt, topicPageCnt, pagerIndex;
-
-    private String stockCode;
-
+    public GuBaPageProcessor(String toCrawlStockCode) {
+        this.targetStockCode = toCrawlStockCode;
+    }
 
     @Override
     public void process(Page page) {
-        String pagerNumberString = page.getHtml().xpath("//div[@class=\"pager\"]/span/@data-pager").toString();
-        if(StringUtils.isNotEmpty(pagerNumberString)){
-            analysisPagerNumberString(pagerNumberString);
+        GuBaUrlInfo urlInfo = GuBaUrlInfo.analysis(page.getUrl().toString());
+        switch (urlInfo.getPageType()){
+            case list : dealWithListPage(page); break;
+            case news : dealWithTopicPage(page, urlInfo); break;
+            case cjpl : break;
+            default:
         }
-        //String topicNumberString = page.getHtml().css("div.pager/text()").toString();
-        List<String> urls = page.getHtml().css("span.pagernums").links().all();
-        urls = page.getHtml().css("span.pagernums").links().regex(".*/list,\\d{6}_\\d+.html").all();
 
-        List<String> links = page.getHtml().xpath("//*[@id=\"articlelistnew\"]/div[87]/span").all();
-        page.addTargetRequests(links);
-        page.putField("title", page.getHtml().xpath("//div[@class='BlogEntity']/div[@class='BlogTitle']/h1/text()").toString());
-        if (page.getResultItems().get("title") == null) {
-            //skip this page
-            page.setSkip(true);
-        }
-        page.putField("content", page.getHtml().smartContent().toString());
-        page.putField("tags", page.getHtml().xpath("//div[@class='BlogTags']/a/text()").all());
+
+//        //String topicNumberString = page.getHtml().css("div.pager/text()").toString();
+//        List<String> urls = page.getHtml().css("span.pagernums").links().all();
+//        urls = page.getHtml().css("span.pagernums").links().regex(".*/list,\\d{6}_\\d+.html").all();
+//
+//        List<String> links = page.getHtml().xpath("//*[@id=\"articlelistnew\"]/div[87]/span").all();
+//        page.addTargetRequests(links);
+//        page.putField("title", page.getHtml().xpath("//div[@class='BlogEntity']/div[@class='BlogTitle']/h1/text()").toString());
+//        if (page.getResultItems().get("title") == null) {
+//            //skip this page
+//            page.setSkip(true);
+//        }
+//        page.putField("content", page.getHtml().smartContent().toString());
+//        page.putField("tags", page.getHtml().xpath("//div[@class='BlogTags']/a/text()").all());
     }
 
-    private void analysisPagerNumberString(String pagerNumberString){
-        Matcher matcher = pagerNumberPattern.matcher(pagerNumberString);
-        if(matcher.matches()){
-            stockCode = matcher.group(2);
-            topicTotalCnt = Integer.valueOf(matcher.group(3));
-            topicPageCnt = Integer.valueOf(matcher.group(4));
-            pagerIndex = Integer.valueOf(matcher.group(5));
+    /**
+     * extract pager info, snapshot of each topic info
+     */
+    private void dealWithListPage(Page page){
+        String pagerNumberString = page.getHtml().xpath("//div[@class=\"pager\"]/span/@data-pager").toString();
+        if(StringUtils.isNotEmpty(pagerNumberString)){
+            GuBaPagerInfo pagerInfo = GuBaPagerInfo.analysis(pagerNumberString);
+            page.addTargetRequests(pagerInfo.getTargetRequestsList());
+            if(targetStockCode.equals(pagerInfo.getStockCode())){
+                List<Selectable> articleHeaders = page.getHtml().css("div.articleh").nodes();
+                List<GuBaTopicSnapshot> snapshots = GuBaTopicSnapshot.generate(articleHeaders);
+                for(GuBaTopicSnapshot snapshot : snapshots){
+                    page.addTargetRequest(snapshot.getLink());
+                }
+            }
         }
+    }
+
+    /**
+     * extract pager info, snapshot of each topic info
+     */
+    private void dealWithTopicPage(Page page, GuBaUrlInfo urlInfo){
+        Selectable topicHtml = page.getHtml().xpath("//div[@id=\"zwcontent\"]");
+        GuBaTopic topic = GuBaTopic.generate(topicHtml, urlInfo);
+        List<Selectable> comments = page.getHtml().xpath("//div[@id=\"zwlist\"]/div").nodes();
     }
 
     @Override
@@ -60,6 +89,10 @@ public class GuBaPageProcessor implements PageProcessor {
     }
 
     public static void main(String[] args) {
-        Spider.create(new GuBaPageProcessor()).addUrl("http://guba.eastmoney.com/list,000702_1.html").run();
+        String stockCode = "000702";
+//        String url = String.format(MidasConstants.gubaUrlTemplate, stockCode, 1);
+//        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/list,000702.html").run();
+        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,000702,211665695.html").run();
+//        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,cjpl,211591648.html").run();
     }
 }
