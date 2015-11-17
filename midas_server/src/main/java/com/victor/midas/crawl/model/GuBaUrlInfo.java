@@ -1,6 +1,9 @@
 package com.victor.midas.crawl.model;
 
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
 import com.victor.utilities.utils.ArrayHelper;
+import com.victor.utilities.utils.MathHelper;
 import com.victor.utilities.utils.StringHelper;
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,9 +15,9 @@ public class GuBaUrlInfo {
 
     private String stockCode;
 
-    private String pageIndex;
+    private Integer pageIndex;
 
-    private String pageId;
+    private Long pageId;
 
     /**
      * example :
@@ -51,15 +54,15 @@ public class GuBaUrlInfo {
                 if(GuBaPageType.unknown == info.pageType){
                     return info;
                 } else if(GuBaPageType.cjpl == info.pageType){
-                    info.pageId = ArrayHelper.get(results, i++);
-                    info.pageIndex = ArrayHelper.get(results, i++);
+                    info.pageId = MathHelper.tryParse2Long(ArrayHelper.get(results, i++));
+                    info.pageIndex = MathHelper.tryParse2Int(ArrayHelper.get(results, i++));
                 } else {
                     info.stockCode = data;
                     if(GuBaPageType.list == info.pageType){
-                        info.pageIndex = ArrayHelper.get(results, i++);
+                        info.pageIndex = MathHelper.tryParse2Int(ArrayHelper.get(results, i++));
                     } else if(GuBaPageType.news == info.pageType){
-                        info.pageId = ArrayHelper.get(results, i++);
-                        info.pageIndex = ArrayHelper.get(results, i++);
+                        info.pageId = MathHelper.tryParse2Long(ArrayHelper.get(results, i++));
+                        info.pageIndex = MathHelper.tryParse2Int(ArrayHelper.get(results, i++));
                     }
                 }
             }
@@ -84,19 +87,19 @@ public class GuBaUrlInfo {
         this.stockCode = stockCode;
     }
 
-    public String getPageIndex() {
+    public Integer getPageIndex() {
         return pageIndex;
     }
 
-    public void setPageIndex(String pageIndex) {
+    public void setPageIndex(Integer pageIndex) {
         this.pageIndex = pageIndex;
     }
 
-    public String getPageId() {
+    public Long getPageId() {
         return pageId;
     }
 
-    public void setPageId(String pageId) {
+    public void setPageId(Long pageId) {
         this.pageId = pageId;
     }
 

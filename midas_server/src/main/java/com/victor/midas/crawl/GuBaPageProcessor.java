@@ -1,9 +1,6 @@
 package com.victor.midas.crawl;
 
-import com.victor.midas.crawl.model.GuBaPagerInfo;
-import com.victor.midas.crawl.model.GuBaTopic;
-import com.victor.midas.crawl.model.GuBaTopicSnapshot;
-import com.victor.midas.crawl.model.GuBaUrlInfo;
+import com.victor.midas.crawl.model.*;
 import com.victor.midas.util.MidasConstants;
 import com.victor.spider.core.Page;
 import com.victor.spider.core.Site;
@@ -80,7 +77,9 @@ public class GuBaPageProcessor implements PageProcessor {
     private void dealWithTopicPage(Page page, GuBaUrlInfo urlInfo){
         Selectable topicHtml = page.getHtml().xpath("//div[@id=\"zwcontent\"]");
         GuBaTopic topic = GuBaTopic.generate(topicHtml, urlInfo);
-        List<Selectable> comments = page.getHtml().xpath("//div[@id=\"zwlist\"]/div").nodes();
+        List<Selectable> commentHtmls = page.getHtml().xpath("//div[@id=\"zwlist\"]/div").nodes();
+        List<GuBaComment> comments = GuBaComment.generate(commentHtmls);
+        GuBaComment.setTopicId(comments, topic.getTopicId());
     }
 
     @Override
@@ -92,7 +91,8 @@ public class GuBaPageProcessor implements PageProcessor {
         String stockCode = "000702";
 //        String url = String.format(MidasConstants.gubaUrlTemplate, stockCode, 1);
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/list,000702.html").run();
-        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,000702,211665695.html").run();
+//        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,000702,211665695.html").run();
+        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,000702,208850958.html").run();
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,cjpl,211591648.html").run();
     }
 }

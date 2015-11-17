@@ -10,7 +10,7 @@ import java.sql.Timestamp;
  */
 public class GuBaTopic {
 
-    private String user;
+    private String author;
 
     private Timestamp time;
 
@@ -20,12 +20,12 @@ public class GuBaTopic {
 
     private String stockCode;
 
-    private String topicId;
+    private Long topicId;
 
     public static GuBaTopic generate(Selectable selectable, GuBaUrlInfo urlInfo){
         if(selectable == null) return null;
         GuBaTopic topic = new GuBaTopic();
-        topic.user = selectable.xpath("/div/div[@id=\"zwcontt\"]/div[@id=\"zwconttb\"]//span[@class=\"gray\"]/text()").toString();
+        topic.author = selectable.xpath("/div/div[@id=\"zwcontt\"]/div[@id=\"zwconttb\"]//span[@class=\"gray\"]/text()").toString();
         topic.time = Timestamp.valueOf(RegExpHelper.extractTimeStr(selectable.xpath("/div/div[@id=\"zwcontt\"]/div[@id=\"zwconttb\"]/div[@class=\"zwfbtime\"]/text()").toString()));
         topic.title = selectable.xpath("/div/div[@class=\"zwcontentmain\"]/div[@id=\"zwconttbt\"]/text()").toString();
         topic.content = selectable.xpath("/div/div[@class=\"zwcontentmain\"]/div[@id=\"zwconbody\"]/div/text()").toString();
@@ -36,12 +36,12 @@ public class GuBaTopic {
         return topic;
     }
 
-    public String getUser() {
-        return user;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public Timestamp getTime() {
@@ -76,11 +76,11 @@ public class GuBaTopic {
         this.stockCode = stockCode;
     }
 
-    public String getTopicId() {
+    public Long getTopicId() {
         return topicId;
     }
 
-    public void setTopicId(String topicId) {
+    public void setTopicId(Long topicId) {
         this.topicId = topicId;
     }
 }
