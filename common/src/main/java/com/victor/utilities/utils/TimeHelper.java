@@ -1,5 +1,6 @@
 package com.victor.utilities.utils;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -7,7 +8,7 @@ import java.text.SimpleDateFormat;
 /**
  * deal with date conversion
  */
-public class DateHelper {
+public class TimeHelper {
     private final static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
     public static Date toDate(int date) throws ParseException {
@@ -32,5 +33,10 @@ public class DateHelper {
             dates[i] = toDate(date[i]);
         }
         return dates;
+    }
+
+    public static Timestamp tryParse2Timestamp(String str){
+        if(str == null) return null;
+        return Timestamp.valueOf(str);
     }
 }

@@ -244,6 +244,7 @@ public class RegExpHelper {
     }
 
     public static String extract(String str, Pattern pattern){
+        if(str == null) return null;
         Matcher matcher = pattern.matcher(str);
         while(matcher.find()){
             return matcher.group(1);

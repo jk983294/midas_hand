@@ -2,6 +2,7 @@ package com.victor.midas.crawl.model;
 
 import com.victor.spider.core.selector.Selectable;
 import com.victor.utilities.utils.RegExpHelper;
+import com.victor.utilities.utils.TimeHelper;
 
 import java.sql.Timestamp;
 
@@ -26,7 +27,7 @@ public class GuBaTopic {
         if(selectable == null) return null;
         GuBaTopic topic = new GuBaTopic();
         topic.author = selectable.xpath("/div/div[@id=\"zwcontt\"]/div[@id=\"zwconttb\"]//span[@class=\"gray\"]/text()").toString();
-        topic.time = Timestamp.valueOf(RegExpHelper.extractTimeStr(selectable.xpath("/div/div[@id=\"zwcontt\"]/div[@id=\"zwconttb\"]/div[@class=\"zwfbtime\"]/text()").toString()));
+        topic.time = TimeHelper.tryParse2Timestamp(RegExpHelper.extractTimeStr(selectable.xpath("/div/div[@id=\"zwcontt\"]/div[@id=\"zwconttb\"]/div[@class=\"zwfbtime\"]/text()").toString()));
         topic.title = selectable.xpath("/div/div[@class=\"zwcontentmain\"]/div[@id=\"zwconttbt\"]/text()").toString();
         topic.content = selectable.xpath("/div/div[@class=\"zwcontentmain\"]/div[@id=\"zwconbody\"]/div/text()").toString();
         if(urlInfo != null){

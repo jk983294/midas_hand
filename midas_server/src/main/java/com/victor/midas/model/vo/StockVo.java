@@ -4,7 +4,7 @@ package com.victor.midas.model.vo;
 import com.victor.midas.model.common.StockType;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.utils.ArrayHelper;
-import com.victor.utilities.utils.DateHelper;
+import com.victor.utilities.utils.TimeHelper;
 import org.springframework.data.annotation.Id;
 
 import java.text.ParseException;
@@ -60,7 +60,7 @@ public class StockVo {
             datesInt = times;
             start = datesInt[0];
             end = datesInt[datesInt.length - 1];
-            datesDate = DateHelper.toDates(times);
+            datesDate = TimeHelper.toDates(times);
             startDate = datesDate[0];
             endDate = datesDate[datesDate.length - 1];
         }
