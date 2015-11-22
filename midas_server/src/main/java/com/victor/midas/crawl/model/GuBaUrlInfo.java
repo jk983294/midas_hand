@@ -1,7 +1,5 @@
 package com.victor.midas.crawl.model;
 
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
 import com.victor.utilities.utils.ArrayHelper;
 import com.victor.utilities.utils.MathHelper;
 import com.victor.utilities.utils.StringHelper;

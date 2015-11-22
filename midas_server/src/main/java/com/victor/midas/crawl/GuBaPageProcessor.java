@@ -76,8 +76,12 @@ public class GuBaPageProcessor implements PageProcessor {
      */
     private void dealWithTopicPage(Page page, GuBaUrlInfo urlInfo){
         Selectable topicHtml = page.getHtml().xpath("//div[@id=\"zwcontent\"]");
+        GuBaTopic topic = null;
         if(urlInfo.getPageIndex() == null || urlInfo.getPageIndex().equals(Integer.valueOf(1))){
-            GuBaTopic topic = GuBaTopic.generate(topicHtml, urlInfo);
+            topic = GuBaTopic.generate(topicHtml, urlInfo);
+            String pagerNumberString = page.getHtml().xpath("//div[@class=\"pager\"]/span/@data-page").toString();
+            GuBaPagerInfo pagerInfo = GuBaPagerInfo.analysis(pagerNumberString);
+            page.addTargetRequests(pagerInfo.getTargetRequestsList());
         }
         List<Selectable> commentHtmls = page.getHtml().xpath("//div[@id=\"zwlist\"]/div").nodes();
         List<GuBaComment> comments = GuBaComment.generate(commentHtmls);
@@ -91,10 +95,11 @@ public class GuBaPageProcessor implements PageProcessor {
 
     public static void main(String[] args) {
         String stockCode = "000702";
-//        String url = String.format(MidasConstants.gubaUrlTemplate, stockCode, 1);
+//        String url = String.format(MidasConstants.gubaUrlListTemplate, stockCode, 1);
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/list,000702.html").run();
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,000702,211665695.html").run();
-        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601918,201526977_2.html").run();
+//        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601918,201526977_2.html").run();
+        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601766,211862489_1.html").run();
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,cjpl,211591648.html").run();
     }
 }

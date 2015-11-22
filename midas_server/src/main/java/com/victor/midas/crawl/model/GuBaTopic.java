@@ -1,6 +1,7 @@
 package com.victor.midas.crawl.model;
 
 import com.victor.spider.core.selector.Selectable;
+import com.victor.utilities.utils.MathHelper;
 import com.victor.utilities.utils.RegExpHelper;
 import com.victor.utilities.utils.TimeHelper;
 
@@ -11,7 +12,7 @@ import java.sql.Timestamp;
  */
 public class GuBaTopic {
 
-    private String author;
+    private String authorName;
 
     private Timestamp time;
 
@@ -21,15 +22,20 @@ public class GuBaTopic {
 
     private String stockCode;
 
-    private Long topicId;
+    private Long topicId, authorId;
 
     public static GuBaTopic generate(Selectable selectable, GuBaUrlInfo urlInfo){
         if(selectable == null) return null;
         GuBaTopic topic = new GuBaTopic();
-        topic.author = selectable.xpath("/div/div[@id=\"zwcontt\"]/div[@id=\"zwconttb\"]//span[@class=\"gray\"]/text()").toString();
+        topic.authorName = selectable.xpath("/div/div[@id=\"zwcontt\"]/div[@id=\"zwconttb\"]//span[@class=\"gray\"]/text()").toString();
+        if(topic.authorName == null){
+            topic.authorName = selectable.xpath("/div/div[@id=\"zwcontt\"]/div[@id=\"zwconttb\"]/div[@id=\"zwconttbn\"]//a/text()").toString();
+            topic.authorId = MathHelper.tryParse2Long(selectable.xpath("/div/div[@id=\"zwcontt\"]/div[@id=\"zwconttb\"]/div[@id=\"zwconttbn\"]//a/@data-popper").toString());
+        }
         topic.time = TimeHelper.tryParse2Timestamp(RegExpHelper.extractTimeStr(selectable.xpath("/div/div[@id=\"zwcontt\"]/div[@id=\"zwconttb\"]/div[@class=\"zwfbtime\"]/text()").toString()));
         topic.title = selectable.xpath("/div/div[@class=\"zwcontentmain\"]/div[@id=\"zwconttbt\"]/text()").toString();
         topic.content = selectable.xpath("/div/div[@class=\"zwcontentmain\"]/div[@id=\"zwconbody\"]/div/text()").toString();
+        topic.content = topic.content == null ? null : topic.content.trim();
         if(urlInfo != null){
             topic.stockCode = urlInfo.getStockCode();
             topic.topicId = urlInfo.getPageId();
@@ -37,12 +43,12 @@ public class GuBaTopic {
         return topic;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getAuthorName() {
+        return authorName;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 
     public Timestamp getTime() {

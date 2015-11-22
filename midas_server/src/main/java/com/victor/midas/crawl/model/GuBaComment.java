@@ -42,7 +42,7 @@ public class GuBaComment {
             GuBaComment commentAgainst = new GuBaComment();
             commentAgainst.author = against.xpath("/div/div[@class=\"zwlitalkboxh\"]/div[@class=\"zwlitalkboxuinfo\"]/div[@class=\"zwnick\"]/a/text()").toString();
             commentAgainst.commentUserId = MathHelper.tryParse2Long(against.xpath("/div/div[@class=\"zwlitalkboxh\"]/div[@class=\"zwlitalkboxuinfo\"]/div[@class=\"zwnick\"]/a/@data-popper").toString());
-            if(comment.author == null){
+            if(commentAgainst.author == null){
                 commentAgainst.author = against.xpath("/div/div[@class=\"zwlitalkboxh\"]/div[@class=\"zwlitalkboxuinfo\"]/div[@class=\"zwnick\"]/span[@class=\"gray\"]/text()").toString();
             }
             commentAgainst.time = TimeHelper.tryParse2Timestamp(RegExpHelper.extractTimeStr(against.xpath("/div/div[@class=\"zwlitalkboxh\"]/div[@class=\"zwlitalkboxuinfo\"]/div[@class=\"zwlitalkboxtime\"]/text()").toString()));
@@ -60,7 +60,7 @@ public class GuBaComment {
         if(StringUtils.isNotEmpty(imgs)){
             str = str + "," + imgs;
         }
-        return str;
+        return str == null ? str : str.trim();
     }
 
     public static List<GuBaComment> generate(List<Selectable> selectables){
@@ -74,6 +74,9 @@ public class GuBaComment {
     public static void setTopicId(List<GuBaComment> comments, Long topicId){
         for(GuBaComment comment : comments){
             comment.topicId = topicId;
+            if(comment.commentAgainst != null){
+                comment.commentAgainst.topicId = topicId;
+            }
         }
     }
 
