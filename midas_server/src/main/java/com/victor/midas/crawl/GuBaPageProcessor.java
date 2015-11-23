@@ -5,6 +5,7 @@ import com.victor.midas.util.MidasConstants;
 import com.victor.spider.core.Page;
 import com.victor.spider.core.Site;
 import com.victor.spider.core.Spider;
+import com.victor.spider.core.pipeline.JsonFilePipeline;
 import com.victor.spider.core.processor.PageProcessor;
 import com.victor.spider.core.selector.Selectable;
 import com.victor.utilities.utils.StringHelper;
@@ -79,6 +80,7 @@ public class GuBaPageProcessor implements PageProcessor {
         GuBaTopic topic = null;
         if(urlInfo.getPageIndex() == null || urlInfo.getPageIndex().equals(Integer.valueOf(1))){
             topic = GuBaTopic.generate(topicHtml, urlInfo);
+            page.putField("topic", topic);
             String pagerNumberString = page.getHtml().xpath("//div[@class=\"pager\"]/span/@data-page").toString();
             GuBaPagerInfo pagerInfo = GuBaPagerInfo.analysis(pagerNumberString);
             page.addTargetRequests(pagerInfo.getTargetRequestsList());
@@ -99,7 +101,8 @@ public class GuBaPageProcessor implements PageProcessor {
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/list,000702.html").run();
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,000702,211665695.html").run();
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601918,201526977_2.html").run();
-        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601766,211862489_1.html").run();
+        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601766,211862489_1.html")
+                .addPipeline(new JsonFilePipeline("D:\\MktData\\guba")).run();
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,cjpl,211591648.html").run();
     }
 }
