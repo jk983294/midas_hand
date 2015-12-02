@@ -1,7 +1,9 @@
 package com.victor.midas.calculator.index;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -12,9 +14,13 @@ import java.util.HashMap;
  * this is used for index level results (like IDX000001)
  * used for identify good or bad period for whole stocks
  */
-public class IndexBadState extends IndexCalcbase {
+public class IndexBadState extends IndexCalcBase {
 
-    private final static String indexName = "isBad";
+    private final static String INDEX_NAME = "isBad";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexBadState(IndexFactory.parameter));
+    }
 
     private double[] acp;
     private int[] isBad;
@@ -42,7 +48,12 @@ public class IndexBadState extends IndexCalcbase {
 
     @Override
     public String getIndexName() {
-        return indexName;
+        return INDEX_NAME;
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+        requiredCalculator.add(IndexChangePct.INDEX_NAME);
     }
 
     @Override

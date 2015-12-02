@@ -1,7 +1,9 @@
 package com.victor.midas.calculator.indicator.kline;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
 import com.victor.midas.calculator.common.CalcUtil;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.model.common.KState;
@@ -14,9 +16,18 @@ import java.util.HashMap;
 /**
  * calculate K line basic, compare with yesterday's end price
  */
-public class IndexKState extends IndexCalcbase {
+public class IndexKState extends IndexCalcBase {
 
-    private final static String indexName = "k_state";
+    private final static String INDEX_NAME = "k_state";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexKState(IndexFactory.parameter));
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    }
 
     private CalcUtil calcUtil;
 
@@ -43,7 +54,7 @@ public class IndexKState extends IndexCalcbase {
 
     @Override
     public String getIndexName() {
-        return indexName;
+        return INDEX_NAME;
     }
 
     @Override
@@ -52,7 +63,7 @@ public class IndexKState extends IndexCalcbase {
             signals[i] = KState.signal(calcKState(i));
         }
 
-        addIndexData(indexName, signals);
+        addIndexData(INDEX_NAME, signals);
     }
 
     private KState calcKState(int index){
@@ -136,7 +147,7 @@ public class IndexKState extends IndexCalcbase {
     protected void initIndexForTrain() throws MidasException {
 //        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
 //        len = end.length;
-//        changePct = (double[])stock.queryCmpIndex(indexName);
+//        changePct = (double[])stock.queryCmpIndex(INDEX_NAME);
     }
 
     @Override

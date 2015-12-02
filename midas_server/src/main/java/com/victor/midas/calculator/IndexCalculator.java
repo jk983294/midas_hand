@@ -1,7 +1,8 @@
 package com.victor.midas.calculator;
 
 import java.util.List;
-import com.victor.midas.calculator.common.IndexCalcbase;
+
+import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
@@ -11,10 +12,10 @@ import org.apache.log4j.Logger;
 public class IndexCalculator {
     private static final Logger logger = Logger.getLogger(IndexCalculator.class);
 
-    private List<IndexCalcbase> indexCalcbases;     // could be basic calculator when big data set
-    private List<IndexCalcbase> indexCalcbasesAll;  // contain all index calculators
-    private List<IndexCalcbase> indexCalcbasesForIndex;
-    private List<IndexCalcbase> indexCalcbasesCommonForIndex;
+    private List<IndexCalcBase> indexCalcBases;     // could be basic calculator when big data set
+    private List<IndexCalcBase> indexCalcbasesAll;  // contain all index calculators
+    private List<IndexCalcBase> indexCalcbasesForIndex;
+    private List<IndexCalcBase> indexCalcbasesCommonForIndex;
     private AggregationCalculator aggregationCalculator;
     private boolean isBigDataSet;
     private List<StockVo> stocks;
@@ -30,14 +31,14 @@ public class IndexCalculator {
         }
 
         aggregationCalculator = new AggregationCalculator(stocks);
-        indexCalcbasesAll = IndexFactory.getIndexCalcbases();
+        indexCalcbasesAll = IndexFactory.getIndexCalcBases();
         indexCalcbasesForIndex = IndexFactory.getIndexCalcbasesForIndex();
         indexCalcbasesCommonForIndex = IndexFactory.getIndexCalcbasesCommonForIndex();
         if(stocks.size() < 100){
-            indexCalcbases = indexCalcbasesAll;
+            indexCalcBases = indexCalcbasesAll;
             isBigDataSet = false;
         } else {
-            indexCalcbases = IndexFactory.getIndexCalcbasesForBigDataSet();
+            indexCalcBases = IndexFactory.getIndexCalcbasesForBigDataSet();
             isBigDataSet = true;
         }
 
@@ -45,20 +46,20 @@ public class IndexCalculator {
         calcAggregationIndex();
         calcForIndex();
         // use aggregation results and Index level results to init tradable stocks' calculators
-        IndexFactory.applyNewParameter(this.parameter, indexCalcbases);
+        IndexFactory.applyNewParameter(this.parameter, indexCalcBases);
         IndexFactory.applyNewParameter(this.parameter, indexCalcbasesAll);
         IndexFactory.applyNewParameter(this.parameter, indexCalcbasesCommonForIndex);
-        IndexFactory.setAggregationCalculator(indexCalcbases, aggregationCalculator);
+        IndexFactory.setAggregationCalculator(indexCalcBases, aggregationCalculator);
         IndexFactory.setAggregationCalculator(indexCalcbasesAll, aggregationCalculator);
         IndexFactory.setAggregationCalculator(indexCalcbasesCommonForIndex, aggregationCalculator);
     }
 
     public void calculate() throws MidasException {
-        logger.info("calculation use incremental mode : " + IndexCalcbase.useExistingData);
+        logger.info("calculation use incremental mode : " + IndexCalcBase.useExistingData);
 		for(StockVo stock : aggregationCalculator.getTradableStocks()){
             try {
-                for (IndexCalcbase indexCalcbase : indexCalcbases){
-                    indexCalcbase.calculate(stock);
+                for (IndexCalcBase indexCalcBase : indexCalcBases){
+                    indexCalcBase.calculate(stock);
                 }
             } catch (Exception e){
                 logger.error(e);
@@ -75,8 +76,8 @@ public class IndexCalculator {
      */
     public void calculate(StockVo stockVo) throws MidasException {
         try {
-            for (IndexCalcbase indexCalcbase : indexCalcbasesAll){
-                indexCalcbase.calculate(stockVo);
+            for (IndexCalcBase indexCalcBase : indexCalcbasesAll){
+                indexCalcBase.calculate(stockVo);
             }
         } catch (Exception e){
             logger.error(e);
@@ -92,11 +93,11 @@ public class IndexCalculator {
         logger.info("calculation for Index ");
         for(StockVo stock : aggregationCalculator.getIndexStocks()){
             try {
-                for (IndexCalcbase indexCalcbase : indexCalcbasesCommonForIndex){
-                    indexCalcbase.calculate(stock);
+                for (IndexCalcBase indexCalcBase : indexCalcbasesCommonForIndex){
+                    indexCalcBase.calculate(stock);
                 }
-                for (IndexCalcbase indexCalcbase : indexCalcbasesForIndex){
-                    indexCalcbase.calculate(stock);
+                for (IndexCalcBase indexCalcBase : indexCalcbasesForIndex){
+                    indexCalcBase.calculate(stock);
                 }
             } catch (Exception e){
                 logger.error(e);

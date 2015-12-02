@@ -1,7 +1,9 @@
 package com.victor.midas.calculator.indicator.volume;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
 import com.victor.midas.calculator.common.CalcUtil;
 import com.victor.midas.model.common.VolPriceCorrelation;
 import com.victor.midas.util.MidasConstants;
@@ -13,9 +15,17 @@ import java.util.HashMap;
 /**
  * calculate K line basic, compare with yesterday's end price
  */
-public class IndexVolumePriceCorr extends IndexCalcbase {
+public class IndexVolumePriceCorr extends IndexCalcBase {
 
-    private final static String indexName = "vp_corr";
+    private final static String INDEX_NAME = "vp_corr";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexVolumePriceCorr(IndexFactory.parameter));
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+    }
 
     private final static int FREEZE_TIME_FRAME_FACTOR = 3;
 
@@ -46,7 +56,7 @@ public class IndexVolumePriceCorr extends IndexCalcbase {
 
     @Override
     public String getIndexName() {
-        return indexName;
+        return INDEX_NAME;
     }
 
     @Override
@@ -65,7 +75,7 @@ public class IndexVolumePriceCorr extends IndexCalcbase {
             signals[i] = VolPriceCorrelation.signal(corr);
         }
 
-        addIndexData(indexName, signals);
+        addIndexData(INDEX_NAME, signals);
     }
 
     private VolPriceCorrelation calcVolPriceCorrelation(int index){
@@ -118,7 +128,7 @@ public class IndexVolumePriceCorr extends IndexCalcbase {
     protected void initIndexForTrain() throws MidasException {
 //        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
 //        len = end.length;
-//        changePct = (double[])stock.queryCmpIndex(indexName);
+//        changePct = (double[])stock.queryCmpIndex(INDEX_NAME);
     }
 
     @Override

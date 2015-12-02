@@ -1,36 +1,33 @@
 package com.victor.midas.calculator.util;
 
 import com.victor.midas.calculator.AggregationCalculator;
-import com.victor.midas.calculator.common.IndexCalcbase;
-import com.victor.midas.calculator.index.IndexBadState;
+import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.indicator.IndexChangePct;
-import com.victor.midas.calculator.indicator.IndexPriceMA;
-import com.victor.midas.calculator.indicator.IndexVolumeMa;
-import com.victor.midas.calculator.indicator.kline.*;
-import com.victor.midas.calculator.indicator.trend.IndexPriceDelta;
-import com.victor.midas.calculator.indicator.trend.IndexSupportResist;
 import com.victor.midas.calculator.score.StockScoreRank;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.utilities.math.stats.ma.SMA;
+import com.victor.midas.util.MidasException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Create index calculators
  */
 public class IndexFactory {
 
+    private static final HashMap<String, IndexCalcBase> calcMap = new HashMap();
+
     /** all index calculators */
-    private static List<IndexCalcbase> indexCalcbases = new ArrayList<>();
+    private static List<IndexCalcBase> indexCalcBases = new ArrayList<>();
     /** all common index calculators that apply for tradable and Index stocks */
-    private static List<IndexCalcbase> indexCalcbasesCommonForIndex = new ArrayList<>();
+    private static List<IndexCalcBase> indexCalcbasesCommonForIndex = new ArrayList<>();
     /** all common index calculators that only apply for Index stocks not for tradable stocks */
-    private static List<IndexCalcbase> indexCalcbasesForIndex = new ArrayList<>();
+    private static List<IndexCalcBase> indexCalcbasesForIndex = new ArrayList<>();
     private static List<String> indexNames = new ArrayList<>();
-    private static CalcParameter parameter = new CalcParameter();
-    private static HashMap<String, IndexCalcbase> indexName2Calculator = new HashMap<>();
+    public static CalcParameter parameter = new CalcParameter();
+    private static Map<String, IndexCalcBase> indexName2Calculator = new HashMap<>();
 
     static {
         /*** prepare all index calculator*/
@@ -56,34 +53,55 @@ public class IndexFactory {
 //        indexCalcbasesForIndex.add(new IndexBadState(parameter));
     }
 
-    public static void addCalculator(IndexCalcbase indexCalcbase, boolean isCommonIndex){
-        indexCalcbases.add(indexCalcbase);
-        indexCalcbase.applyParameter();
-        indexNames.add(indexCalcbase.getIndexName());
-        indexName2Calculator.put(indexCalcbase.getIndexName(), indexCalcbase);
+    public static IndexCalcBase getCalculator(String calc) throws MidasException {
+        IndexCalcBase calcbase = calcMap.get(calc);
+        if(calcbase == null) {
+            switch (calc){
+                case IndexChangePct.INDEX_NAME : {
+                    calcbase = new IndexChangePct(parameter);
+                    calcMap.put(IndexChangePct.INDEX_NAME, calcbase);
+                } break;
+                default: throw new MidasException("no such calculator!");
+            }
+        }
+        return calcbase;
+    }
+
+    public static void addCalculator(String calc, IndexCalcBase calcBase) {
+        IndexCalcBase calcbase = calcMap.get(calc);
+        if(calcbase == null) {
+            calcMap.put(calc, calcbase);
+        }
+    }
+
+    public static void addCalculator(IndexCalcBase indexCalcBase, boolean isCommonIndex){
+        indexCalcBases.add(indexCalcBase);
+        indexCalcBase.applyParameter();
+        indexNames.add(indexCalcBase.getIndexName());
+        indexName2Calculator.put(indexCalcBase.getIndexName(), indexCalcBase);
         if(isCommonIndex){
-            indexCalcbasesCommonForIndex.add(indexCalcbase);
+            indexCalcbasesCommonForIndex.add(indexCalcBase);
         }
     }
 
     public static void applyNewParameter(CalcParameter param){
         parameter = param;
-        applyNewParameter(param, indexCalcbases);
+        applyNewParameter(param, indexCalcBases);
     }
 
-    public static void applyNewParameter(CalcParameter param, List<IndexCalcbase> calcbaseList){
-        for (IndexCalcbase calcbase : calcbaseList){
+    public static void applyNewParameter(CalcParameter param, List<IndexCalcBase> calcbaseList){
+        for (IndexCalcBase calcbase : calcbaseList){
             calcbase.setParameter(parameter);
             calcbase.applyParameter();
         }
     }
 
-    public static List<IndexCalcbase> getIndexCalcbases() {
-        return indexCalcbases;
+    public static List<IndexCalcBase> getIndexCalcBases() {
+        return indexCalcBases;
     }
 
-    public static List<IndexCalcbase> getIndexCalcbasesForBigDataSet() {
-        List<IndexCalcbase> bigDataSet = new ArrayList<>();
+    public static List<IndexCalcBase> getIndexCalcbasesForBigDataSet() {
+        List<IndexCalcBase> bigDataSet = new ArrayList<>();
         bigDataSet.add(new IndexChangePct(parameter));
         bigDataSet.add(new StockScoreRank(parameter));
         return bigDataSet;
@@ -93,13 +111,13 @@ public class IndexFactory {
         return indexNames;
     }
 
-    public static void setIndexCalcbases(List<IndexCalcbase> indexCalcbases) {
-        IndexFactory.indexCalcbases = indexCalcbases;
+    public static void setIndexCalcBases(List<IndexCalcBase> indexCalcBases) {
+        IndexFactory.indexCalcBases = indexCalcBases;
     }
 
-    public static void setAggregationCalculator(List<IndexCalcbase> calcbases, AggregationCalculator aggregationCalculator) {
-        for(IndexCalcbase indexCalcbase : calcbases){
-            indexCalcbase.setAggregationCalculator(aggregationCalculator);
+    public static void setAggregationCalculator(List<IndexCalcBase> calcbases, AggregationCalculator aggregationCalculator) {
+        for(IndexCalcBase indexCalcBase : calcbases){
+            indexCalcBase.setAggregationCalculator(aggregationCalculator);
         }
     }
 
@@ -115,19 +133,19 @@ public class IndexFactory {
         IndexFactory.parameter = parameter;
     }
 
-    public static HashMap<String, IndexCalcbase> getIndexName2Calculator() {
+    public static Map<String, IndexCalcBase> getIndexName2Calculator() {
         return indexName2Calculator;
     }
 
-    public static void setIndexName2Calculator(HashMap<String, IndexCalcbase> indexName2Calculator) {
+    public static void setIndexName2Calculator(HashMap<String, IndexCalcBase> indexName2Calculator) {
         IndexFactory.indexName2Calculator = indexName2Calculator;
     }
 
-    public static List<IndexCalcbase> getIndexCalcbasesForIndex() {
+    public static List<IndexCalcBase> getIndexCalcbasesForIndex() {
         return indexCalcbasesForIndex;
     }
 
-    public static List<IndexCalcbase> getIndexCalcbasesCommonForIndex() {
+    public static List<IndexCalcBase> getIndexCalcbasesCommonForIndex() {
         return indexCalcbasesCommonForIndex;
     }
 }

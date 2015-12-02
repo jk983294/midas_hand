@@ -1,12 +1,9 @@
 package com.victor.midas.train;
 
 import com.victor.midas.calculator.IndexCalculator;
-import com.victor.midas.calculator.common.IndexCalcbase;
+import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.model.vo.concept.StockConcept;
-import com.victor.midas.model.vo.concept.StockConceptStats;
-import com.victor.midas.model.vo.concept.StockCrawlData;
 import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.train.perf.PerfCollector;
@@ -35,15 +32,15 @@ public class ScoreTemplateManager {
     private int index;                          // benchmark stock's date index
     private int len;                            // benchmark stock's date len
 
-    private IndexCalcbase indexCalcbase;
+    private IndexCalcBase indexCalcBase;
 
     private List<StockScoreRecord> stockScoreRecords, stockConceptScoreRecords;
 
     private boolean isBigDataSet;
 
-    public ScoreTemplateManager(CalcParameter parameter, IndexCalcbase indexCalcbase, List<StockVo> stocks) throws Exception {
+    public ScoreTemplateManager(CalcParameter parameter, IndexCalcBase indexCalcBase, List<StockVo> stocks) throws Exception {
         this.stocks = stocks;
-        this.indexCalcbase = indexCalcbase;
+        this.indexCalcBase = indexCalcBase;
         initStocks(parameter);
     }
 
@@ -97,7 +94,7 @@ public class ScoreTemplateManager {
 
         for(StockVo stock : stocks){
             try {
-                indexCalcbase.calculate(stock);
+                indexCalcBase.calculate(stock);
             } catch (Exception e){
                 logger.error(e);
                 throw new MidasException("problem meet when calculate index for " + stock, e);

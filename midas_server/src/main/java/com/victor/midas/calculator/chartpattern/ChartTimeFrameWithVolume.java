@@ -1,7 +1,9 @@
 package com.victor.midas.calculator.chartpattern;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
 import com.victor.midas.calculator.common.CalcUtil;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.util.MidasConstants;
@@ -15,9 +17,18 @@ import java.util.HashMap;
 /**
  * based on Financial Time Series Segmentation Based On Turning Points, Jiangling Yin, Yain-Whar Si, Zhiguo Gong
  */
-public class ChartTimeFrameWithVolume extends IndexCalcbase {
+public class ChartTimeFrameWithVolume extends IndexCalcBase {
 
-    private static final String INDEX_NAME = "ctf";
+    public static final String INDEX_NAME = "ctf";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new ChartTimeFrameWithVolume(IndexFactory.parameter));
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    }
 
     private static final int UP = -1;
     private static final int TIE = -2;

@@ -55,11 +55,12 @@ public class ScoreTask extends TaskBase {
         manager.process();
 
         logger.info( "start save results ...");
+
+        scoreDao.save(manager.getStockScoreRecords());
+        conceptScoreDao.save(manager.getStockConceptScoreRecords());
         if(isFromFileSystem || !manager.isBigDataSet()){
             stocksService.saveStocks(stocks);               // maybe train strategy has generate new data
         }
-        scoreDao.save(manager.getStockScoreRecords());
-        conceptScoreDao.save(manager.getStockConceptScoreRecords());
 
         PerformanceUtil.manuallyGC(stocks);
 

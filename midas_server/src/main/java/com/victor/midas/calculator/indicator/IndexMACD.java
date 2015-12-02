@@ -1,25 +1,31 @@
 package com.victor.midas.calculator.indicator;
 
-import com.victor.midas.calculator.common.IndexCalcbase;
-import com.victor.midas.calculator.util.MathStockUtil;
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.math.stats.ma.EMA;
 import com.victor.utilities.math.stats.ma.MaBase;
-import com.victor.utilities.utils.ArrayHelper;
+import com.victor.utilities.math.stats.ma.SMA;
 import com.victor.utilities.utils.MathHelper;
-import org.apache.commons.math3.util.MathArrays;
-import org.apache.commons.math3.util.MathUtils;
 
 import java.util.HashMap;
 
 /**
  * calculate Price Moving Average
  */
-public class IndexMACD extends IndexCalcbase {
+public class IndexMACD extends IndexCalcBase {
 
     private static final String INDEX_NAME = "macd";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexMACD(IndexFactory.parameter));
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+    }
 
     private MaBase maMethod = new EMA();
 
@@ -36,8 +42,8 @@ public class IndexMACD extends IndexCalcbase {
         this.maMethod = maMethod;
     }
 
-    public IndexMACD(MaBase maMethod) {
-        this.maMethod = maMethod;
+    public IndexMACD(CalcParameter parameter) {
+        super(parameter);
     }
 
     @Override

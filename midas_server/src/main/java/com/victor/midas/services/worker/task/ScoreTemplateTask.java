@@ -1,6 +1,6 @@
 package com.victor.midas.services.worker.task;
 
-import com.victor.midas.calculator.common.IndexCalcbase;
+import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.score.StockRevertScoreRank;
 import com.victor.midas.dao.ConceptScoreDao;
 import com.victor.midas.dao.ScoreDao;
@@ -47,15 +47,15 @@ public class ScoreTemplateTask extends TaskBase {
 	@Override
 	public void doTask() throws Exception {
         CalcParameter parameter = new CalcParameter();
-        IndexCalcbase indexCalcbase = null;
+        IndexCalcBase indexCalcBase = null;
         if(params == null || params.size() == 0){
             throw new MidasException("no calculator is specified.");
         } else if(params.get(0).equalsIgnoreCase("StockRevertScoreRank")){
-            indexCalcbase = new StockRevertScoreRank(parameter);
+            indexCalcBase = new StockRevertScoreRank(parameter);
         }
         List<StockVo> stocks = getAllStock();
 
-        ScoreTemplateManager manager = new ScoreTemplateManager(parameter, indexCalcbase, stocks);
+        ScoreTemplateManager manager = new ScoreTemplateManager(parameter, indexCalcBase, stocks);
 
         logger.info( "start score template ...");
         manager.process();

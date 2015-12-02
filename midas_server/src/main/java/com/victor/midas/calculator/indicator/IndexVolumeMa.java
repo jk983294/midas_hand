@@ -1,23 +1,28 @@
 package com.victor.midas.calculator.indicator;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.math.stats.ma.MaBase;
+import com.victor.utilities.math.stats.ma.SMA;
 import com.victor.utilities.utils.ArrayHelper;
 import org.apache.commons.math3.util.MathArrays;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * calculate Price Moving Average
  */
-public class IndexVolumeMa extends IndexCalcbase {
+public class IndexVolumeMa extends IndexCalcBase {
 
     private static final String INDEX_NAME = "vMA";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexVolumeMa(IndexFactory.parameter, new SMA()));
+    }
 
     private MaBase maMethod;
 
@@ -47,6 +52,11 @@ public class IndexVolumeMa extends IndexCalcbase {
     @Override
     public String getIndexName() {
         return INDEX_NAME;
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+
     }
 
     public String getIndexCmpName(int interval) {

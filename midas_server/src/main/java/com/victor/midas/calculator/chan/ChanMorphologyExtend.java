@@ -4,7 +4,9 @@ import com.victor.midas.calculator.chan.model.ChanStroke;
 import com.victor.midas.calculator.chan.model.FractalType;
 import com.victor.midas.calculator.chan.model.MergedKLine;
 import com.victor.midas.calculator.chan.model.SupportResistLines;
-import com.victor.midas.calculator.common.IndexCalcbase;
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
@@ -16,9 +18,13 @@ import java.util.List;
 /**
  * Price Moving Average Tangle Up state, like pMa5 > pMa10 > pMa20 > pMa30 > pMa60
  */
-public class ChanMorphologyExtend extends IndexCalcbase {
+public class ChanMorphologyExtend extends IndexCalcBase {
 
     public static final String INDEX_NAME = "cme";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new ChanMorphologyExtend(IndexFactory.parameter));
+    }
 
     private int[] cob;
 
@@ -39,11 +45,15 @@ public class ChanMorphologyExtend extends IndexCalcbase {
     public ChanMorphologyExtend(CalcParameter parameter) {
         super(parameter);
     }
-    public ChanMorphologyExtend() {}
 
     @Override
     public String getIndexName() {
         return INDEX_NAME;
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+        requiredCalculator.add(IndexChangePct.INDEX_NAME);
     }
 
     @Override

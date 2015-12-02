@@ -1,6 +1,8 @@
 package com.victor.midas.calculator.score;
 
-import com.victor.midas.calculator.common.IndexCalcbase;
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
@@ -10,10 +12,15 @@ import com.victor.utilities.math.function.SectionalFunction;
 
 import java.util.HashMap;
 
-public class StockRevertScoreRank extends IndexCalcbase {
+public class StockRevertScoreRank extends IndexCalcBase {
+
+    public final static String INDEX_NAME = "score";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new StockRevertScoreRank(IndexFactory.parameter));
+    }
 
     private double[] end, start, max, min, volume, total, changePct;
-
 
     private double[] scores;
 
@@ -22,17 +29,21 @@ public class StockRevertScoreRank extends IndexCalcbase {
     public StockRevertScoreRank(CalcParameter parameter) {
         super(parameter);
     }
-    public StockRevertScoreRank() {}
 
     @Override
     public String getIndexName() {
-        return "score";
+        return INDEX_NAME;
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+        requiredCalculator.add(IndexChangePct.INDEX_NAME);
     }
 
     @Override
     protected void calculateFromScratch() throws MidasException {
         calculateScore();
-        addIndexData("score", scores);
+        addIndexData(INDEX_NAME, scores);
     }
 
     private static final SectionalFunction volumeRatioFunc = new SectionalFunction(0.0d, 1d, 1d, 0d);

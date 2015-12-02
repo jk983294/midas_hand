@@ -1,7 +1,8 @@
 package com.victor.midas.calculator.indicator.trend;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
 import com.victor.midas.calculator.util.strategy.CalcUtilGp;
 import com.victor.midas.model.common.KState;
 import com.victor.midas.util.MidasConstants;
@@ -12,9 +13,13 @@ import java.util.HashMap;
 /**
  * good period is to pick some good period to select drop time intervene
  */
-public class IndexGoodPeriod extends IndexCalcbase {
+public class IndexGoodPeriod extends IndexCalcBase {
 
-    private final static String indexName = "gp";
+    public final static String INDEX_NAME = "gp";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexGoodPeriod(IndexFactory.parameter));
+    }
 
     private final static int NOTHING = 0;
     private final static int PREPARE = 1;
@@ -56,7 +61,12 @@ public class IndexGoodPeriod extends IndexCalcbase {
 
     @Override
     public String getIndexName() {
-        return indexName;
+        return INDEX_NAME;
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+
     }
 
     @Override

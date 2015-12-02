@@ -1,8 +1,9 @@
 package com.victor.midas.calculator.indicator.kline;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
-import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 
@@ -11,9 +12,18 @@ import java.util.HashMap;
 /**
  * calculate K line basic, find past several days, it is small range oscillate
  */
-public class IndexKLineSignals extends IndexCalcbase {
+public class IndexKLineSignals extends IndexCalcBase {
 
-    private final static String indexName = "k_sig";
+    public final static String INDEX_NAME = "k_sig";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexLongGoodTrend(IndexFactory.parameter));
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    }
 
     private int[] signals;
 
@@ -43,7 +53,7 @@ public class IndexKLineSignals extends IndexCalcbase {
 
     @Override
     public String getIndexName() {
-        return indexName;
+        return INDEX_NAME;
     }
 
     @Override
@@ -52,7 +62,7 @@ public class IndexKLineSignals extends IndexCalcbase {
             signals[i] = backInduction(i);
         }
 
-        addIndexData(indexName, signals);
+        addIndexData(INDEX_NAME, signals);
     }
 
 
@@ -118,7 +128,7 @@ public class IndexKLineSignals extends IndexCalcbase {
     protected void initIndexForTrain() throws MidasException {
 //        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
 //        len = end.length;
-//        changePct = (double[])stock.queryCmpIndex(indexName);
+//        changePct = (double[])stock.queryCmpIndex(INDEX_NAME);
     }
 
     @Override

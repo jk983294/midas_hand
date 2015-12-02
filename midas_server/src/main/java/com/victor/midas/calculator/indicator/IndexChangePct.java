@@ -1,6 +1,7 @@
 package com.victor.midas.calculator.indicator;
 
-import com.victor.midas.calculator.common.IndexCalcbase;
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
@@ -12,9 +13,13 @@ import java.util.HashMap;
 /**
  * calculate change percentage per day
  */
-public class IndexChangePct extends IndexCalcbase {
+public class IndexChangePct extends IndexCalcBase {
 
-    private final static String indexName = MidasConstants.INDEX_NAME_CHANGEPCT;
+    public final static String INDEX_NAME = MidasConstants.INDEX_NAME_CHANGEPCT;
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexChangePct(IndexFactory.parameter));
+    }
 
     private double[] changePct;
 
@@ -28,7 +33,12 @@ public class IndexChangePct extends IndexCalcbase {
 
     @Override
     public String getIndexName() {
-        return indexName;
+        return INDEX_NAME;
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+
     }
 
     @Override
@@ -36,7 +46,7 @@ public class IndexChangePct extends IndexCalcbase {
         for (int i = 1; i < len; i++) {
             changePct[i] = MathStockUtil.calculateChangePct(end[i - 1], end[i]);
         }
-        addIndexData(indexName, changePct);
+        addIndexData(INDEX_NAME, changePct);
     }
 
     @Override
@@ -47,7 +57,7 @@ public class IndexChangePct extends IndexCalcbase {
         for (int i = Math.max(1, oldChangePct.length); i < len; i++) {
             changePct[i] = MathStockUtil.calculateChangePct(end[i - 1], end[i]);
         }
-        addIndexData(indexName, changePct);
+        addIndexData(INDEX_NAME, changePct);
     }
 
     @Override
@@ -69,7 +79,7 @@ public class IndexChangePct extends IndexCalcbase {
     protected void initIndexForTrain() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         len = end.length;
-        changePct = (double[])stock.queryCmpIndex(indexName);
+        changePct = (double[])stock.queryCmpIndex(INDEX_NAME);
     }
 
     @Override

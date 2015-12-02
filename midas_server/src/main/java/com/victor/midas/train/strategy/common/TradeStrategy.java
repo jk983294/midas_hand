@@ -1,9 +1,8 @@
 package com.victor.midas.train.strategy.common;
 
 import com.victor.midas.calculator.IndexCalculator;
+import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
-import com.victor.midas.calculator.correlation.VolumeCorr;
 import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.common.StockType;
 import com.victor.midas.model.train.StockTrain;
@@ -57,9 +56,9 @@ public abstract class TradeStrategy {
     protected double[] stockIndexTotal;
 
     /** provide some calculators relate to discrete parameter iteration*/
-    protected List<IndexCalcbase> discreteCalculators;
+    protected List<IndexCalcBase> discreteCalculators;
     /** provide some calculators relate to parameter mutation, used by trainManager to generate related indexes*/
-    protected List<IndexCalcbase> continuousCalculators;
+    protected List<IndexCalcBase> continuousCalculators;
 
     protected TradeStrategy() {
     }
@@ -154,9 +153,9 @@ public abstract class TradeStrategy {
     public void discreteCalculate() throws MidasException {
         if(!ArrayHelper.isNull(discreteCalculators)){
             IndexFactory.applyNewParameter(parameter, discreteCalculators);
-            for(IndexCalcbase indexCalcbase : discreteCalculators){
+            for(IndexCalcBase indexCalcBase : discreteCalculators){
                 for(StockTrain stock : allStocks){
-                    indexCalcbase.calculateForTrainEntry(stock.getStock());
+                    indexCalcBase.calculateForTrainEntry(stock.getStock());
                 }
             }
         }
@@ -168,9 +167,9 @@ public abstract class TradeStrategy {
     public void continuousCalculate() throws MidasException {
         if(!ArrayHelper.isNull(continuousCalculators)){
             IndexFactory.applyNewParameter(parameter, continuousCalculators);
-            for(IndexCalcbase indexCalcbase : continuousCalculators){
+            for(IndexCalcBase indexCalcBase : continuousCalculators){
                 for(StockTrain stock : allStocks){
-                    indexCalcbase.calculateForTrainEntry(stock.getStock());
+                    indexCalcBase.calculateForTrainEntry(stock.getStock());
                 }
             }
         }
@@ -220,19 +219,19 @@ public abstract class TradeStrategy {
         this.parameter = parameter;
     }
 
-    public List<IndexCalcbase> getDiscreteCalculators() {
+    public List<IndexCalcBase> getDiscreteCalculators() {
         return discreteCalculators;
     }
 
-    public void setDiscreteCalculators(List<IndexCalcbase> discreteCalculators) {
+    public void setDiscreteCalculators(List<IndexCalcBase> discreteCalculators) {
         this.discreteCalculators = discreteCalculators;
     }
 
-    public List<IndexCalcbase> getContinuousCalculators() {
+    public List<IndexCalcBase> getContinuousCalculators() {
         return continuousCalculators;
     }
 
-    public void setContinuousCalculators(List<IndexCalcbase> continuousCalculators) {
+    public void setContinuousCalculators(List<IndexCalcBase> continuousCalculators) {
         this.continuousCalculators = continuousCalculators;
     }
 

@@ -1,8 +1,10 @@
 package com.victor.midas.calculator.indicator.trend;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.calculator.util.MaxMinUtil;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
 import com.victor.midas.calculator.util.strategy.CalcUtilSR;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.model.common.KState;
@@ -15,9 +17,13 @@ import java.util.HashMap;
 /**
  * good period is to pick some good period to select drop time intervene
  */
-public class IndexSupportResist extends IndexCalcbase {
+public class IndexSupportResist extends IndexCalcBase {
 
-    private final static String indexName = "sr";
+    private final static String INDEX_NAME = "sr";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexSupportResist(IndexFactory.parameter));
+    }
 
     private final static int NOTHING = 0;
     private final static int PREPARE_NEW_HIGH = 1;
@@ -78,7 +84,12 @@ public class IndexSupportResist extends IndexCalcbase {
 
     @Override
     public String getIndexName() {
-        return indexName;
+        return INDEX_NAME;
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+        requiredCalculator.add(IndexChangePct.INDEX_NAME);
     }
 
     @Override

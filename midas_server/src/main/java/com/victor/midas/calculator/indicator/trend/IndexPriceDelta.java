@@ -1,7 +1,9 @@
 package com.victor.midas.calculator.indicator.trend;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
 import com.victor.midas.calculator.util.MathDeltaUtil;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
@@ -11,9 +13,17 @@ import java.util.HashMap;
 /**
  * calculate price delta, derivative of price trend, use priceMaYear as pd0
  */
-public class IndexPriceDelta extends IndexCalcbase {
+public class IndexPriceDelta extends IndexCalcBase {
 
-    private static final String INDEX_NAME = "pD";
+    public static final String INDEX_NAME = "pD";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexPriceDelta(IndexFactory.parameter));
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+    }
 
     private int timeFramePriceDelta = 6;
 

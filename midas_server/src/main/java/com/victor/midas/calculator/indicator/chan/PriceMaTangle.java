@@ -1,26 +1,28 @@
 package com.victor.midas.calculator.indicator.chan;
 
-import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
-import com.victor.midas.calculator.indicator.IndexPriceMA;
-import com.victor.midas.calculator.indicator.IndexVolumeMa;
+import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.util.IndexFactory;
+import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.calculator.util.MathStockUtil;
-import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
-import org.apache.commons.math3.util.MathArrays;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Price Moving Average
  * http://blog.sina.com.cn/s/blog_486e105c010007dc.html
  */
-public class PriceMaTangle extends IndexCalcbase {
+public class PriceMaTangle extends IndexCalcBase {
 
     public static final String INDEX_NAME = "pMaTangle";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new PriceMaTangle(IndexFactory.parameter));
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+    }
 
     public static final int BUY = 1;
     public static final int SELL = -1;

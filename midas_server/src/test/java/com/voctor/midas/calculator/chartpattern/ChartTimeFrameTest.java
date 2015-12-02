@@ -1,6 +1,6 @@
 package com.voctor.midas.calculator.chartpattern;
 
-import com.victor.midas.calculator.common.IndexCalcbase;
+import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.util.MidasConstants;
@@ -19,8 +19,8 @@ public class ChartTimeFrameTest {
 
     @Test
     public void testChartTimeFrame() throws MidasException {
-        IndexCalcbase calculator = IndexFactory.getIndexName2Calculator().get("ctf");
-        IndexCalcbase indexChangePct = IndexFactory.getIndexName2Calculator().get(MidasConstants.INDEX_NAME_CHANGEPCT);
+        IndexCalcBase calculator = IndexFactory.getIndexName2Calculator().get("ctf");
+        IndexCalcBase indexChangePct = IndexFactory.getIndexName2Calculator().get(MidasConstants.INDEX_NAME_CHANGEPCT);
         StockVo stock = new TestData().getStockVo();
         indexChangePct.calculate(stock, null);
 //        calculator.calculate(stock, null);

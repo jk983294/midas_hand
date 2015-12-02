@@ -67,7 +67,7 @@ public class StockVo {
     }
 
     /**
-     * default indexName map to indexData
+     * default INDEX_NAME map to indexData
      */
     public void addIndex(String indexName, int[] indexData){
         indexInts.put(indexName, indexData);
@@ -88,7 +88,7 @@ public class StockVo {
     }
 
     /**
-     * indexData is indexName map to ( cmpName map to double[] or int[])
+     * indexData is INDEX_NAME map to ( cmpName map to double[] or int[])
      */
     public void addIndex(String indexName, Map<String, Object> indexData) throws MidasException {
         for(Map.Entry<String, Object> entry : indexData.entrySet()){
@@ -105,7 +105,7 @@ public class StockVo {
     }
 
     /**
-     * indexName map to ( cmpName map to double[] or int[])
+     * INDEX_NAME map to ( cmpName map to double[] or int[])
      */
     public void addIndex(Map<String, Map<String, Object>> indexData) throws MidasException {
         for(Map.Entry<String, Map<String, Object>> entry : indexData.entrySet()){

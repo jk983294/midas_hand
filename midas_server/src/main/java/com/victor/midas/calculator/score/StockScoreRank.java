@@ -2,11 +2,9 @@ package com.victor.midas.calculator.score;
 
 import com.victor.midas.calculator.chan.ChanMorphology;
 import com.victor.midas.calculator.chan.ChanMorphologyExtend;
-import com.victor.midas.calculator.common.IndexCalcbase;
-import com.victor.midas.calculator.util.MathDeltaUtil;
-import com.victor.midas.calculator.util.MathStockUtil;
-import com.victor.midas.calculator.util.MaxMinUtil;
-import com.victor.midas.calculator.util.MaxMinVolumeUtil;
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.*;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
@@ -20,9 +18,18 @@ import java.util.HashMap;
 /**
  * Price Moving Average Tangle Up state, like pMa5 > pMa10 > pMa20 > pMa30 > pMa60
  */
-public class StockScoreRank extends IndexCalcbase {
+public class StockScoreRank extends IndexCalcBase {
 
     public static final String INDEX_NAME = "ssr";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new StockScoreRank(IndexFactory.parameter));
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    }
 
     private MaBase maMethod = new SMA();
     private MathDeltaUtil deltaUtil = new MathDeltaUtil(6);
@@ -47,7 +54,6 @@ public class StockScoreRank extends IndexCalcbase {
     public StockScoreRank(CalcParameter parameter) {
         super(parameter);
     }
-    public StockScoreRank() {}
 
     @Override
     public String getIndexName() {

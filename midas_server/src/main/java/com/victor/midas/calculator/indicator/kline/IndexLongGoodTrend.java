@@ -1,7 +1,9 @@
 package com.victor.midas.calculator.indicator.kline;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
 import com.victor.midas.calculator.common.CalcUtil;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.model.common.KState;
@@ -15,9 +17,18 @@ import java.util.HashMap;
 /**
  * calculate K line basic, compare with yesterday's end price
  */
-public class IndexLongGoodTrend extends IndexCalcbase {
+public class IndexLongGoodTrend extends IndexCalcBase {
 
-    private final static String indexName = "lgt";
+    private final static String INDEX_NAME = "lgt";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexLongGoodTrend(IndexFactory.parameter));
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    }
 
     private CalcUtil calcUtil;
 
@@ -51,7 +62,7 @@ public class IndexLongGoodTrend extends IndexCalcbase {
 
     @Override
     public String getIndexName() {
-        return indexName;
+        return INDEX_NAME;
     }
 
     @Override
@@ -60,7 +71,7 @@ public class IndexLongGoodTrend extends IndexCalcbase {
             lgt[i] = calcLgt(i);
         }
 
-        addIndexData(indexName, lgt);
+        addIndexData(INDEX_NAME, lgt);
     }
 
     private int calcLgt(int index){

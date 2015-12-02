@@ -1,7 +1,9 @@
 package com.victor.midas.calculator.indicator.trend;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 
@@ -10,9 +12,18 @@ import java.util.HashMap;
 /**
  * calculate Rebounce, find past several days big fall, fall energy is exhausted
  */
-public class IndexRebounce extends IndexCalcbase {
+public class IndexRebounce extends IndexCalcBase {
 
-    private final static String indexName = "rbs";
+    private final static String INDEX_NAME = "rbs";
+
+    static {
+        IndexFactory.addCalculator(INDEX_NAME, new IndexRebounce(IndexFactory.parameter));
+    }
+
+    @Override
+    public void setRequiredCalculator() {
+        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    }
 
     private int[] signals;
 
@@ -41,7 +52,7 @@ public class IndexRebounce extends IndexCalcbase {
 
     @Override
     public String getIndexName() {
-        return indexName;
+        return INDEX_NAME;
     }
 
     @Override
@@ -50,7 +61,7 @@ public class IndexRebounce extends IndexCalcbase {
             signals[i] = backInduction(i);
         }
 
-        addIndexData(indexName, signals);
+        addIndexData(INDEX_NAME, signals);
     }
 
 
@@ -114,7 +125,7 @@ public class IndexRebounce extends IndexCalcbase {
     protected void initIndexForTrain() throws MidasException {
 //        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
 //        len = end.length;
-//        changePct = (double[])stock.queryCmpIndex(indexName);
+//        changePct = (double[])stock.queryCmpIndex(INDEX_NAME);
     }
 
     @Override

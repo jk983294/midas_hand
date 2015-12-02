@@ -2,8 +2,6 @@ package com.victor.midas.train;
 
 import com.victor.midas.calculator.IndexCalculator;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.common.IndexCalcbase;
-import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.TrainItem;
 import com.victor.midas.model.vo.TrainResult;
