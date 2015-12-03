@@ -44,7 +44,6 @@ public class PriceMaTangle extends IndexCalcBase {
     public PriceMaTangle(CalcParameter parameter) {
         super(parameter);
     }
-    public PriceMaTangle() {}
 
     @Override
     public String getIndexName() {

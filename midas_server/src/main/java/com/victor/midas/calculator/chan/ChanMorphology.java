@@ -46,7 +46,6 @@ public class ChanMorphology extends IndexCalcBase {
     public ChanMorphology(CalcParameter parameter) {
         super(parameter);
     }
-    public ChanMorphology() {}
 
     @Override
     public String getIndexName() {
