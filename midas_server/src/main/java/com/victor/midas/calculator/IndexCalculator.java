@@ -22,13 +22,9 @@ public class IndexCalculator {
     private CalcParameter parameter;
 
 
-    public IndexCalculator(List<StockVo> stocks, CalcParameter parameter) throws MidasException {
+    public IndexCalculator(List<StockVo> stocks, String calcName) throws MidasException {
         this.stocks = stocks;
-        if(parameter == null){
-            this.parameter = new CalcParameter();
-        } else {
-            this.parameter = parameter;
-        }
+        this.parameter = IndexFactory.parameter;
 
         aggregationCalculator = new AggregationCalculator(stocks);
         indexCalcbasesAll = IndexFactory.getIndexCalcBases();

@@ -6,18 +6,19 @@ import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.score.StockScoreRank;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasException;
+import com.victor.utilities.datastructures.graph.Edge;
+import com.victor.utilities.datastructures.graph.Graph;
+import com.victor.utilities.datastructures.graph.GraphNode;
+import com.victor.utilities.datastructures.graph.TopologicalSort;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Create index calculators
  */
 public class IndexFactory {
 
-    private static final HashMap<String, IndexCalcBase> calcMap = new HashMap();
+    private static final HashMap<String, IndexCalcBase> calcName2calculator = new HashMap();
 
     /** all index calculators */
     private static List<IndexCalcBase> indexCalcBases = new ArrayList<>();
@@ -54,12 +55,12 @@ public class IndexFactory {
     }
 
     public static IndexCalcBase getCalculator(String calc) throws MidasException {
-        IndexCalcBase calcbase = calcMap.get(calc);
+        IndexCalcBase calcbase = calcName2calculator.get(calc);
         if(calcbase == null) {
             switch (calc){
                 case IndexChangePct.INDEX_NAME : {
                     calcbase = new IndexChangePct(parameter);
-                    calcMap.put(IndexChangePct.INDEX_NAME, calcbase);
+                    calcName2calculator.put(IndexChangePct.INDEX_NAME, calcbase);
                 } break;
                 default: throw new MidasException("no such calculator!");
             }
@@ -67,10 +68,47 @@ public class IndexFactory {
         return calcbase;
     }
 
+    /**
+     * use dependency to get all calculators
+     */
+    public static List<IndexCalcBase> getAllCalculator(String calc) throws MidasException {
+        List<IndexCalcBase> calculators = new ArrayList<>();
+        Set<GraphNode<String>> calcNames = new HashSet<>();
+        Map<String, GraphNode<String>> calcName2Node = new HashMap<>();
+        Queue<String> toProcessCalcNames = new LinkedList<String>();
+        toProcessCalcNames.add(calc);
+
+        List<GraphNode<String>> nodes = new ArrayList<>();
+        List<Edge<String>> edges = new ArrayList<>();
+        while(!toProcessCalcNames.isEmpty()){
+            String calcName = toProcessCalcNames.remove();
+            GraphNode<String> node = new GraphNode<>(calcName);
+            if(!calcNames.contains(node)){
+                calcNames.add(node);
+                calcName2Node.put(calcName, node);
+                IndexCalcBase calcBase = calcName2calculator.get(calc);
+                for(String preCalcName : calcBase.getRequiredCalculator()){
+                    GraphNode<String> node1 = new GraphNode<>(preCalcName);
+                    if(calcName2Node.containsKey(preCalcName)){
+                        node1 = calcName2Node.get(preCalcName);
+                    }
+                    edges.add(new Edge<>(node, node1));
+                    toProcessCalcNames.add(preCalcName);
+                }
+            }
+        }
+        Graph<String> dependency = new Graph<>(Graph.TYPE.DIRECTED, nodes, edges);
+        List<GraphNode<String>> nodeResults = TopologicalSort.sort(dependency);
+        for(GraphNode<String> node : nodeResults){
+            calculators.add(calcName2calculator.get(node.getValue()));
+        }
+        return calculators;
+    }
+
     public static void addCalculator(String calc, IndexCalcBase calcBase) {
-        IndexCalcBase calcbase = calcMap.get(calc);
+        IndexCalcBase calcbase = calcName2calculator.get(calc);
         if(calcbase == null) {
-            calcMap.put(calc, calcbase);
+            calcName2calculator.put(calc, calcbase);
         }
     }
 

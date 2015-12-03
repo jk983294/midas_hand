@@ -146,4 +146,8 @@ public abstract class IndexCalcBase {
     public void setAggregationCalculator(AggregationCalculator aggregationCalculator) {
         this.aggregationCalculator = aggregationCalculator;
     }
+
+    public Set<String> getRequiredCalculator() {
+        return requiredCalculator;
+    }
 }

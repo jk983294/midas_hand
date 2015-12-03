@@ -13,30 +13,28 @@ import java.util.Set;
  * tuple of total cost of shortest path and the path.
  * 
  * Worst case: O(|E| + |V| log |V|)
- * 
- * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Dijkstra {
 
-    private static Map<Graph.Vertex<Integer>, Graph.CostVertexPair<Integer>> costs = null;
-    private static Map<Graph.Vertex<Integer>, Set<Graph.Edge<Integer>>> paths = null;
-    private static Queue<Graph.CostVertexPair<Integer>> unvisited = null;
+    private static Map<GraphNode<Integer>, CostVertexPair<Integer>> costs = null;
+    private static Map<GraphNode<Integer>, Set<Edge<Integer>>> paths = null;
+    private static Queue<CostVertexPair<Integer>> unvisited = null;
 
     private Dijkstra() { }
 
-    public static Map<Graph.Vertex<Integer>, Graph.CostPathPair<Integer>> getShortestPaths(Graph<Integer> g, Graph.Vertex<Integer> start) {
+    public static Map<GraphNode<Integer>, CostPathPair<Integer>> getShortestPaths(Graph<Integer> g, GraphNode<Integer> start) {
         getShortestPath(g, start, null);
-        Map<Graph.Vertex<Integer>, Graph.CostPathPair<Integer>> map = new HashMap<Graph.Vertex<Integer>, Graph.CostPathPair<Integer>>();
-        for (Graph.CostVertexPair<Integer> pair : costs.values()) {
+        Map<GraphNode<Integer>, CostPathPair<Integer>> map = new HashMap<GraphNode<Integer>, CostPathPair<Integer>>();
+        for (CostVertexPair<Integer> pair : costs.values()) {
             int cost = pair.getCost();
-            Graph.Vertex<Integer> vertex = pair.getVertex();
-            Set<Graph.Edge<Integer>> path = paths.get(vertex);
-            map.put(vertex, new Graph.CostPathPair<Integer>(cost, path));
+            GraphNode<Integer> graphNode = pair.getGraphNode();
+            Set<Edge<Integer>> path = paths.get(graphNode);
+            map.put(graphNode, new CostPathPair<Integer>(cost, path));
         }
         return map;
     }
 
-    public static Graph.CostPathPair<Integer> getShortestPath(Graph<Integer> graph, Graph.Vertex<Integer> start, Graph.Vertex<Integer> end) {
+    public static CostPathPair<Integer> getShortestPath(Graph<Integer> graph, GraphNode<Integer> start, GraphNode<Integer> end) {
         if (graph == null)
             throw (new NullPointerException("Graph must be non-NULL."));
 
@@ -46,31 +44,31 @@ public class Dijkstra {
         unvisited = null;
 
         // Dijkstra's algorithm only works on positive cost graphs
-        boolean hasNegativeEdge = checkForNegativeEdges(graph.getVerticies());
+        boolean hasNegativeEdge = checkForNegativeEdges(graph.getNodes());
         if (hasNegativeEdge)
             throw (new IllegalArgumentException("Negative cost Edges are not allowed."));
 
-        paths = new HashMap<Graph.Vertex<Integer>, Set<Graph.Edge<Integer>>>();
-        for (Graph.Vertex<Integer> v : graph.getVerticies())
-            paths.put(v, new LinkedHashSet<Graph.Edge<Integer>>());
+        paths = new HashMap<GraphNode<Integer>, Set<Edge<Integer>>>();
+        for (GraphNode<Integer> v : graph.getNodes())
+            paths.put(v, new LinkedHashSet<Edge<Integer>>());
 
-        costs = new HashMap<Graph.Vertex<Integer>, Graph.CostVertexPair<Integer>>();
-        for (Graph.Vertex<Integer> v : graph.getVerticies()) {
+        costs = new HashMap<GraphNode<Integer>, CostVertexPair<Integer>>();
+        for (GraphNode<Integer> v : graph.getNodes()) {
             if (v.equals(start))
-                costs.put(v, new Graph.CostVertexPair<Integer>(0, v));
+                costs.put(v, new CostVertexPair<Integer>(0, v));
             else
-                costs.put(v, new Graph.CostVertexPair<Integer>(Integer.MAX_VALUE, v));
+                costs.put(v, new CostVertexPair<Integer>(Integer.MAX_VALUE, v));
         }
 
-        unvisited = new PriorityQueue<Graph.CostVertexPair<Integer>>();
+        unvisited = new PriorityQueue<CostVertexPair<Integer>>();
         unvisited.addAll(costs.values()); // Shallow copy which is O(n log n)
 
-        Graph.Vertex<Integer> vertex = start;
+        GraphNode<Integer> graphNode = start;
         while (true) {
             // Compute costs from current vertex to all reachable vertices which haven't been visited
-            for (Graph.Edge<Integer> e : vertex.getEdges()) {
-                Graph.CostVertexPair<Integer> pair = costs.get(e.getToVertex()); // O(log n)
-                Graph.CostVertexPair<Integer> lowestCostToThisVertex = costs.get(vertex); // O(log n)
+            for (Edge<Integer> e : graphNode.getEdges()) {
+                CostVertexPair<Integer> pair = costs.get(e.getToVertex()); // O(log n)
+                CostVertexPair<Integer> lowestCostToThisVertex = costs.get(graphNode); // O(log n)
                 int cost = lowestCostToThisVertex.getCost() + e.getCost();
                 if (pair.getCost() == Integer.MAX_VALUE) {
                     // Haven't seen this vertex yet
@@ -81,7 +79,7 @@ public class Dijkstra {
                     unvisited.add(pair); // O(log n)
 
                     // Update the paths
-                    Set<Graph.Edge<Integer>> set = paths.get(e.getToVertex()); // O(log n)
+                    Set<Edge<Integer>> set = paths.get(e.getToVertex()); // O(log n)
                     set.addAll(paths.get(e.getFromVertex())); // O(log n)
                     set.add(e);
                 } else if (cost < pair.getCost()) {
@@ -93,7 +91,7 @@ public class Dijkstra {
                     unvisited.add(pair); // O(log n)
 
                     // Update the paths
-                    Set<Graph.Edge<Integer>> set = paths.get(e.getToVertex()); // O(log n)
+                    Set<Edge<Integer>> set = paths.get(e.getToVertex()); // O(log n)
                     set.clear();
                     set.addAll(paths.get(e.getFromVertex())); // O(log n)
                     set.add(e);
@@ -101,13 +99,13 @@ public class Dijkstra {
             }
 
             // Termination conditions
-            if (end != null && vertex.equals(end)) {
+            if (end != null && graphNode.equals(end)) {
                 // If we are looking for shortest path, we found it.
                 break;
             } else if (unvisited.size() > 0) {
                 // If there are other vertices to visit (which haven't been visited yet)
-                Graph.CostVertexPair<Integer> pair = unvisited.remove();  // O(log n)
-                vertex = pair.getVertex();
+                CostVertexPair<Integer> pair = unvisited.remove();  // O(log n)
+                graphNode = pair.getGraphNode();
                 if (pair.getCost() == Integer.MAX_VALUE) {
                     // If the only edge left to explore has MAX_VALUE then it
                     // cannot be reached from the starting vertex
@@ -120,16 +118,16 @@ public class Dijkstra {
         }
 
         if (end != null) {
-            Graph.CostVertexPair<Integer> pair = costs.get(end);
-            Set<Graph.Edge<Integer>> set = paths.get(end);
-            return (new Graph.CostPathPair<Integer>(pair.getCost(), set));
+            CostVertexPair<Integer> pair = costs.get(end);
+            Set<Edge<Integer>> set = paths.get(end);
+            return (new CostPathPair<Integer>(pair.getCost(), set));
         }
         return null;
     }
 
-    private static boolean checkForNegativeEdges(List<Graph.Vertex<Integer>> vertitices) {
-        for (Graph.Vertex<Integer> v : vertitices) {
-            for (Graph.Edge<Integer> e : v.getEdges()) {
+    private static boolean checkForNegativeEdges(List<GraphNode<Integer>> vertitices) {
+        for (GraphNode<Integer> v : vertitices) {
+            for (Edge<Integer> e : v.getEdges()) {
                 if (e.getCost() < 0)
                     return true;
             }

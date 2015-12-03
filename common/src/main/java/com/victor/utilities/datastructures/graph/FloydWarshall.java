@@ -9,21 +9,19 @@ import java.util.Map;
  * paths in a weighted graph (with positive or negative edge weights).
  * 
  * Worst case: O(V^3)
- * 
- * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class FloydWarshall {
 
     private FloydWarshall() {
     }
 
-    public static Map<Graph.Vertex<Integer>, Map<Graph.Vertex<Integer>, Integer>> getAllPairsShortestPaths(Graph<Integer> graph) {
+    public static Map<GraphNode<Integer>, Map<GraphNode<Integer>, Integer>> getAllPairsShortestPaths(Graph<Integer> graph) {
         if (graph == null)
             throw (new NullPointerException("Graph must be non-NULL."));
 
-        Map<Graph.Vertex<Integer>, Map<Graph.Vertex<Integer>, Integer>> allShortestPaths = new HashMap<Graph.Vertex<Integer>, Map<Graph.Vertex<Integer>, Integer>>();
+        Map<GraphNode<Integer>, Map<GraphNode<Integer>, Integer>> allShortestPaths = new HashMap<>();
 
-        List<Graph.Vertex<Integer>> vertices = graph.getVerticies();
+        List<GraphNode<Integer>> vertices = graph.getNodes();
         int[][] sums = new int[vertices.size()][vertices.size()];
 
         for (int i = 0; i < sums.length; i++) {
@@ -32,8 +30,8 @@ public class FloydWarshall {
             }
         }
 
-        List<Graph.Edge<Integer>> edges = graph.getEdges();
-        for (Graph.Edge<Integer> e : edges) {
+        List<Edge<Integer>> edges = graph.getEdges();
+        for (Edge<Integer> e : edges) {
             int indexOfFrom = vertices.indexOf(e.getFromVertex());
             int indexOfTo = vertices.indexOf(e.getToVertex());
             sums[indexOfFrom][indexOfTo] = e.getCost();
@@ -59,11 +57,11 @@ public class FloydWarshall {
 
         for (int i = 0; i < sums.length; i++) {
             for (int j = 0; j < sums[i].length; j++) {
-                Graph.Vertex<Integer> from = vertices.get(i);
-                Graph.Vertex<Integer> to = vertices.get(j);
-                Map<Graph.Vertex<Integer>, Integer> map = allShortestPaths.get(from);
+                GraphNode<Integer> from = vertices.get(i);
+                GraphNode<Integer> to = vertices.get(j);
+                Map<GraphNode<Integer>, Integer> map = allShortestPaths.get(from);
                 if (map == null)
-                    map = new HashMap<Graph.Vertex<Integer>, Integer>();
+                    map = new HashMap<>();
                 int cost = sums[i][j];
                 if (cost != Integer.MAX_VALUE)
                     map.put(to, cost);

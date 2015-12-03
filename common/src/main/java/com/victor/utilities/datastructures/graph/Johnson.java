@@ -10,36 +10,34 @@ import java.util.Set;
  * negative numbers, but no negative-weight cycles may exist.
  * 
  * Worst case: O(V^2 log V + VE)
- * 
- * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Johnson {
 
     private Johnson() { }
 
-    public static Map<Graph.Vertex<Integer>, Map<Graph.Vertex<Integer>, Set<Graph.Edge<Integer>>>> getAllPairsShortestPaths(Graph<Integer> g) {
+    public static Map<GraphNode<Integer>, Map<GraphNode<Integer>, Set<Edge<Integer>>>> getAllPairsShortestPaths(Graph<Integer> g) {
         if (g == null)
             throw (new NullPointerException("Graph must be non-NULL."));
 
-        Map<Graph.Vertex<Integer>, Map<Graph.Vertex<Integer>, Set<Graph.Edge<Integer>>>> allShortestPaths = 
-          new HashMap<Graph.Vertex<Integer>, Map<Graph.Vertex<Integer>, Set<Graph.Edge<Integer>>>>();
+        Map<GraphNode<Integer>, Map<GraphNode<Integer>, Set<Edge<Integer>>>> allShortestPaths =
+          new HashMap<>();
 
         // First, a new node 'connector' is added to the graph, connected by zero-weight edges to each of the other nodes.
-        Graph<Integer> graph = new Graph<Integer>(g);
-        Graph.Vertex<Integer> connector = new Graph.Vertex<Integer>(Integer.MAX_VALUE);
-        graph.getVerticies().add(connector);
+        Graph<Integer> graph = new Graph<>(g);
+        GraphNode<Integer> connector = new GraphNode<>(Integer.MAX_VALUE);
+        graph.getNodes().add(connector);
 
         // Add the connector Vertex to all edges.
-        for (Graph.Vertex<Integer> v : g.getVerticies()) {
-            int indexOfV = graph.getVerticies().indexOf(v);
-            Graph.Edge<Integer> edge = new Graph.Edge<Integer>(0, connector, graph.getVerticies().get(indexOfV));
+        for (GraphNode<Integer> v : g.getNodes()) {
+            int indexOfV = graph.getNodes().indexOf(v);
+            Edge<Integer> edge = new Edge<>(0, connector, graph.getNodes().get(indexOfV));
             connector.addEdge(edge);
             graph.getEdges().add(edge);
         }
 
         // Second, the Bellman–Ford algorithm is used, starting from the new vertex 'connector', to find for each vertex v 
         // the minimum weight h(v) of a path from 'connector' to v. If this step detects a negative cycle, the algorithm is terminated.
-        Map<Graph.Vertex<Integer>, Graph.CostPathPair<Integer>> costs = BellmanFord.getShortestPaths(graph, connector);
+        Map<GraphNode<Integer>, CostPathPair<Integer>> costs = BellmanFord.getShortestPaths(graph, connector);
         if (costs==null) {
             System.out.println("Graph contains a negative weight cycle. Cannot compute shortest path.");
             return null;
@@ -47,10 +45,10 @@ public class Johnson {
 
         // Next the edges of the original graph are reweighted using the values computed by the Bellman–Ford algorithm: an edge 
         // from u to v, having length w(u,v), is given the new length w(u,v) + h(u) − h(v).
-        for (Graph.Edge<Integer> e : graph.getEdges()) {
+        for (Edge<Integer> e : graph.getEdges()) {
             int weight = e.getCost();
-            Graph.Vertex<Integer> u = e.getFromVertex();
-            Graph.Vertex<Integer> v = e.getToVertex();
+            GraphNode<Integer> u = e.getFromVertex();
+            GraphNode<Integer> v = e.getToVertex();
 
             // Don't worry about the connector
             if (u.equals(connector) || v.equals(connector)) continue;
@@ -64,18 +62,18 @@ public class Johnson {
 
         // Finally, 'connector' is removed, and Dijkstra's algorithm is used to find the shortest paths from each node s to every 
         // other vertex in the reweighted graph.
-        int indexOfConnector = graph.getVerticies().indexOf(connector);
-        graph.getVerticies().remove(indexOfConnector);
-        for (Graph.Edge<Integer> e : connector.getEdges()) {
+        int indexOfConnector = graph.getNodes().indexOf(connector);
+        graph.getNodes().remove(indexOfConnector);
+        for (Edge<Integer> e : connector.getEdges()) {
             int indexOfConnectorEdge = graph.getEdges().indexOf(e);
             graph.getEdges().remove(indexOfConnectorEdge);
         }
 
-        for (Graph.Vertex<Integer> v : g.getVerticies()) {
-            Map<Graph.Vertex<Integer>, Graph.CostPathPair<Integer>> costPaths = Dijkstra.getShortestPaths(graph, v);
-            Map<Graph.Vertex<Integer>, Set<Graph.Edge<Integer>>> paths = new HashMap<Graph.Vertex<Integer>, Set<Graph.Edge<Integer>>>();
-            for (Graph.Vertex<Integer> v2 : costPaths.keySet()) {
-                Graph.CostPathPair<Integer> pair = costPaths.get(v2);
+        for (GraphNode<Integer> v : g.getNodes()) {
+            Map<GraphNode<Integer>, CostPathPair<Integer>> costPaths = Dijkstra.getShortestPaths(graph, v);
+            Map<GraphNode<Integer>, Set<Edge<Integer>>> paths = new HashMap<>();
+            for (GraphNode<Integer> v2 : costPaths.keySet()) {
+                CostPathPair<Integer> pair = costPaths.get(v2);
                 paths.put(v2, pair.getPath());
             }
             allShortestPaths.put(v, paths);
