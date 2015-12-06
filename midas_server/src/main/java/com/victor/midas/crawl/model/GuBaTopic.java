@@ -90,4 +90,12 @@ public class GuBaTopic {
     public void setTopicId(Long topicId) {
         this.topicId = topicId;
     }
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
 }
