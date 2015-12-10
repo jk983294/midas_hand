@@ -165,7 +165,7 @@ public class Graphs {
             edges.add(e4_7);
         }
 
-        Graph<Integer> graph = new Graph<Integer>(Graph.TYPE.DIRECTED, verticies, edges);
+        Graph<Integer> graph = new Graph<Integer>(GraphType.DIRECTED, verticies, edges);
     }
     private DirectedGraph directed = new DirectedGraph();
 
@@ -271,7 +271,7 @@ public class Graphs {
             edges.add(e4_3);
         }
 
-        Graph<Integer> graph = new Graph<Integer>(Graph.TYPE.DIRECTED, verticies, edges);
+        Graph<Integer> graph = new Graph<Integer>(GraphType.DIRECTED, verticies, edges);
     }
     private DirectedWithNegativeWeights directedWithNegWeights = new DirectedWithNegativeWeights(); 
 
@@ -833,7 +833,7 @@ public class Graphs {
             edges.add(new Edge<>(cv3, cv6));
             edges.add(new Edge<>(cv4, cv6));
 
-            Graph<Integer> directed = new Graph<>(Graph.TYPE.DIRECTED, graphNodes, edges);
+            Graph<Integer> directed = new Graph<>(GraphType.DIRECTED, graphNodes, edges);
             if (debug > 0) System.out.println(directed.toString());
 
             System.out.println("Topological sort of the directed graph.");
@@ -869,7 +869,7 @@ public class Graphs {
             graphNodes.clear();
             edges.clear();
             graphNodes.add(cv1);
-            Graph<Integer> directed1 = new Graph<>(Graph.TYPE.DIRECTED, graphNodes, edges);
+            Graph<Integer> directed1 = new Graph<>(GraphType.DIRECTED, graphNodes, edges);
             List<GraphNode<Integer>> results1 = TopologicalSort.sort(directed1);
             assertTrue("Topological sort error", results1.size() == 1);
         }

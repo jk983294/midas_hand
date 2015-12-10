@@ -24,7 +24,7 @@ public class CycleDetection {
         if (graph == null)
             throw new IllegalArgumentException("Graph is NULL.");
 
-        if (graph.getType() != Graph.TYPE.UNDIRECTED)
+        if (graph.getType() != GraphType.UNDIRECTED)
             throw new IllegalArgumentException("Graph is needs to be Undirected.");
 
         visitedVerticies.clear();

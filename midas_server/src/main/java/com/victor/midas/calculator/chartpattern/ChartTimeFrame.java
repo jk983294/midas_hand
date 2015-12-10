@@ -260,8 +260,8 @@ public class ChartTimeFrame extends IndexCalcBase {
 //            else trend[previousDayIndex] = UP;
 //
 //            //set last day
-//            previousDayIndex = tps.get(length - 2);
-//            dayIndex = tps.get(length - 1);
+//            previousDayIndex = tps.get(weight - 2);
+//            dayIndex = tps.get(weight - 1);
 //            if(end[previousDayIndex] > end[dayIndex]) trend[dayIndex] = DOWN;
 //            else trend[dayIndex] = UP;
         }

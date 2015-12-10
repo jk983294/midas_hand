@@ -1,7 +1,9 @@
 package com.victor.midas.services;
 
 import java.util.List;
+import java.util.Set;
 
+import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.dao.*;
 import com.victor.midas.model.db.DayFocusDb;
 import com.victor.midas.model.db.StockInfoDb;
@@ -14,6 +16,7 @@ import com.victor.midas.util.MidasException;
 import com.victor.midas.util.ModelConvertor;
 import org.apache.log4j.Logger;
 
+import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +44,12 @@ public class StocksService {
     private StockCrawlDataDao stockCrawlDataDao;
 	@Autowired
 	private TypeAhead typeAhead;
+
+    // register all calculator to factory
+    static {
+        Reflections reflections = new Reflections("com.victor.midas.calculator");
+        Set<Class<? extends IndexCalcBase>> subTypes = reflections.getSubTypesOf(IndexCalcBase.class);
+    }
 
 
     public void saveStocks(List<StockVo> stocks) throws MidasException {

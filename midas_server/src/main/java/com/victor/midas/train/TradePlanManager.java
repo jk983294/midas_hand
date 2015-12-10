@@ -57,7 +57,7 @@ public class TradePlanManager {
      * in strategy, it use related calculator only, so it is needed to use all calculators to init
      */
     private void initStocks(List<StockVo> stocks, CalcParameter parameter) throws MidasException {
-        IndexCalculator calculator = new IndexCalculator(stocks, parameter);
+        IndexCalculator calculator = new IndexCalculator(stocks, strategyName);
         calculator.calculate();
         isBigDataSet = calculator.isBigDataSet();
         logger.info("init stock finished...");

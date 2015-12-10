@@ -32,7 +32,7 @@ public class Prim {
         edgesAvailable = null;
 
         // Prim's algorithm only works on undirected graphs
-        if (graph.getType() == Graph.TYPE.DIRECTED)
+        if (graph.getType() == GraphType.DIRECTED)
             throw (new IllegalArgumentException("Undirected graphs only."));
 
         path = new LinkedHashSet<>();

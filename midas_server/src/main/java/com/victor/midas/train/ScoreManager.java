@@ -1,6 +1,7 @@
 package com.victor.midas.train;
 
 import com.victor.midas.calculator.IndexCalculator;
+import com.victor.midas.calculator.score.StockScoreRank;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.concept.StockConcept;
@@ -133,7 +134,7 @@ public class ScoreManager {
      * in strategy, it use related calculator only, so it is needed to use all calculators to init
      */
     private void initStocks(CalcParameter parameter) throws MidasException, IOException {
-        IndexCalculator calculator = new IndexCalculator(stocks, parameter);
+        IndexCalculator calculator = new IndexCalculator(stocks, StockScoreRank.INDEX_NAME);
         calculator.calculate();
         isBigDataSet = calculator.isBigDataSet();
 

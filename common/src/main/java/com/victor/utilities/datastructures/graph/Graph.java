@@ -16,16 +16,12 @@ public class Graph<T extends Comparable<T>> {
     private List<GraphNode<T>> nodes = new ArrayList<GraphNode<T>>();
     private List<Edge<T>> edges = new ArrayList<Edge<T>>();
 
-    public enum TYPE {
-        DIRECTED, UNDIRECTED
-    }
-
-    private TYPE type = TYPE.UNDIRECTED;
+    private GraphType type = GraphType.UNDIRECTED;
 
     public Graph() {
     }
 
-    public Graph(TYPE type) {
+    public Graph(GraphType type) {
         this();
         this.type = type;
     }
@@ -54,10 +50,10 @@ public class Graph<T extends Comparable<T>> {
     }
 
     public Graph(Collection<GraphNode<T>> nodes, Collection<Edge<T>> edges) {
-        this(TYPE.UNDIRECTED, nodes, edges);
+        this(GraphType.UNDIRECTED, nodes, edges);
     }
 
-    public Graph(TYPE type, Collection<GraphNode<T>> nodes, Collection<Edge<T>> edges) {
+    public Graph(GraphType type, Collection<GraphNode<T>> nodes, Collection<Edge<T>> edges) {
         this(type);
         this.nodes.addAll(nodes);
         this.edges.addAll(edges);
@@ -74,7 +70,7 @@ public class Graph<T extends Comparable<T>> {
             index = this.nodes.indexOf(to);
             GraphNode<T> toGraphNode = this.nodes.get(index);
             fromGraphNode.addEdge(e);
-            if (this.type == TYPE.UNDIRECTED) {
+            if (this.type == GraphType.UNDIRECTED) {
                 Edge<T> reciprical = new Edge<T>(e.cost, toGraphNode, fromGraphNode);
                 toGraphNode.addEdge(reciprical);
                 this.edges.add(reciprical);
@@ -82,7 +78,7 @@ public class Graph<T extends Comparable<T>> {
         }
     }
 
-    public TYPE getType() {
+    public GraphType getType() {
         return type;
     }
 

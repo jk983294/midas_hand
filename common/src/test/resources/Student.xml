@@ -34,4 +34,8 @@
         WHERE ID = #{id};
     </update>
 
+    <delete id = "deleteById" parameterType = "int">
+        DELETE from STUDENT WHERE ID = #{id};
+    </delete>
+
 </mapper>

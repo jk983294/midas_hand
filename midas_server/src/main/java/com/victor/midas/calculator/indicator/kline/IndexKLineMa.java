@@ -99,7 +99,7 @@ public class IndexKLineMa extends IndexCalcBase {
     @Override
     protected void initIndexForTrain() throws MidasException {
 //        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-//        len = end.length;
+//        len = end.weight;
 //        changePct = (double[])stock.queryCmpIndex(INDEX_NAME);
     }
 

@@ -88,7 +88,7 @@ public class ScoreTemplateManager {
      * in strategy, it use related calculator only, so it is needed to use all calculators to init
      */
     private void initStocks(CalcParameter parameter) throws MidasException, IOException {
-        IndexCalculator calculator = new IndexCalculator(stocks, parameter);
+        IndexCalculator calculator = new IndexCalculator(stocks, "score");
         calculator.calculate();
         isBigDataSet = calculator.isBigDataSet();
 

@@ -6,10 +6,7 @@ import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.score.StockScoreRank;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasException;
-import com.victor.utilities.datastructures.graph.Edge;
-import com.victor.utilities.datastructures.graph.Graph;
-import com.victor.utilities.datastructures.graph.GraphNode;
-import com.victor.utilities.datastructures.graph.TopologicalSort;
+import com.victor.utilities.datastructures.graph.*;
 
 import java.util.*;
 
@@ -97,7 +94,7 @@ public class IndexFactory {
                 }
             }
         }
-        Graph<String> dependency = new Graph<>(Graph.TYPE.DIRECTED, nodes, edges);
+        Graph<String> dependency = new Graph<>(GraphType.DIRECTED, nodes, edges);
         List<GraphNode<String>> nodeResults = TopologicalSort.sort(dependency);
         for(GraphNode<String> node : nodeResults){
             calculators.add(calcName2calculator.get(node.getValue()));

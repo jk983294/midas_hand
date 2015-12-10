@@ -1,6 +1,7 @@
 package com.victor.midas.train;
 
 import com.victor.midas.calculator.IndexCalculator;
+import com.victor.midas.calculator.chan.ChanMorphology;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.concept.StockConcept;
@@ -87,7 +88,7 @@ public class ChanManager {
      * in strategy, it use related calculator only, so it is needed to use all calculators to init
      */
     private void initStocks(CalcParameter parameter) throws MidasException, IOException {
-        IndexCalculator calculator = new IndexCalculator(stocks, parameter);
+        IndexCalculator calculator = new IndexCalculator(stocks, ChanMorphology.INDEX_NAME);
         calculator.calculate();
         isBigDataSet = calculator.isBigDataSet();
 

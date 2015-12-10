@@ -24,7 +24,7 @@ public class TopologicalSort {
         if (graph == null)
             throw new IllegalArgumentException("Graph is NULL.");
 
-        if (graph.getType() != Graph.TYPE.DIRECTED)
+        if (graph.getType() != GraphType.DIRECTED)
             throw new IllegalArgumentException("Cannot perform a topological sort on a non-directed graph. graph type = "+graph.getType());
 
         List<GraphNode<T>> sorted = new ArrayList<>();

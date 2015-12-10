@@ -67,7 +67,7 @@ public abstract class TradeStrategy {
         this.parameter = parameter;
         this.needTrain = needTrain;
         this.allRawStocks = allStockVos;
-        calculator = new IndexCalculator(allRawStocks, parameter);
+        calculator = new IndexCalculator(allRawStocks, "");
         calculator.calculate();
         isSmallSetData = !calculator.isBigDataSet();
         portfolio = new Portfolio(parameter.getTradeTaxRate());
