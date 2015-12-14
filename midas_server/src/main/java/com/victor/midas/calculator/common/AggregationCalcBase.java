@@ -12,9 +12,9 @@ import java.util.Map;
 /**
  * interface for index calculation
  */
-public abstract class AggregationCalcbase {
+public abstract class AggregationCalcBase {
 
-    private static final Logger logger = Logger.getLogger(AggregationCalcbase.class);
+    private static final Logger logger = Logger.getLogger(AggregationCalcBase.class);
 
     protected List<StockVo> stocks;
     protected CalcParameter parameter;
@@ -27,7 +27,7 @@ public abstract class AggregationCalcbase {
     protected int len;                            // benchmark stock's date len
 
 
-    protected AggregationCalcbase(List<StockVo> stocks, StockVo indexSH, List<StockVo> tradableStocks) {
+    protected AggregationCalcBase(List<StockVo> stocks, StockVo indexSH, List<StockVo> tradableStocks) {
         this.stocks = stocks;
         this.indexSH = indexSH;
         this.tradableStocks = tradableStocks;
