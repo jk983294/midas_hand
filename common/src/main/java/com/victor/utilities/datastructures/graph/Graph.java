@@ -1,8 +1,6 @@
 package com.victor.utilities.datastructures.graph;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Graph. Could be directed or undirected depending on the TYPE enum. A graph is
@@ -15,6 +13,8 @@ public class Graph<T extends Comparable<T>> {
 
     private List<GraphNode<T>> nodes = new ArrayList<GraphNode<T>>();
     private List<Edge<T>> edges = new ArrayList<Edge<T>>();
+
+    private Map<T, GraphNode<T>> data2node = new HashMap<>();
 
     private GraphType type = GraphType.UNDIRECTED;
 
@@ -88,6 +88,27 @@ public class Graph<T extends Comparable<T>> {
 
     public List<Edge<T>> getEdges() {
         return edges;
+    }
+
+    public void addEdge(T from, T to){
+        if(from != null && to != null){
+            GraphNode<T> nodeFrom, nodeTo;
+            if(data2node.containsKey(from)){
+                nodeFrom = data2node.get(from);
+            } else {
+                nodeFrom = new GraphNode<T>(from);
+                nodes.add(nodeFrom);
+                data2node.put(from, nodeFrom);
+            }
+            if(data2node.containsKey(to)){
+                nodeTo = data2node.get(to);
+            } else {
+                nodeTo = new GraphNode<T>(to);
+                nodes.add(nodeTo);
+                data2node.put(to, nodeTo);
+            }
+            edges.add(new Edge<T>(nodeFrom, nodeTo));
+        }
     }
 
     @Override
