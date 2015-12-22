@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ImportResource;
  */
 @ComponentScan
 @EnableAutoConfiguration
-@ImportResource("classpath:WEB-INF/midas-content.xml")
+@ImportResource("classpath:midas-content.xml")
 public class SpringMain {
 
     private static final Logger logger = Logger.getLogger(SpringMain.class);

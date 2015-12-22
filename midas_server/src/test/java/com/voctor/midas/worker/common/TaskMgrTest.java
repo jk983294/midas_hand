@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/WEB-INF/midas-content.xml")
+@ContextConfiguration(locations = "classpath:/midas-content.xml")
 public class TaskMgrTest {
 
     private static final Logger logger = Logger.getLogger(TaskMgrTest.class);

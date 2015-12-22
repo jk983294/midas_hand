@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * create db
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/WEB-INF/midas-content.xml")
+@ContextConfiguration(locations = "classpath:/midas-content.xml")
 public class FreeChartSpringMain {
 
     private static final Logger logger = Logger.getLogger(FreeChartSpringMain.class);
