@@ -63,6 +63,7 @@ public class TaskMgr {
             case perf : addTask(new PerfTask(taskDao, stocksService, params)); break;
             default : logger.error("no such cmd in task manager.");
         }
+        Thread.yield();
     }
 
     public void addTask(TaskBase task) {

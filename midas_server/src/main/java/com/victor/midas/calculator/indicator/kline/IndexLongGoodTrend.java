@@ -21,13 +21,10 @@ public class IndexLongGoodTrend extends IndexCalcBase {
 
     private final static String INDEX_NAME = "lgt";
 
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new IndexLongGoodTrend(IndexFactory.parameter));
-    }
-
     @Override
-    public void setRequiredCalculator() {
-        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    public void setRequiredCalculators() {
+        requiredCalculators.add(IndexChangePct.INDEX_NAME);
+        requiredCalculators.add(IndexKState.INDEX_NAME);
     }
 
     private CalcUtil calcUtil;
@@ -66,7 +63,7 @@ public class IndexLongGoodTrend extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         for (int i = 1; i < len; i++) {
             lgt[i] = calcLgt(i);
         }
@@ -125,15 +122,6 @@ public class IndexLongGoodTrend extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
@@ -151,14 +139,5 @@ public class IndexLongGoodTrend extends IndexCalcBase {
         lgt = new int[len];
         cmpIndexName2Index = new HashMap<>();
         calcUtil.init(stock);
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-    }
-
-    @Override
-    public void applyParameter() {
-
     }
 }

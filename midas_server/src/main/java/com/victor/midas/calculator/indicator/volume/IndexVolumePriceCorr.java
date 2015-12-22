@@ -2,7 +2,7 @@ package com.victor.midas.calculator.indicator.volume;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.indicator.IndexChangePct;
-import com.victor.midas.calculator.util.IndexFactory;
+import com.victor.midas.calculator.indicator.kline.IndexKLine;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.calculator.common.CalcUtil;
 import com.victor.midas.model.common.VolPriceCorrelation;
@@ -17,14 +17,12 @@ import java.util.HashMap;
  */
 public class IndexVolumePriceCorr extends IndexCalcBase {
 
-    private final static String INDEX_NAME = "vp_corr";
-
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new IndexVolumePriceCorr(IndexFactory.parameter));
-    }
+    public final static String INDEX_NAME = "vp_corr";
 
     @Override
-    public void setRequiredCalculator() {
+    public void setRequiredCalculators() {
+        requiredCalculators.add(IndexChangePct.INDEX_NAME);
+        requiredCalculators.add(IndexKLine.INDEX_NAME);
     }
 
     private final static int FREEZE_TIME_FRAME_FACTOR = 3;
@@ -60,7 +58,7 @@ public class IndexVolumePriceCorr extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         VolPriceCorrelation corr = null;
         int frezzeDay = 0;
         for (int i = 1; i < len; i++) {
@@ -96,15 +94,6 @@ public class IndexVolumePriceCorr extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
@@ -122,17 +111,5 @@ public class IndexVolumePriceCorr extends IndexCalcBase {
         signals = new int[len];
         cmpIndexName2Index = new HashMap<>();
         calcUtil.init(stock);
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-//        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-//        len = end.weight;
-//        changePct = (double[])stock.queryCmpIndex(INDEX_NAME);
-    }
-
-    @Override
-    public void applyParameter() {
-
     }
 }

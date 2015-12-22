@@ -11,6 +11,13 @@ import java.util.List;
  */
 public class MidasConstants {
 
+    public enum CalculatorType {
+        Tradable,
+        Index,
+        All,            // apply to both index and tradable
+        Aggregation     // only apply to sh index
+    }
+
     /**
      * misc collection MiscName for MongoDB index
      */

@@ -2,7 +2,6 @@ package com.victor.midas.calculator.indicator.kline;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.indicator.IndexChangePct;
-import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
@@ -16,13 +15,10 @@ public class IndexKLineSignals extends IndexCalcBase {
 
     public final static String INDEX_NAME = "k_sig";
 
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new IndexLongGoodTrend(IndexFactory.parameter));
-    }
-
     @Override
-    public void setRequiredCalculator() {
-        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    public void setRequiredCalculators() {
+        requiredCalculators.add(IndexChangePct.INDEX_NAME);
+        requiredCalculators.add(IndexKLine.INDEX_NAME);
     }
 
     private int[] signals;
@@ -57,7 +53,7 @@ public class IndexKLineSignals extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         for (int i = 1; i < len; i++) {
             signals[i] = backInduction(i);
         }
@@ -91,20 +87,6 @@ public class IndexKLineSignals extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-//        for (int i = 1; i < len; i++) {
-//            upShadowPct[i] = MathStockUtil.calculatePct(end[i - 1], max[i] - Math.max(start[i], end[i]));
-//            downShadowPct[i] = MathStockUtil.calculatePct(end[i - 1], Math.min(start[i], end[i]) - min[i]);
-//            middleShadowPct[i] = MathStockUtil.calculatePct(end[i - 1], Math.abs(start[i] - end[i]));
-//        }
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
@@ -122,17 +104,5 @@ public class IndexKLineSignals extends IndexCalcBase {
 
         signals = new int[len];
         cmpIndexName2Index = new HashMap<>();
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-//        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-//        len = end.weight;
-//        changePct = (double[])stock.queryCmpIndex(INDEX_NAME);
-    }
-
-    @Override
-    public void applyParameter() {
-
     }
 }

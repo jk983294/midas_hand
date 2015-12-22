@@ -1,13 +1,19 @@
 package com.victor.midas.services;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 
+import com.victor.midas.calculator.common.AggregationCalcBase;
+import com.victor.midas.calculator.common.ICalculator;
 import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.dao.*;
 import com.victor.midas.model.db.DayFocusDb;
 import com.victor.midas.model.db.StockInfoDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
+import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 
 import com.victor.midas.model.vo.TrainResult;
@@ -22,7 +28,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class StocksService {
-	private final Logger logger = Logger.getLogger(StocksService.class);
+
+	private static final Logger logger = Logger.getLogger(StocksService.class);
 
     @Autowired
     private StockInfoDao stockInfoDao;
@@ -49,6 +56,29 @@ public class StocksService {
     static {
         Reflections reflections = new Reflections("com.victor.midas.calculator");
         Set<Class<? extends IndexCalcBase>> subTypes = reflections.getSubTypesOf(IndexCalcBase.class);
+        Set<Class<? extends AggregationCalcBase>> aggregationTypes = reflections.getSubTypesOf(AggregationCalcBase.class);
+        CalcParameter parameter = IndexFactory.getParameter();
+        try {
+            for(Class aggregation : aggregationTypes){
+                Constructor constructor = aggregation.getConstructor(new Class[]{CalcParameter.class});
+                ICalculator calculator = (ICalculator)constructor.newInstance(parameter);
+                IndexFactory.addCalculator(calculator.getIndexName(), calculator);
+            }
+            for(Class indexCalcBase : subTypes){
+                Constructor constructor = indexCalcBase.getConstructor(new Class[]{CalcParameter.class});
+                ICalculator calculator = (ICalculator)constructor.newInstance(parameter);
+                IndexFactory.addCalculator(calculator.getIndexName(), calculator);
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        logger.info("finish registering all calculators.");
     }
 
 

@@ -38,8 +38,8 @@ public class AggregationCalculator {
     public void calculate() throws MidasException {
         logger.info("aggregation calculator start...");
         try {
-            volumeCorr = new VolumeCorr(stocks, indexSH, tradableStocks);
-            volumeCorr.calculate();
+//            volumeCorr = new VolumeCorr(stocks, indexSH, tradableStocks);
+//            volumeCorr.calculate();
         } catch (Exception e){
             logger.error(e);
             throw new MidasException("problem meet when calculate aggregation index", e);

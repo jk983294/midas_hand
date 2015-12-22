@@ -16,14 +16,6 @@ public class PriceMaTangle extends IndexCalcBase {
 
     public static final String INDEX_NAME = "pMaTangle";
 
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new PriceMaTangle(IndexFactory.parameter));
-    }
-
-    @Override
-    public void setRequiredCalculator() {
-    }
-
     public static final int BUY = 1;
     public static final int SELL = -1;
     public static final int Watch = 0;
@@ -51,7 +43,7 @@ public class PriceMaTangle extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         // calculate tangle range
         bullPeriod = MathStockUtil.thresholdCalc(pMaDiffPct, bullLine);
         bearPeriod = MathStockUtil.thresholdVectorRevert(MathStockUtil.thresholdCalc(pMaDiffPct, bearLine));
@@ -88,19 +80,6 @@ public class PriceMaTangle extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-//        MathStockUtil.thresholdCalcInplace(pMaDiffPct, bullLine, bullPeriod);
-//        MathStockUtil.thresholdVectorRevertInplace(MathStockUtil.thresholdCalc(pMaDiffPct, bearLine), bearPeriod);
-//        MathStockUtil.thresholdCalcInplace(pMaDiffPct, bullLine , bearLine, tanglePeriod);
-        calculateDecision();
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         pMaDiffPct = (double[])stock.queryCmpIndex("pMaDiffPct");
         len = pMaDiffPct.length;
@@ -112,17 +91,8 @@ public class PriceMaTangle extends IndexCalcBase {
     }
 
     @Override
-    protected void initIndexForTrain() throws MidasException {
-        pMaDiffPct = (double[])stock.queryCmpIndex("pMaDiffPct");
-        len = pMaDiffPct.length;
-        bullPeriod = (int[])stock.queryCmpIndex("bullPeriod");
-        bearPeriod = (int[])stock.queryCmpIndex("bearPeriod");
-        tanglePeriod = (int[])stock.queryCmpIndex("tanglePeriod");
-        decision = (int[])stock.queryCmpIndex("decision");
-    }
-
-    @Override
-    public void applyParameter() {
+    public void applyParameter(CalcParameter parameter) {
+        this.parameter = parameter;
         bullLine = parameter.getBullLine();
         bearLine = parameter.getBearLine();
     }

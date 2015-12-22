@@ -46,19 +46,16 @@ public class ScoreTask extends TaskBase {
 	public void doTask() throws Exception {
         List<StockCrawlData> crawlData = stocksService.queryAllStockCrawlData();
         List<StockVo> stocks = getAllStock();
-        // TODO get parameter from service
-        CalcParameter parameter = new CalcParameter();
 
-        ScoreManager manager = new ScoreManager(parameter, stocks, crawlData);
+        ScoreManager manager = new ScoreManager(stocks, crawlData);
 
         logger.info( "start score ...");
         manager.process();
 
-        logger.info( "start save results ...");
-
         scoreDao.save(manager.getStockScoreRecords());
         conceptScoreDao.save(manager.getStockConceptScoreRecords());
         if(isFromFileSystem || !manager.isBigDataSet()){
+            logger.info("start save stocks ...");
             stocksService.saveStocks(stocks);               // maybe train strategy has generate new data
         }
 

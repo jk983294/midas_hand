@@ -1,6 +1,7 @@
 package com.victor.midas.train.strategy.common;
 
 import com.victor.midas.calculator.IndexCalculator;
+import com.victor.midas.calculator.common.ICalculator;
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.calculator.util.IndexFactory;
@@ -56,9 +57,9 @@ public abstract class TradeStrategy {
     protected double[] stockIndexTotal;
 
     /** provide some calculators relate to discrete parameter iteration*/
-    protected List<IndexCalcBase> discreteCalculators;
+    protected List<ICalculator> discreteCalculators;
     /** provide some calculators relate to parameter mutation, used by trainManager to generate related indexes*/
-    protected List<IndexCalcBase> continuousCalculators;
+    protected List<ICalculator> continuousCalculators;
 
     protected TradeStrategy() {
     }
@@ -74,7 +75,8 @@ public abstract class TradeStrategy {
         try {
             initStocks(allStockVos);
             datesSH = stockMap.get(MidasConstants.SH_INDEX_NAME).getStock().getDatesInt();
-            stockIndexTotal = calculator.getAggregationCalculator().getVolumeCorr().getAvgTotal();
+            // TODO find a way to extract aggregation calculator's result
+            //stockIndexTotal = calculator.getAggregationCalculator().getVolumeCorr().getAvgTotal();
         } catch (Exception e){
             logger.error("init trade strategy failed.");
             throw new MidasException("init trade strategy failed.", e);
@@ -153,9 +155,9 @@ public abstract class TradeStrategy {
     public void discreteCalculate() throws MidasException {
         if(!ArrayHelper.isNull(discreteCalculators)){
             IndexFactory.applyNewParameter(parameter, discreteCalculators);
-            for(IndexCalcBase indexCalcBase : discreteCalculators){
+            for(ICalculator indexCalcBase : discreteCalculators){
                 for(StockTrain stock : allStocks){
-                    indexCalcBase.calculateForTrainEntry(stock.getStock());
+                    indexCalcBase.calculate(stock.getStock());
                 }
             }
         }
@@ -167,9 +169,9 @@ public abstract class TradeStrategy {
     public void continuousCalculate() throws MidasException {
         if(!ArrayHelper.isNull(continuousCalculators)){
             IndexFactory.applyNewParameter(parameter, continuousCalculators);
-            for(IndexCalcBase indexCalcBase : continuousCalculators){
+            for(ICalculator indexCalcBase : continuousCalculators){
                 for(StockTrain stock : allStocks){
-                    indexCalcBase.calculateForTrainEntry(stock.getStock());
+                    indexCalcBase.calculate(stock.getStock());
                 }
             }
         }
@@ -219,19 +221,19 @@ public abstract class TradeStrategy {
         this.parameter = parameter;
     }
 
-    public List<IndexCalcBase> getDiscreteCalculators() {
+    public List<ICalculator> getDiscreteCalculators() {
         return discreteCalculators;
     }
 
-    public void setDiscreteCalculators(List<IndexCalcBase> discreteCalculators) {
+    public void setDiscreteCalculators(List<ICalculator> discreteCalculators) {
         this.discreteCalculators = discreteCalculators;
     }
 
-    public List<IndexCalcBase> getContinuousCalculators() {
+    public List<ICalculator> getContinuousCalculators() {
         return continuousCalculators;
     }
 
-    public void setContinuousCalculators(List<IndexCalcBase> continuousCalculators) {
+    public void setContinuousCalculators(List<ICalculator> continuousCalculators) {
         this.continuousCalculators = continuousCalculators;
     }
 

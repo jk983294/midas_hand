@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.model.common.StockType;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.calculator.IndexCalculator;
@@ -43,7 +44,7 @@ public class MktDataTask extends TaskBase {
         logger.info("load data from dir : " + path);
         List<StockVo> stocks = new ArrayList<>();
         fromDirectory(stocks, path);
-        calcIndex(stocks);
+        //calcIndex(stocks);
         return stocks;
     }
 
@@ -66,10 +67,10 @@ public class MktDataTask extends TaskBase {
         }
     }
 
-    private static void calcIndex(List<StockVo> stocks) throws MidasException {
-        IndexCalculator indexCalculator = new IndexCalculator(stocks, null);
-        indexCalculator.calculate();
-    }
+//    private static void calcIndex(List<StockVo> stocks) throws MidasException {
+//        IndexCalculator indexCalculator = new IndexCalculator(stocks, IndexChangePct.INDEX_NAME);
+//        indexCalculator.calculate();
+//    }
 	
 	/**
 	 * read market data from file

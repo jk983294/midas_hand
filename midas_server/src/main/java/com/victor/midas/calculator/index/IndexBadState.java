@@ -18,10 +18,6 @@ public class IndexBadState extends IndexCalcBase {
 
     private final static String INDEX_NAME = "isBad";
 
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new IndexBadState(IndexFactory.parameter));
-    }
-
     private double[] acp;
     private int[] isBad;
 
@@ -52,18 +48,18 @@ public class IndexBadState extends IndexCalcBase {
     }
 
     @Override
-    public void setRequiredCalculator() {
-        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    public void setRequiredCalculators() {
+        requiredCalculators.add(IndexChangePct.INDEX_NAME);
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
-        calculate();
+    public void calculate() throws MidasException {
+        calculateIndex();
         //addIndexData("acp", acp);
         addIndexData("isBad", isBad);
     }
 
-    private void calculate(){
+    private void calculateIndex(){
         boolean isDanger = false;
         DescriptiveStatistics descriptiveStats = new DescriptiveStatistics();
         descriptiveStats.setWindowSize(INTERVAL);
@@ -90,15 +86,6 @@ public class IndexBadState extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
@@ -115,14 +102,5 @@ public class IndexBadState extends IndexCalcBase {
         acp = new double[len];
         isBad = new int[len];
         cmpIndexName2Index = new HashMap<>();
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-    }
-
-    @Override
-    public void applyParameter() {
-
     }
 }

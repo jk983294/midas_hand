@@ -1,7 +1,6 @@
 package com.victor.midas.calculator.indicator.trend;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
-import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.calculator.util.MathDeltaUtil;
@@ -17,12 +16,8 @@ public class IndexPriceDelta extends IndexCalcBase {
 
     public static final String INDEX_NAME = "pD";
 
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new IndexPriceDelta(IndexFactory.parameter));
-    }
-
     @Override
-    public void setRequiredCalculator() {
+    public void setRequiredCalculators() {
     }
 
     private int timeFramePriceDelta = 6;
@@ -58,7 +53,7 @@ public class IndexPriceDelta extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         pMa30D1 = deltaUtil.calculate(pMa30, false);
         //pMaYearD2 = deltaUtil.calculate(pMa30D1, false);
 
@@ -82,23 +77,6 @@ public class IndexPriceDelta extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-//        maMethod.calculateInPlace(end, priceMaShort, pMa5);
-//        maMethod.calculateInPlace(end, priceMaMedium, pMa10);
-//        maMethod.calculateInPlace(end, priceMaLong, pMa60);
-//        maMethod.calculateInPlace(end, priceMaYear, pMa30);
-//        // calculate short and long term ma difference
-//        ArrayHelper.ebeSubtractInplace(pMa5, pMa10, pMaDiff);
-//        // calculate short and long term ma difference percentage
-//        MathStockUtil.differencePctInplace(pMa5, pMa10, pMaDiffPct);
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         pMa5 = (double[])stock.queryCmpIndex("pMa5");
@@ -108,27 +86,6 @@ public class IndexPriceDelta extends IndexCalcBase {
         pMa60 = (double[])stock.queryCmpIndex("pMa60");
         len = end.length;
         cmpIndexName2Index = new HashMap<>();
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        len = end.length;
-        pMa30 = (double[])stock.queryCmpIndex("pMa30");
-        pMa60 = (double[])stock.queryCmpIndex("pMa60");
-        pMa5 = (double[])stock.queryCmpIndex("pMa5");
-        pMa30D1 = (double[])stock.queryCmpIndex("pMa30D1");
-        pMa60D1 = (double[])stock.queryCmpIndex("pMa60D1");
-        pMa5D1 = (double[])stock.queryCmpIndex("pMa5D1");
-        pD1 = (double[])stock.queryCmpIndex("pD1");
-    }
-
-    @Override
-    public void applyParameter() {
-//        priceMaShort = parameter.getPriceMaShort();
-//        priceMaMedium = parameter.getPriceMaMedium();
-//        priceMaLong = parameter.getPriceMaLong();
-//        priceMaYear = parameter.getPriceMaYear();
     }
 
 }

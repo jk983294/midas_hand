@@ -21,12 +21,9 @@ public class ChanMorphology extends IndexCalcBase {
 
     public static final String INDEX_NAME = "cm";
 
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new ChanMorphology(IndexFactory.parameter));
-    }
-
     @Override
-    public void setRequiredCalculator() {
+    public void setRequiredCalculators() {
+        requiredCalculators.add(IndexChangePct.INDEX_NAME);
     }
 
     private int[] cob;
@@ -53,7 +50,7 @@ public class ChanMorphology extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         mergedKLines = new ArrayList<>();
         fractalKeyPoints = new ArrayList<>();
         strokes = new ArrayList<>();
@@ -117,16 +114,6 @@ public class ChanMorphology extends IndexCalcBase {
         }
     }
 
-
-    @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-    }
-
     @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
@@ -140,15 +127,6 @@ public class ChanMorphology extends IndexCalcBase {
         len = end.length;
         scores = new double[len];
         cmpIndexName2Index = new HashMap<>();
-    }
-
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-    }
-
-    @Override
-    public void applyParameter() {
     }
 
     public List<MergedKLine> getMergedKLines() {

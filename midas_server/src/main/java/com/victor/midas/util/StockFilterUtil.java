@@ -52,4 +52,8 @@ public class StockFilterUtil {
     public Map<String, StockVo> getName2stock() {
         return name2stock;
     }
+
+    public List<StockVo> getAllStockVos() {
+        return allStockVos;
+    }
 }

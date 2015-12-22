@@ -2,20 +2,21 @@ package com.victor.midas.calculator.common;
 
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
+import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
+import com.victor.midas.util.StockFilterUtil;
 import org.apache.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * interface for index calculation
  */
-public abstract class AggregationCalcBase {
+public abstract class AggregationCalcBase implements ICalculator {
 
     private static final Logger logger = Logger.getLogger(AggregationCalcBase.class);
 
+    protected Set<String> requiredCalculators = new LinkedHashSet<>();
     protected List<StockVo> stocks;
     protected CalcParameter parameter;
     protected StockVo indexSH;
@@ -27,27 +28,42 @@ public abstract class AggregationCalcBase {
     protected int len;                            // benchmark stock's date len
 
 
-    protected AggregationCalcBase(List<StockVo> stocks, StockVo indexSH, List<StockVo> tradableStocks) {
-        this.stocks = stocks;
-        this.indexSH = indexSH;
-        this.tradableStocks = tradableStocks;
-        parameter = new CalcParameter();
-        name2index = new HashMap<>();
-        dates = indexSH.getDatesInt();
-        for(StockVo stock : tradableStocks){
-            name2index.put(stock.getStockName(), 0);
-        }
-        len = dates.length;
-        tradableCnt = tradableStocks.size();
-        index = 0;
+    protected AggregationCalcBase(CalcParameter parameter) {
+        this.parameter = parameter;
+        setRequiredCalculators();
     }
 
-    public abstract void calculate() throws MidasException;
+    @Override
+    public MidasConstants.CalculatorType getCalculatorType() {
+        return MidasConstants.CalculatorType.Aggregation;
+    }
 
-    /**
-     * for concrete calculator set their parameter
-     */
-    public abstract void applyParameter();
+    @Override
+    public void init_aggregation(StockFilterUtil filterUtil){
+        if(filterUtil != null){
+            this.stocks = filterUtil.getAllStockVos();
+            this.indexSH = filterUtil.getIndexSH();
+            this.tradableStocks = filterUtil.getTradableStocks();
+            dates = indexSH.getDatesInt();
+            name2index = new HashMap<>();
+            for(StockVo stock : tradableStocks){
+                name2index.put(stock.getStockName(), 0);
+            }
+            len = dates.length;
+            tradableCnt = tradableStocks.size();
+            index = 0;
+        }
+    }
+
+    @Override
+    public void calculate(StockVo stock) throws MidasException {
+        calculate();
+    }
+
+    @Override
+    public Set<String> getRequiredCalculators() {
+        return requiredCalculators;
+    }
 
     public CalcParameter getParameter() {
         return parameter;
@@ -55,5 +71,15 @@ public abstract class AggregationCalcBase {
 
     public void setParameter(CalcParameter parameter) {
         this.parameter = parameter;
+    }
+
+    @Override
+    public void applyParameter(CalcParameter parameter) {
+        this.parameter = parameter;
+    }
+
+    @Override
+    public void setRequiredCalculators() {
+        // do nothing
     }
 }

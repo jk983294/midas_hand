@@ -2,6 +2,7 @@ package com.victor.midas.calculator.indicator.trend;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.indicator.kline.IndexKLine;
 import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.calculator.util.MaxMinUtil;
 import com.victor.midas.model.vo.CalcParameter;
@@ -20,10 +21,6 @@ import java.util.HashMap;
 public class IndexSupportResist extends IndexCalcBase {
 
     private final static String INDEX_NAME = "sr";
-
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new IndexSupportResist(IndexFactory.parameter));
-    }
 
     private final static int NOTHING = 0;
     private final static int PREPARE_NEW_HIGH = 1;
@@ -88,12 +85,13 @@ public class IndexSupportResist extends IndexCalcBase {
     }
 
     @Override
-    public void setRequiredCalculator() {
-        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    public void setRequiredCalculators() {
+        requiredCalculators.add(IndexChangePct.INDEX_NAME);
+        requiredCalculators.add(IndexKLine.INDEX_NAME);
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         maxMinUtil.calcMaxMinIndex(longTimeFrame);
         maxIndexLong = maxMinUtil.getMaxIndex();
         minIndexLong = maxMinUtil.getMinIndex();
@@ -305,15 +303,6 @@ public class IndexSupportResist extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
@@ -327,22 +316,13 @@ public class IndexSupportResist extends IndexCalcBase {
         //volPriceCorr = (int[])stock.queryCmpIndex("vp_corr");
         total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
         k_state = (int[])stock.queryCmpIndex("k_state");
-        if(aggregationCalculator != null)
-        isBad = (int[])aggregationCalculator.getIndexSH().queryCmpIndex("isBad");
+        if(filterUtil != null)
+        isBad = (int[])filterUtil.getIndexSH().queryCmpIndex("isBad");
         len = end.length;
 
         sr_sig = new int[len];
         cmpIndexName2Index = new HashMap<>();
         calcUtil.init(stock);
         maxMinUtil.init(stock);
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-    }
-
-    @Override
-    public void applyParameter() {
-
     }
 }

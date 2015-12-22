@@ -1,6 +1,7 @@
 package com.victor.midas.calculator.indicator.trend;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.kline.IndexKState;
 import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.calculator.util.strategy.CalcUtilGp;
@@ -16,10 +17,6 @@ import java.util.HashMap;
 public class IndexGoodPeriod extends IndexCalcBase {
 
     public final static String INDEX_NAME = "gp";
-
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new IndexGoodPeriod(IndexFactory.parameter));
-    }
 
     private final static int NOTHING = 0;
     private final static int PREPARE = 1;
@@ -65,12 +62,12 @@ public class IndexGoodPeriod extends IndexCalcBase {
     }
 
     @Override
-    public void setRequiredCalculator() {
-
+    public void setRequiredCalculators() {
+        requiredCalculators.add(IndexKState.INDEX_NAME);
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         gpShort = calcGp(10);
         gpLong = calcGp(30);
         calcSignals();
@@ -147,15 +144,6 @@ public class IndexGoodPeriod extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
@@ -177,14 +165,5 @@ public class IndexGoodPeriod extends IndexCalcBase {
         gpLong = new double[len];
         cmpIndexName2Index = new HashMap<>();
         calcUtil.init(stock);
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-    }
-
-    @Override
-    public void applyParameter() {
-
     }
 }

@@ -1,8 +1,6 @@
 package com.victor.midas.calculator.chartpattern;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
-import com.victor.midas.calculator.indicator.IndexChangePct;
-import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.util.MidasConstants;
@@ -19,14 +17,6 @@ import java.util.*;
 public class ChartTimeFrame extends IndexCalcBase {
 
     public static final String INDEX_NAME = "ctf";
-
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new ChartTimeFrame(IndexFactory.parameter));
-    }
-
-    @Override
-    public void setRequiredCalculator() {
-    }
 
     private static final int UP = -1;
     private static final int TIE = 2;
@@ -56,7 +46,7 @@ public class ChartTimeFrame extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         double[] end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         double[] changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
         int len = end.length;
@@ -76,28 +66,8 @@ public class ChartTimeFrame extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-        // TODO add support for ctf
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         cmpIndexName2Index = new HashMap<>();
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-
-    }
-
-    @Override
-    public void applyParameter() {
-
     }
 
     /**

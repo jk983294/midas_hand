@@ -16,10 +16,6 @@ public class StockRevertScoreRank extends IndexCalcBase {
 
     public final static String INDEX_NAME = "score";
 
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new StockRevertScoreRank(IndexFactory.parameter));
-    }
-
     private double[] end, start, max, min, volume, total, changePct;
 
     private double[] scores;
@@ -36,12 +32,12 @@ public class StockRevertScoreRank extends IndexCalcBase {
     }
 
     @Override
-    public void setRequiredCalculator() {
-        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    public void setRequiredCalculators() {
+        requiredCalculators.add(IndexChangePct.INDEX_NAME);
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         calculateScore();
         addIndexData(INDEX_NAME, scores);
     }
@@ -72,16 +68,6 @@ public class StockRevertScoreRank extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-        calculateScore();
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
@@ -94,13 +80,5 @@ public class StockRevertScoreRank extends IndexCalcBase {
         len = end.length;
         scores = new double[len];
         cmpIndexName2Index = new HashMap<>();
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-    }
-
-    @Override
-    public void applyParameter() {
     }
 }

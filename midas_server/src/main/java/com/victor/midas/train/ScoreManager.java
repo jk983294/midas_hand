@@ -42,10 +42,10 @@ public class ScoreManager {
 
     private boolean isBigDataSet;
 
-    public ScoreManager(CalcParameter parameter, List<StockVo> stocks, List<StockCrawlData> crawlData) throws Exception {
+    public ScoreManager(List<StockVo> stocks, List<StockCrawlData> crawlData) throws Exception {
         this.stocks = stocks;
         this.crawlDatas = crawlData;
-        initStocks(parameter);
+        initStocks();
     }
 
     public void process() throws Exception {
@@ -133,13 +133,13 @@ public class ScoreManager {
     /**
      * in strategy, it use related calculator only, so it is needed to use all calculators to init
      */
-    private void initStocks(CalcParameter parameter) throws MidasException, IOException {
+    private void initStocks() throws MidasException, IOException {
         IndexCalculator calculator = new IndexCalculator(stocks, StockScoreRank.INDEX_NAME);
+        calculator.setBigDataSet(false);
         calculator.calculate();
         isBigDataSet = calculator.isBigDataSet();
 
-        StockFilterUtil filterUtil = new StockFilterUtil(stocks);
-        filterUtil.filter();
+        StockFilterUtil filterUtil = calculator.getFilterUtil();
         indexSH = filterUtil.getIndexSH();
         tradableStocks = filterUtil.getTradableStocks();
 
@@ -151,7 +151,6 @@ public class ScoreManager {
         tradableCnt = tradableStocks.size();
         index = 0;
         name2stock = filterUtil.getName2stock();
-
 
         initConcept();
 
@@ -195,7 +194,7 @@ public class ScoreManager {
 //            }
         }
         /*** remove those conceptStats which have too many or little stocks */
-        Set<StockConcept> toRemoveConcepts = new HashSet<>();
+        Set<StockConcept> toRemoveConcepts = new HashSet<StockConcept>();
         for (StockConcept concept : concept2stats.keySet()){
             int stockCnt = concept2stats.get(concept).getStocks().size();
             if(stockCnt > 150 || stockCnt < 8){

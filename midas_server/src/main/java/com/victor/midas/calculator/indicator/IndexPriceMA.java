@@ -20,11 +20,7 @@ public class IndexPriceMA extends IndexCalcBase {
 
     private static final String INDEX_NAME = "pMA";
 
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new IndexPriceMA(IndexFactory.parameter, new SMA()));
-    }
-
-    private MaBase maMethod;
+    private MaBase maMethod = new SMA();
 
     private double[] end;
 
@@ -43,14 +39,13 @@ public class IndexPriceMA extends IndexCalcBase {
         this.maMethod = maMethod;
     }
 
-    @Override
-    public String getIndexName() {
-        return INDEX_NAME;
+    public IndexPriceMA(CalcParameter parameter) {
+        super(parameter);
     }
 
     @Override
-    public void setRequiredCalculator() {
-
+    public String getIndexName() {
+        return INDEX_NAME;
     }
 
     public String getIndexCmpName(int interval) {
@@ -58,7 +53,7 @@ public class IndexPriceMA extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         pMa5 = maMethod.calculate(end, 5);
         pMa10 = maMethod.calculate(end, 10);
         pMa20 = maMethod.calculate(end, 20);
@@ -79,67 +74,9 @@ public class IndexPriceMA extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        String indexCmpName;
-        double[] oldIndexValue;
-        indexCmpName = getIndexCmpName(5);
-        oldIndexValue = (double[])oldStock.queryCmpIndex(indexCmpName);
-        pMa5 = maMethod.calculate(end, oldIndexValue, 5);
-        indexCmpName = getIndexCmpName(10);
-        oldIndexValue = (double[])oldStock.queryCmpIndex(indexCmpName);
-        pMa10 = maMethod.calculate(end, oldIndexValue, 10);
-        indexCmpName = getIndexCmpName(20);
-        oldIndexValue = (double[])oldStock.queryCmpIndex(indexCmpName);
-        pMa20 = maMethod.calculate(end, oldIndexValue, 20);
-        indexCmpName = getIndexCmpName(30);
-        oldIndexValue = (double[])oldStock.queryCmpIndex(indexCmpName);
-        pMa30 = maMethod.calculate(end, oldIndexValue, 30);
-        // calculate short and long term ma difference
-        pMaDiff = MathArrays.ebeSubtract(pMa5, pMa10);
-        // calculate short and long term ma difference percentage
-        pMaDiffPct = MathStockUtil.differencePct(pMa5, pMa10);
-
-        addIndexData("pMa5", pMa5);
-        addIndexData("pMa10", pMa10);
-        addIndexData("pMa20", pMa20);
-        addIndexData("pMa30", pMa30);
-        addIndexData("pMa60", pMa60);
-        //addIndexData("pMaDiff", pMaDiff);
-        //addIndexData("pMaDiffPct", pMaDiffPct);
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-        maMethod.calculateInPlace(end, 5, pMa5);
-        maMethod.calculateInPlace(end, 10, pMa10);
-        maMethod.calculateInPlace(end, 20, pMa20);
-        maMethod.calculateInPlace(end, 30, pMa30);
-        // calculate short and long term ma difference
-        ArrayHelper.ebeSubtractInplace(pMa5, pMa10, pMaDiff);
-        // calculate short and long term ma difference percentage
-        MathStockUtil.differencePctInplace(pMa5, pMa10, pMaDiffPct);
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         len = end.length;
         cmpIndexName2Index = new HashMap<>();
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        len = end.length;
-        pMa5 = (double[])stock.queryCmpIndex("pMa5");
-        pMa10 = (double[])stock.queryCmpIndex("pMa10");
-        pMa20 = (double[])stock.queryCmpIndex("pMa20");
-        pMa30 = (double[])stock.queryCmpIndex("pMa30");
-        pMaDiff = (double[])stock.queryCmpIndex("pMaDiff");
-        pMaDiffPct = (double[])stock.queryCmpIndex("pMaDiffPct");
-    }
-
-    @Override
-    public void applyParameter() {
     }
 }

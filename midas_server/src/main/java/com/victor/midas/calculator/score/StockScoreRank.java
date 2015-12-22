@@ -22,13 +22,9 @@ public class StockScoreRank extends IndexCalcBase {
 
     public static final String INDEX_NAME = "ssr";
 
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new StockScoreRank(IndexFactory.parameter));
-    }
-
     @Override
-    public void setRequiredCalculator() {
-        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    public void setRequiredCalculators() {
+        requiredCalculators.add(IndexChangePct.INDEX_NAME);
     }
 
     private MaBase maMethod = new SMA();
@@ -61,7 +57,7 @@ public class StockScoreRank extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         calculateScore();
 
         avgAmplitude = maMethod.calculate(MathStockUtil.calculateChangePct(min, max, 0), 45);
@@ -260,16 +256,6 @@ public class StockScoreRank extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-        calculateScore();
-    }
-
-    @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
@@ -316,13 +302,5 @@ public class StockScoreRank extends IndexCalcBase {
         ChanMorphologyExtend chanMorphologyExtend = new ChanMorphologyExtend(new CalcParameter());
         chanMorphologyExtend.calculate(stock);
         cme = (double[])stock.queryCmpIndex("cme");
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-    }
-
-    @Override
-    public void applyParameter() {
     }
 }

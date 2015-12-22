@@ -1,6 +1,7 @@
 package com.victor.midas.calculator.correlation;
 
-import com.victor.midas.calculator.common.AggregationCalcbase;
+import com.victor.midas.calculator.common.AggregationCalcBase;
+import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
@@ -11,17 +12,17 @@ import com.victor.utilities.math.stats.ma.SMA;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * calculate volume correlation with whole info
  */
-public class VolumeCorr extends AggregationCalcbase {
+public class VolumeCorr extends AggregationCalcBase {
 
     private double[] avgTotal;
 
-    public VolumeCorr(List<StockVo> stocks, StockVo indexSH, List<StockVo> tradableStocks) {
-        super(stocks, indexSH, tradableStocks);
-        avgTotal = new double[len];
+    public VolumeCorr(CalcParameter parameter) {
+        super(parameter);
     }
 
     @Override
@@ -55,8 +56,8 @@ public class VolumeCorr extends AggregationCalcbase {
     }
 
     @Override
-    public void applyParameter() {
-
+    public String getIndexName() {
+        return "VolumeCorr";
     }
 
     public double[] getAvgTotal() {

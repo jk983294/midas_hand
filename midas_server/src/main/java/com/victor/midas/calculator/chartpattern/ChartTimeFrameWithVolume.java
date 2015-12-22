@@ -21,13 +21,9 @@ public class ChartTimeFrameWithVolume extends IndexCalcBase {
 
     public static final String INDEX_NAME = "ctf";
 
-    static {
-        IndexFactory.addCalculator(INDEX_NAME, new ChartTimeFrameWithVolume(IndexFactory.parameter));
-    }
-
     @Override
-    public void setRequiredCalculator() {
-        requiredCalculator.add(IndexChangePct.INDEX_NAME);
+    public void setRequiredCalculators() {
+        requiredCalculators.add(IndexChangePct.INDEX_NAME);
     }
 
     private static final int UP = -1;
@@ -61,7 +57,7 @@ public class ChartTimeFrameWithVolume extends IndexCalcBase {
     }
 
     @Override
-    protected void calculateFromScratch() throws MidasException {
+    public void calculate() throws MidasException {
         ArrayList<Integer> ips = calculateInitialTP();
         //ips = turningPoints(ips);
         buildTrendArray(ctf, ips);
@@ -69,16 +65,6 @@ public class ChartTimeFrameWithVolume extends IndexCalcBase {
         //addIndexData("tav", trendAvgVol);
         addIndexData("tpvr", trendPreVolRatio);
         addIndexData("tppvr", trendPrePreVolRatio);
-    }
-
-    @Override
-    protected void calculateFromExisting() throws MidasException {
-        calculateFromScratch();
-    }
-
-    @Override
-    protected void calculateForTrain() throws MidasException {
-        // TODO add support for ctf
     }
 
     @Override
@@ -98,16 +84,6 @@ public class ChartTimeFrameWithVolume extends IndexCalcBase {
 
         cmpIndexName2Index = new HashMap<>();
         calcUtil.init(stock);
-    }
-
-    @Override
-    protected void initIndexForTrain() throws MidasException {
-
-    }
-
-    @Override
-    public void applyParameter() {
-
     }
 
     /**
