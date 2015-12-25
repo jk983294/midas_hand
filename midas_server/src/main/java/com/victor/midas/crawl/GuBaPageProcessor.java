@@ -94,15 +94,4 @@ public class GuBaPageProcessor implements PageProcessor {
     public Site getSite() {
         return site;
     }
-
-    public static void main(String[] args) {
-        String stockCode = "000702";
-//        String url = String.format(MidasConstants.gubaUrlListTemplate, stockCode, 1);
-//        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/list,000702.html").run();
-//        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,000702,211665695.html").run();
-//        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601918,201526977_2.html").run();
-        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601766,211862489_1.html")
-                .addPipeline(new JsonFilePipeline("D:\\MktData\\guba")).run();
-//        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,cjpl,211591648.html").run();
-    }
 }

@@ -7,7 +7,6 @@ import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.ModelConvertor;
-import com.victor.utilities.utils.MathHelper;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -136,7 +135,7 @@ public abstract class SingleStockStrategyBase extends TradeStrategy {
             }
 
             if(!isSmallSetData){
-                ModelConvertor.removeUnnessaryIndex(stock);
+                ModelConvertor.removeUnnecessaryIndex(stock);
             }
         }
 

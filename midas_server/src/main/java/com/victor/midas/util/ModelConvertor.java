@@ -67,7 +67,7 @@ public class ModelConvertor {
      * @param stockTrain
      * @throws MidasException
      */
-    public static void removeUnnessaryIndex(StockTrain stockTrain) throws MidasException {
+    public static void removeUnnecessaryIndex(StockTrain stockTrain) throws MidasException {
         StockVo oldStock = stockTrain.getStock();
 
         Map<String, int[]> indexInts = oldStock.getIndexInts();

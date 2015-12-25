@@ -115,15 +115,4 @@ public class GuBaPagerInfo {
     public void setStockCode(String stockCode) {
         this.stockCode = stockCode;
     }
-
-    public static void main(String[] args) {
-        GuBaPagerInfo info;
-        List<String> urls;
-        info = analysis("list,000702_|25292|80|1");
-        urls = info.getTargetRequestsList();
-        info = analysis("news,601766,211862489_|309|30|1");
-        urls = info.getTargetRequestsList();
-        info = analysis("news,cjpl,223920695_|843|30|1");
-        urls = info.getTargetRequestsList();
-    }
 }

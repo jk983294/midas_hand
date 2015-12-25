@@ -100,14 +100,4 @@ public class GuBaUrlInfo {
     public void setPageId(Long pageId) {
         this.pageId = pageId;
     }
-
-    public static void main(String[] args) {
-        GuBaUrlInfo info;
-        info = analysis("http://guba.eastmoney.com/list,000702.html");
-        info = analysis("http://guba.eastmoney.com/list,000702_1.html");
-        info = analysis("http://guba.eastmoney.com/news,000702,211665695.html");
-        info = analysis("http://guba.eastmoney.com/news,000702,211665695_1.html");
-        info = analysis("http://guba.eastmoney.com/news,cjpl,211591648.html");
-        info = analysis("http://guba.eastmoney.com/news,cjpl,211591648_1.html");
-    }
 }

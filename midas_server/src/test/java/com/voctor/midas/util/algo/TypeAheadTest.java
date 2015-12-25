@@ -9,6 +9,7 @@ public class TypeAheadTest {
 
 	public static void main(String[] args) {
 		List<String> data = new ArrayList<String>();
+        data.add("IDX999999");
 		data.add("IDX999999");
 		data.add("IDX999998");
 		data.add("IDX999997");

@@ -1,5 +1,6 @@
 package com.victor.midas.util;
 
+import com.victor.midas.model.common.CmdParameter;
 import com.victor.midas.model.common.CmdType;
 import com.victor.utilities.utils.ArrayHelper;
 
@@ -84,6 +85,9 @@ public class MidasConstants {
         actions = new ArrayList<>();
         for(CmdType cmdType : CmdType.values()){
             actions.add(cmdType.toString());
+        }
+        for(CmdParameter cmdParameter : CmdParameter.values()){
+            actions.add(cmdParameter.toString());
         }
     }
 

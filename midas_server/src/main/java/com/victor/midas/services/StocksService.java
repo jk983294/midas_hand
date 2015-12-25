@@ -115,7 +115,7 @@ public class StocksService {
         return stockCrawlDataDao.queryAllCrawlData();
     }
 
-    public void saveAllStockCrawlData(List<StockCrawlData> crawlDatas){
+    public void saveAllStockCrawlConceptData(List<StockCrawlData> crawlDatas){
         stockCrawlDataDao.saveCrawlData(crawlDatas);
     }
 
