@@ -1,11 +1,13 @@
 package com.victor.midas.services;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.victor.midas.model.db.StockInfoDb;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.StringPatternAware;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import com.victor.midas.dao.StockInfoDao;
@@ -18,7 +20,7 @@ public class TypeAhead {
 	
 	private static final Logger logger = Logger.getLogger(TypeAhead.class);
 	
-	private TernaryTree data;
+	private static TernaryTree data = new TernaryTree();
 	/**
 	 * characters that we don't bother to concern
 	 */
@@ -40,9 +42,8 @@ public class TypeAhead {
 		init(names);
 	}
 	
-	public void init(List<String> names){
-        if(data == null) data = new TernaryTree();
-		if(names != null){
+	public static void init(Collection<String> names){
+		if(CollectionUtils.isNotEmpty(names)){
 			for (String string : names) {
 				data.add(string);
 			}

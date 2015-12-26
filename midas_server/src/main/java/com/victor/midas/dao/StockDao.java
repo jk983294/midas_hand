@@ -43,14 +43,14 @@ public class StockDao {
      * next time, if save again, it will saved by that Id
      */
     @CacheEvict(value="stocks", allEntries=true)
-    public void saveStock(Collection<StockVo> stocks){
+    public void saveStocks(Collection<StockVo> stocks){
         for (StockVo stock : stocks) {
             mongoTemplate.save(stock, COLLECTION_NAME);
         }
     }
 
     @CacheEvict(value="stocks", key="#stock.stockName")
-    private void updateStock(StockVo stock){
+    public void updateStock(StockVo stock){
         mongoTemplate.save(stock, COLLECTION_NAME);
     }
 

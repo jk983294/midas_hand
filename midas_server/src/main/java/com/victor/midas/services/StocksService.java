@@ -79,6 +79,7 @@ public class StocksService {
             e.printStackTrace();
         }
         logger.info("finish registering all calculators.");
+        TypeAhead.init(IndexFactory.getCalcName2calculator().keySet());
     }
 
 
@@ -88,7 +89,7 @@ public class StocksService {
 
         List<StockInfoDb> stockInfoDbs = ModelConvertor.convert2StockInfo(stocks);
         stockInfoDao.saveStockInfo(stockInfoDbs);
-        stockDao.saveStock(stocks);
+        stockDao.saveStocks(stocks);
     }
 
     public TrainResult queryTrainResult(Long trainId){

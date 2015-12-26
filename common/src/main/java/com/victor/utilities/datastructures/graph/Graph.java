@@ -107,7 +107,9 @@ public class Graph<T extends Comparable<T>> {
                 nodes.add(nodeTo);
                 data2node.put(to, nodeTo);
             }
-            edges.add(new Edge<T>(nodeFrom, nodeTo));
+            Edge<T> edge = new Edge<T>(nodeFrom, nodeTo);
+            nodeFrom.addEdge(edge);
+            edges.add(edge);
         }
     }
 

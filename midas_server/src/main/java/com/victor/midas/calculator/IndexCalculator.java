@@ -1,5 +1,6 @@
 package com.victor.midas.calculator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.victor.midas.calculator.common.ICalculator;
@@ -25,6 +26,16 @@ public class IndexCalculator {
 
 
     public IndexCalculator(List<StockVo> stocks, String calcName) throws MidasException {
+        ctor(stocks, calcName);
+    }
+
+    public IndexCalculator(StockVo stock, String calcName) throws MidasException {
+        List<StockVo> stocks = new ArrayList<>();
+        stocks.add(stock);
+        ctor(stocks, calcName);
+    }
+
+    private void ctor(List<StockVo> stocks, String calcName) throws MidasException {
         this.stocks = stocks;
         this.parameter = IndexFactory.parameter;
         calculators = IndexFactory.getAllNeededCalculators(calcName);

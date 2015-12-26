@@ -1,7 +1,6 @@
 package com.victor.midas.calculator.util;
 
 import com.victor.midas.calculator.common.ICalculator;
-import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.datastructures.graph.*;
@@ -55,20 +54,20 @@ public class IndexFactory {
 
         while(!toProcessCalcNames.isEmpty()){
             String calcName = toProcessCalcNames.remove();
-            if(!visited.contains(calc)){
-                visited.add(calc);
-                ICalculator current = calcName2calculator.get(calc);
+            if(!visited.contains(calcName)){
+                visited.add(calcName);
+                ICalculator current = calcName2calculator.get(calcName);
                 Set<String> needed = current.getRequiredCalculators();
-                for(String preCalcName : needed){
-                    dependency.addEdge(preCalcName, calcName);
-                    if(!visited.contains(preCalcName)){
-                        toProcessCalcNames.add(preCalcName);
+                for(String need : needed){
+                    dependency.addEdge(calcName, need);
+                    if(!visited.contains(need)){
+                        toProcessCalcNames.add(need);
                     }
                 }
             }
         }
 
-        List<String> names = TopologicalSort.sortThenGetRawData(dependency);
+        List<String> names = TopologicalSort.sortRevertThenGetRawData(dependency);
         VisualAssist.print("all calculators needed: ", names);
         if(names.size() > 0){
             for(String name : names){
@@ -98,4 +97,7 @@ public class IndexFactory {
         IndexFactory.parameter = parameter;
     }
 
+    public static HashMap<String, ICalculator> getCalcName2calculator() {
+        return calcName2calculator;
+    }
 }
