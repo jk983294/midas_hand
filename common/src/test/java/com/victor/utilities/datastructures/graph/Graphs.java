@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class Graphs {
 
-    private static int debug = 1; // Debug level. 0=None, 1=Some
+    private static int debug = 0; // Debug level. 0=None, 1=Some
 
     // Undirected
     private static class UndirectedGraph {

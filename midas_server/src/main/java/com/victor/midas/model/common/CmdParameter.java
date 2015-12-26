@@ -5,5 +5,8 @@ package com.victor.midas.model.common;
  */
 public enum CmdParameter {
     guba,
-    concept
+    concept,
+    ma_score,
+    revert_score,
+    concept_score
 }

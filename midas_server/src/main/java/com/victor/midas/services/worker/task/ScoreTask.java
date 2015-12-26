@@ -3,6 +3,7 @@ package com.victor.midas.services.worker.task;
 import com.victor.midas.dao.ConceptScoreDao;
 import com.victor.midas.dao.ScoreDao;
 import com.victor.midas.dao.TaskDao;
+import com.victor.midas.model.common.CmdParameter;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.concept.StockCrawlData;
@@ -44,6 +45,11 @@ public class ScoreTask extends TaskBase {
 
 	@Override
 	public void doTask() throws Exception {
+        CmdParameter cmdParameter = CmdParameter.ma_score;
+        if(params.size() > 0){
+            cmdParameter = CmdParameter.valueOf(params.get(0));
+        }
+
         List<StockCrawlData> crawlData = stocksService.queryAllStockCrawlData();
         List<StockVo> stocks = getAllStock();
 

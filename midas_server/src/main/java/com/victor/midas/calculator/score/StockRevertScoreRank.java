@@ -24,8 +24,8 @@ public class StockRevertScoreRank extends IndexCalcBase {
 
     private int len;
 
-    private double maxVolume, subMaxVolume;
-    private int fallDays, maxVolumeIndex, subMaxVolumeIndex;
+    private double maxVolume, subMaxVolume, firstRevertVolume;
+    private int maxVolumeIndex, subMaxVolumeIndex, firstRevertIndex, fallDays;
 
     private DescriptiveStatistics changePctStats = new DescriptiveStatistics();
 
@@ -117,18 +117,18 @@ public class StockRevertScoreRank extends IndexCalcBase {
             }
         }
         // sub max index must after max index, find first volume revert point
-        subMaxVolume = maxVolume;
-        subMaxVolumeIndex = maxVolumeIndex;
+        subMaxVolume = firstRevertVolume = maxVolume;
+        subMaxVolumeIndex = firstRevertIndex = maxVolumeIndex;
         for(int i = maxVolumeIndex + 1; i <= index; i++){
             if(volume[i] > volume[i - 1]){
-                subMaxVolume = volume[i];
-                subMaxVolumeIndex = i;
+                subMaxVolume = firstRevertVolume = volume[i];
+                subMaxVolumeIndex = firstRevertIndex = i;
                 break;
             }
         }
         // after find the first volume revert point, volume could have sub max after that point
-        if(subMaxVolumeIndex > maxVolumeIndex){
-            for(int i = subMaxVolumeIndex + 1; i <= index; i++){
+        if(firstRevertIndex > maxVolumeIndex){
+            for(int i = firstRevertIndex + 1; i <= index; i++){
                 if(volume[i] > subMaxVolume){
                     subMaxVolume = volume[i];
                     subMaxVolumeIndex = i;

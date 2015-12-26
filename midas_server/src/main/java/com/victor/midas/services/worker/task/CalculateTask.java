@@ -25,17 +25,17 @@ public class CalculateTask extends TaskBase {
 
 	@Override
 	public void doTask() throws Exception {
-        if(params.size() == 2){
+        if(params.size() == 2){         // calculate SH600598 score_revert
             StockVo stock = stocksService.queryStock(params.get(0));
             IndexCalculator indexCalculator = new IndexCalculator(stock, params.get(1));
             indexCalculator.calculate();
             stocksService.getStockDao().updateStock(stock);
-        } else if(params.size() == 1){
+        } else if(params.size() == 1){  // calculate score_revert
             List<StockVo> stocks = stocksService.queryAllStock();
             IndexCalculator indexCalculator = new IndexCalculator(stocks, params.get(0));
             indexCalculator.calculate();
             stocksService.saveStocks(stocks);
-        } else {
+        } else {                        // calculate
             List<StockVo> stocks = stocksService.queryAllStock();
             IndexCalculator indexCalculator = new IndexCalculator(stocks, IndexChangePct.INDEX_NAME);
             indexCalculator.calculate();
