@@ -1,33 +1,36 @@
 package com.victor.utilities.visual;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.log4j.Logger;
 
 public class VisualAssist {
+
+    private static final Logger logger = Logger.getLogger(VisualAssist.class);
 	
 	public static <T> void print(T... a) {
-		System.out.println(ArrayUtils.toString(a));
+        logger.info(ArrayUtils.toString(a));
 	}
 	
 	public static <T> void print(String description, T... a) {
-		System.out.println(description);
+		logger.info(description);
 		print(a);
 	}
 	
 	public static <T> void print(T a) {
-		System.out.println(a);
+		logger.info(a);
 	}
 	
 	public static <T> void print(String description, T a) {
-		System.out.println(description);
+		logger.info(description);
 		print(a);
 	}
 	
 	public static <T> void print(T[][] a) {
-		System.out.println(ArrayUtils.toString(a));
+		logger.info(ArrayUtils.toString(a));
 	}
 	
 	public static <T> void print(String description, T[][] a) {
-		System.out.println(description);
+		logger.info(description);
 		print(a);
 	}
 	
@@ -37,74 +40,74 @@ public class VisualAssist {
 	 * @param a
 	 */
 	public static void print(double[] a) {
-		System.out.println(ArrayUtils.toString(a));
+		logger.info(ArrayUtils.toString(a));
 	}
 	
 	public static void print(String description, double[] a) {
-		System.out.println(description);
+		logger.info(description);
 		print(a);
 	}
 	
 	public static void print(int[] a) {
-		System.out.println(ArrayUtils.toString(a));
+		logger.info(ArrayUtils.toString(a));
 	}
 	
 	public static void print(String description, int[] a) {
-		System.out.println(description);
+		logger.info(description);
 		print(a);
 	}
 
     public static void print(short[] a) {
-        System.out.println(ArrayUtils.toString(a));
+        logger.info(ArrayUtils.toString(a));
     }
 
     public static void print(String description, short[] a) {
-        System.out.println(description);
+        logger.info(description);
         print(a);
     }
 
     public static void print(byte[] a) {
-        System.out.println(ArrayUtils.toString(a));
+        logger.info(ArrayUtils.toString(a));
     }
 
     public static void print(String description, byte[] a) {
-        System.out.println(description);
+        logger.info(description);
         print(a);
     }
 
     public static void print(long[] a) {
-        System.out.println(ArrayUtils.toString(a));
+        logger.info(ArrayUtils.toString(a));
     }
 
     public static void print(String description, long[] a) {
-        System.out.println(description);
+        logger.info(description);
         print(a);
     }
 
     public static void print(float[] a) {
-        System.out.println(ArrayUtils.toString(a));
+        logger.info(ArrayUtils.toString(a));
     }
 
     public static void print(String description, float[] a) {
-        System.out.println(description);
+        logger.info(description);
         print(a);
     }
 
     public static void print(char[] a) {
-        System.out.println(ArrayUtils.toString(a));
+        logger.info(ArrayUtils.toString(a));
     }
 
     public static void print(String description, char[] a) {
-        System.out.println(description);
+        logger.info(description);
         print(a);
     }
 
     public static void print(boolean[] a) {
-        System.out.println(ArrayUtils.toString(a));
+        logger.info(ArrayUtils.toString(a));
     }
 
     public static void print(String description, boolean[] a) {
-        System.out.println(description);
+        logger.info(description);
         print(a);
     }
 }

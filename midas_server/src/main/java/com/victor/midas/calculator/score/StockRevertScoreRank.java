@@ -26,6 +26,7 @@ public class StockRevertScoreRank extends IndexCalcBase {
 
     private double maxVolume, subMaxVolume, firstRevertVolume;
     private int maxVolumeIndex, subMaxVolumeIndex, firstRevertIndex, fallDays;
+    private boolean hasFirstRevert, hasSubMaxVolume;
 
     private DescriptiveStatistics changePctStats = new DescriptiveStatistics();
 
@@ -55,25 +56,43 @@ public class StockRevertScoreRank extends IndexCalcBase {
         changePctStats.clear();
         for (int i = 5; i < len; i++) {
             score = 0d;
-            if(changePct[i] < 0d || middleShadowPct[i] < 0d || (changePct[i] < 0.01d && Math.abs(middleShadowPct[i]) < 0.01d)){
+            if(changePct[i] < 0d
+                    || (middleShadowPct[i] < 0d && changePct[i] < 0.01)
+                    || (changePct[i] < 0.01d && Math.abs(middleShadowPct[i]) < 0.01d)){
                 changePctStats.addValue(changePct[i]);
             } else {
                 changePctStats.clear();
             }
 
             fallDays = (int)changePctStats.getN();
-            if(fallDays > 0){
+            if(fallDays > 1){
                 findMaxVolume(i);
                 score += fallHeightScore(i);
                 score += volumeScore(i);
+                score += priceVolumeDivergenceScore(i);
+                score += shadowScore(i);
             }
             scores[i] = score;
         }
     }
 
+    private static final SectionalFunction shadowFunc1 = new SectionalFunction(0d, 0d, 0.1d, 1d);
+    private static final SectionalFunction shadowFunc2 = new SectionalFunction(0d, 1d, 0.1d, 0d);
+    private double shadowScore(int index){
+        double score = 0d;
+        int cnt = 0;
+        if(downShadowPct[index] > 0.05){
+            score += shadowFunc1.calculate(downShadowPct[index]);
+            cnt++;
+        }
+        if(fallDays > 1 && upShadowPct[index - 1] > 0.05){
+            score += shadowFunc1.calculate(upShadowPct[index - 1]);
+            cnt++;
+        }
+        return score / (cnt <= 0 ? 1 : cnt);
+    }
 
-
-    private static final SectionalFunction fallHeightFunc = new SectionalFunction(-0.2d, 0d, -0.02d, 1d, 0.1d, 0d);
+    private static final SectionalFunction fallHeightFunc = new SectionalFunction(-0.2d, 0d, -0.033d, 1d, 0.1d, 0d);
     private double fallHeightScore(int index){
         double score = 0d;
         score += fallHeightFunc.calculate(changePctStats.getSum() / fallDays);
@@ -89,20 +108,37 @@ public class StockRevertScoreRank extends IndexCalcBase {
             score += volumeUpFunc.calculate(volume[i + 1] / volume[i]);
             cnt++;
         }
-        if(maxVolumeIndex < subMaxVolumeIndex){
-            for(int i = maxVolumeIndex; i < subMaxVolumeIndex; i++){
+        if(hasFirstRevert){
+            for(int i = maxVolumeIndex; i < firstRevertIndex - 1; i++){
                 score += volumeDownFunc.calculate(volume[i] / volume[i + 1]);
                 cnt++;
             }
-            for(int i = subMaxVolumeIndex; i < index; i++){
+            for(int i = firstRevertIndex - 1; i < subMaxVolumeIndex; i++){
                 score += volumeUpFunc.calculate(volume[i + 1] / volume[i]);
                 cnt++;
             }
-        } else {
-            for(int i = subMaxVolumeIndex; i < index; i++){
-                score += volumeDownFunc.calculate(volume[i] / volume[i + 1]);
-                cnt++;
+        }
+        // if no first revert, means volume always decrease
+        for(int i = subMaxVolumeIndex; i < index; i++){
+            score += volumeDownFunc.calculate(volume[i] / volume[i + 1]);
+            cnt++;
+        }
+        return score / (cnt <= 0 ? 1 : cnt);
+    }
+
+    private static final SectionalFunction divergenceFunc1 = new SectionalFunction(0d, 1d, 0.3d, 0d);
+    private static final SectionalFunction divergenceFunc2 = new SectionalFunction(0d, 0d, 0.3d, 1d);
+    private double priceVolumeDivergenceScore(int index){
+        double score = 0d, volumeRatio;
+        int cnt = 0;
+        for(int i = index - fallDays + 1; i < index; i++){
+            volumeRatio = volume[i + 1] / volume[i];
+            if(volumeRatio > 1){
+                score += divergenceFunc1.calculate( Math.abs(changePct[i + 1]) / volumeRatio);
+            } else {
+                score += divergenceFunc2.calculate( Math.abs(changePct[i + 1]) / volumeRatio);
             }
+            cnt++;
         }
         return score / (cnt <= 0 ? 1 : cnt);
     }
@@ -135,6 +171,8 @@ public class StockRevertScoreRank extends IndexCalcBase {
                 }
             }
         }
+        hasFirstRevert = firstRevertIndex > maxVolumeIndex;
+        hasSubMaxVolume = hasFirstRevert && (subMaxVolumeIndex > firstRevertIndex);
     }
 
     @Override

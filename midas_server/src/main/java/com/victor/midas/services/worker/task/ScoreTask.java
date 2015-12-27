@@ -1,15 +1,19 @@
 package com.victor.midas.services.worker.task;
 
+import com.victor.midas.calculator.score.StockRevertScoreRank;
+import com.victor.midas.calculator.score.StockScoreRank;
 import com.victor.midas.dao.ConceptScoreDao;
 import com.victor.midas.dao.ScoreDao;
 import com.victor.midas.dao.TaskDao;
 import com.victor.midas.model.common.CmdParameter;
-import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.concept.StockCrawlData;
 import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
-import com.victor.midas.train.ScoreManager;
+import com.victor.midas.train.score.ConceptScoreManager;
+import com.victor.midas.train.score.GeneralScoreManager;
+import com.victor.midas.train.score.ScoreManager;
+import com.victor.midas.util.MidasException;
 import com.victor.utilities.utils.PerformanceUtil;
 import org.apache.log4j.Logger;
 
@@ -45,29 +49,55 @@ public class ScoreTask extends TaskBase {
 
 	@Override
 	public void doTask() throws Exception {
-        CmdParameter cmdParameter = CmdParameter.ma_score;
-        if(params.size() > 0){
-            cmdParameter = CmdParameter.valueOf(params.get(0));
-        }
+        CmdParameter cmdParameter = CmdParameter.getParameter(CmdParameter.score_ma, params, 0);
 
-        List<StockCrawlData> crawlData = stocksService.queryAllStockCrawlData();
-        List<StockVo> stocks = getAllStock();
-
-        ScoreManager manager = new ScoreManager(stocks, crawlData);
+        ScoreManager manager = getScoreManager(cmdParameter);
 
         logger.info( "start score ...");
         manager.process();
+        saveResults(manager, cmdParameter);
 
-        scoreDao.save(manager.getStockScoreRecords());
-        conceptScoreDao.save(manager.getStockConceptScoreRecords());
-        if(isFromFileSystem || !manager.isBigDataSet()){
-            logger.info("start save stocks ...");
-            stocksService.saveStocks(stocks);               // maybe train strategy has generate new data
-        }
-
-        PerformanceUtil.manuallyGC(stocks);
+        PerformanceUtil.manuallyGC(manager.getStocks());
 
 		logger.info( description + " complete...");
 	}
+
+    private void saveResults(ScoreManager manager, CmdParameter cmdParameter) throws MidasException {
+        scoreDao.save(manager.getScoreRecords());
+        switch(cmdParameter){
+            case score_ma:  scoreDao.save(manager.getScoreRecords()); break;
+            case score_concept: conceptScoreDao.save(manager.getScoreRecords()); break;
+            default : logger.error("no such parameter in score task.");
+        }
+        if(isFromFileSystem || !manager.isBigDataSet()){
+            logger.info("start save stocks ...");
+            //stocksService.saveStocks(manager.getStocks());               // maybe train strategy has generate new data
+        }
+    }
+
+    private ScoreManager getScoreManager(CmdParameter cmdParameter) throws Exception {
+        List<StockVo> stocks = getAllStock();
+        String indexName = getIndexName(cmdParameter);
+        switch(cmdParameter){
+            case score_ma:
+            case score_revert: return new GeneralScoreManager(stocks, indexName);
+            case score_concept: {
+                List<StockCrawlData> crawlData = stocksService.queryAllStockCrawlData();
+                return new ConceptScoreManager(stocks, indexName, crawlData);
+            }
+            default : logger.error("no such ScoreManager in score task.");
+        }
+        return new GeneralScoreManager(stocks, indexName);
+    }
+
+    private String getIndexName(CmdParameter cmdParameter) throws Exception {
+        switch(cmdParameter){
+            case score_ma:  return StockScoreRank.INDEX_NAME;
+            case score_revert: return StockRevertScoreRank.INDEX_NAME;
+            case score_concept: return StockScoreRank.INDEX_NAME;
+            default : logger.error("no such IndexName in score task.");
+        }
+        return StockScoreRank.INDEX_NAME;
+    }
 
 }

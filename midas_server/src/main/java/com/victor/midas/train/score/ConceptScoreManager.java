@@ -25,6 +25,7 @@ public class ConceptScoreManager implements ScoreManager {
 
     private static final Logger logger = Logger.getLogger(ConceptScoreManager.class);
 
+    private String indexName;
     private List<StockVo> stocks;
     private List<StockCrawlData> crawlDatas;
     private List<StockConceptStats> stockConceptStatses;
@@ -41,8 +42,9 @@ public class ConceptScoreManager implements ScoreManager {
 
     private boolean isBigDataSet;
 
-    public ConceptScoreManager(List<StockVo> stocks, List<StockCrawlData> crawlData) throws Exception {
+    public ConceptScoreManager(List<StockVo> stocks, String indexName, List<StockCrawlData> crawlData) throws Exception {
         this.stocks = stocks;
+        this.indexName = indexName;
         this.crawlDatas = crawlData;
         initStocks();
     }
@@ -65,7 +67,7 @@ public class ConceptScoreManager implements ScoreManager {
                     }
                     index = stock.getCobIndex();
                     if(stock.isSameDayWithIndex(cob)){
-                        scores = (double[])stock.queryCmpIndex("ssr");
+                        scores = (double[])stock.queryCmpIndex(indexName);
                         conceptStats.getScoreStatistics().addValue(scores[index]);
                     }
                 }
@@ -83,7 +85,7 @@ public class ConceptScoreManager implements ScoreManager {
                     }
                     index = stock.getCobIndex();
                     if(stock.isSameDayWithIndex(cob)){
-                        scores = (double[])stock.queryCmpIndex("ssr");
+                        scores = (double[])stock.queryCmpIndex(indexName);
                         avgAmplitude = (double[])stock.queryCmpIndex("avgAmplitude");
                         if(scores[index] * avgAmplitude[index] > bestScore){
                             bestStock = stock;
@@ -109,7 +111,7 @@ public class ConceptScoreManager implements ScoreManager {
      * in strategy, it use related calculator only, so it is needed to use all calculators to init
      */
     private void initStocks() throws MidasException, IOException {
-        IndexCalculator calculator = new IndexCalculator(stocks, StockScoreRank.INDEX_NAME);
+        IndexCalculator calculator = new IndexCalculator(stocks, indexName);
         calculator.setBigDataSet(false);
         calculator.calculate();
         isBigDataSet = calculator.isBigDataSet();
@@ -201,5 +203,9 @@ public class ConceptScoreManager implements ScoreManager {
 
     public List<StockScoreRecord> getScoreRecords() {
         return scoreRecords;
+    }
+
+    public List<StockVo> getStocks() {
+        return stocks;
     }
 }

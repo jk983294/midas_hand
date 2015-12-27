@@ -1,6 +1,7 @@
 package com.victor.midas.calculator.util;
 
 import com.victor.utilities.utils.ArrayHelper;
+import com.victor.utilities.utils.MathHelper;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
@@ -138,5 +139,9 @@ public class MathStockUtil {
             result[i] = total[i] * 2d /(start[i] + end[i]);
         }
         return result;
+    }
+
+    public static boolean isPriceStop(double changePct){
+        return Math.abs(Math.abs(changePct) - 0.1) < 0.005;
     }
 }

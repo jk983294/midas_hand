@@ -30,10 +30,7 @@ public class CrawlTask extends TaskBase {
         logger.info( description + " start...");
         List<String> stockNames = stocksService.queryAllStockNames();
         crawlConcept(stockNames);
-        CmdParameter cmdParameter = CmdParameter.guba;
-        if(params.size() > 0){
-            cmdParameter = CmdParameter.valueOf(params.get(0));
-        }
+        CmdParameter cmdParameter = CmdParameter.getParameter(CmdParameter.guba, params, 0);
         switch(cmdParameter){
             case guba :  crawlGuBa(stockNames);  break;
             case concept : crawlConcept(stockNames);  break;
