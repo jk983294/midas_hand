@@ -71,13 +71,13 @@ public class StockRevertScoreRank extends IndexCalcBase {
                 score += volumeScore(i);
                 score += priceVolumeDivergenceScore(i);
                 score += shadowScore(i);
+                score += starShadowTrapScore(i);
             }
             scores[i] = score;
         }
     }
 
     private static final SectionalFunction shadowFunc1 = new SectionalFunction(0d, 0d, 0.1d, 1d);
-    private static final SectionalFunction shadowFunc2 = new SectionalFunction(0d, 1d, 0.1d, 0d);
     private double shadowScore(int index){
         double score = 0d;
         int cnt = 0;
@@ -90,6 +90,24 @@ public class StockRevertScoreRank extends IndexCalcBase {
             cnt++;
         }
         return score / (cnt <= 0 ? 1 : cnt);
+    }
+
+    private static final double STAR_SHADOW_THRESHOLD = 0.01d;
+    private static final SectionalFunction shadowFunc2 = new SectionalFunction(0d, -1d, STAR_SHADOW_THRESHOLD, 0d);
+    private double starShadowTrapScore(int index){
+        boolean isStarShadowAlways = true;
+        double score = 0d;
+        int cnt = 0;
+        for(int i = index - fallDays + 1; i < index; i++){
+            if(Math.abs(middleShadowPct[i]) > STAR_SHADOW_THRESHOLD){
+                isStarShadowAlways = false;
+                break;
+            }
+            score += shadowFunc2.calculate(Math.abs(middleShadowPct[i]));
+            cnt++;
+        }
+        if(isStarShadowAlways) return score / (cnt <= 0 ? 1 : cnt);
+        else return 0;
     }
 
     private static final SectionalFunction fallHeightFunc = new SectionalFunction(-0.2d, 0d, -0.033d, 1d, 0.1d, 0d);

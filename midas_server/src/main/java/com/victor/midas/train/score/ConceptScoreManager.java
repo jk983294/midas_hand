@@ -94,7 +94,7 @@ public class ConceptScoreManager implements ScoreManager {
                     }
                 }
                 if(bestStock != null){
-                    conceptScores.add(new StockScore(bestStock.getStockName(), conceptStats.getConcept().getName(), bestScore));
+                    conceptScores.add(new StockScore(bestStock.getStockName(), conceptStats.getConcept().getName(), bestScore, cob));
                 }
             }
             /*** move iterator forward */

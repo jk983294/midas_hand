@@ -10,20 +10,24 @@ public class StockScore implements Comparable<StockScore> {
 
     private String conceptName;
 
-    private double score;
+    private double score, perf;
+
+    private int cob;
 
     public StockScore() {
     }
 
-    public StockScore(String stockCode, double score) {
+    public StockScore(String stockCode, double score, int cob) {
         this.stockCode = stockCode;
         this.score = score;
+        this.cob = cob;
     }
 
-    public StockScore(String stockCode, String conceptName, double score) {
+    public StockScore(String stockCode, String conceptName, double score, int cob) {
         this.stockCode = stockCode;
         this.conceptName = conceptName;
         this.score = score;
+        this.cob = cob;
     }
 
     public String getConceptName() {
@@ -50,6 +54,23 @@ public class StockScore implements Comparable<StockScore> {
         this.score = score;
     }
 
+    public double getPerf() {
+        return perf;
+    }
+
+    public void setPerf(double perf) {
+        this.perf = perf;
+    }
+
+    public int getCob() {
+
+        return cob;
+    }
+
+    public void setCob(int cob) {
+        this.cob = cob;
+    }
+
     @Override
     public int compareTo(StockScore o) {
         return (Double.valueOf(score)).compareTo(o.getScore());
@@ -61,6 +82,8 @@ public class StockScore implements Comparable<StockScore> {
                 "stockCode='" + stockCode + '\'' +
                 ", conceptName='" + conceptName + '\'' +
                 ", score=" + score +
+                ", perf=" + perf +
+                ", cob=" + cob +
                 '}';
     }
 }

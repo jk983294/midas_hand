@@ -61,7 +61,7 @@ public class ChanManager {
                 index = stock.getCobIndex();
                 if(stock.isSameDayWithIndex(cob)){
                     scores = (double[])stock.queryCmpIndex("ssr");
-                    stockScores.add(new StockScore(stock.getStockName(), scores[index]));
+                    stockScores.add(new StockScore(stock.getStockName(), scores[index], cob));
                 }
             }
             /*** move iterator forward */

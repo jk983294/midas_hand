@@ -58,7 +58,7 @@ public class GeneralScoreManager implements ScoreManager {
                 index = stock.getCobIndex();
                 if(stock.isSameDayWithIndex(cob)){
                     scores = (double[])stock.queryCmpIndex(indexName);
-                    stockScores.add(new StockScore(stock.getStockName(), scores[index]));
+                    stockScores.add(new StockScore(stock.getStockName(), scores[index], cob));
                 }
             }
             /*** move iterator forward */
