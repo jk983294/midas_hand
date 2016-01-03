@@ -1,7 +1,7 @@
 package com.victor.utilities.utils;
 
 import com.victor.utilities.algorithm.strings.RegExpUsage;
-import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
+import com.victor.utilities.model.KeyValue;
 import org.junit.Test;
 
 import java.util.List;
@@ -165,7 +165,7 @@ public class RegExpHelperTest {
 
     @Test
     public void testExtractVariable(){
-        List<DefaultKeyValue<String, Double>> results = RegExpHelper.extractVariable("x=1 y = 3.14 new variable = 4.3some variable = 7.8");
+        List<KeyValue<String, Double>> results = RegExpHelper.extractVariable("x=1 y = 3.14 new variable = 4.3some variable = 7.8");
         assertEquals(4, results.size());
         assertEquals("x", results.get(0).getKey());
         assertEquals("y", results.get(1).getKey());

@@ -1,6 +1,7 @@
 package com.victor.utilities.utils;
 
-import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
+
+import com.victor.utilities.model.KeyValue;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,8 @@ public class RegExpHelper {
     private static final String numberPatternStr = "[-+]?\\s*(\\d+(,\\d{3})*(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?";
     private static final String percentPatternStr = numberPatternStr + "\\s*%";
     private static final String percentOrNumberPatternStr = numberPatternStr + "(\\s*%)?";
+    private static final String unitStr = "%|k|mm|m|bn|bps";
+    private static final String numberUnitPatternStr = "((" + numberPatternStr + ")(\\s*("+unitStr+"))?)";
 
     /**
      * search pattern
@@ -29,7 +32,10 @@ public class RegExpHelper {
     private static final Pattern numberPattern = Pattern.compile(numberPatternStr);
     private static final Pattern percentPattern = Pattern.compile(percentPatternStr);
     private static final Pattern percentOrNumberPattern = Pattern.compile(percentOrNumberPatternStr);
-    private static final Pattern variablePattern = Pattern.compile("(\\w+(\\s*\\w+)*)\\s*=\\s*(" + percentOrNumberPatternStr + ")");
+    private static final Pattern variablePattern = Pattern.compile("(\\w+(\\s*\\w+)*)\\s*=\\s*" + numberUnitPatternStr);
+    private static final Pattern arithmeticPattern = Pattern.compile("\\w+\\s*(\\+|-|\\*|/)\\s*" + numberUnitPatternStr + "\\s*(\\w+)?");
+    private static final Pattern numberUnitPattern = Pattern.compile(numberUnitPatternStr);
+    private static final Pattern footerPattern = Pattern.compile(".*(\\(\\d+\\))$");
     private static final Pattern timePattern = Pattern.compile(".*(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}).*");
 
     /**
@@ -43,8 +49,6 @@ public class RegExpHelper {
      */
     private static final Pattern numberExtractPattern = Pattern.compile("(" + numberPatternStr + ")");
     private static final Pattern percentOrNumberExtractPattern = Pattern.compile("(" + numberPatternStr + "(\\s*%)?" + ")");
-    private static final Pattern currencyNumberUnitExtractPattern = Pattern.compile("(" + "\\$.*(" + numberPatternStr + ").*(k|m)" + ")");
-
     /**
      * replace several space characters to one space
      * @param str
@@ -82,10 +86,6 @@ public class RegExpHelper {
         return extract(str, numberExtractPattern);
     }
 
-    public static String extractTimeStr(String str){
-        return extract(str, timePattern);
-    }
-
     /**
      * this will extract first number or percent occurrence
      * @param str
@@ -99,16 +99,22 @@ public class RegExpHelper {
         return extract(str, relationalOperatorPattern);
     }
 
-    public static String extractCurrencyNumberUnitStr(String str){
-        return extract(str, currencyNumberUnitExtractPattern);
+    public static List<KeyValue<String, Double>> extractVariable(String str){
+        Matcher matcher = variablePattern.matcher(str);
+        List<KeyValue<String, Double>> results = new ArrayList<>();
+        while(matcher.find()){
+            KeyValue<String, Double> result = new KeyValue<>(matcher.group(1), Double.valueOf(removeFormatForNumberStr(matcher.group(3))));
+            results.add(result);
+        }
+        return results;
     }
 
-    public static List<DefaultKeyValue<String, Double>> extractVariable(String str){
-        Matcher matcher = variablePattern.matcher(str);
-        List<DefaultKeyValue<String, Double>> results = new ArrayList<>();
+    public static List<String> extractArithmeticPattern(String str){
+        Matcher matcher = arithmeticPattern.matcher(str);
+        List<String> results = new ArrayList<>();
         while(matcher.find()){
-            DefaultKeyValue<String, Double> result = new DefaultKeyValue<>(matcher.group(1), Double.valueOf(removeFormatForNumberStr(matcher.group(3))));
-            results.add(result);
+            results.add(matcher.group(1));  // operator
+            results.add(matcher.group(2));  // number
         }
         return results;
     }
@@ -117,14 +123,17 @@ public class RegExpHelper {
         Matcher matcher = variablePattern.matcher(str);
         while(matcher.find()){
             String numberStr = matcher.group(3);
-            if(isPercent(numberStr)){
-                return Double.valueOf(removeFormatForNumberStr(extractNumberStr(numberStr))) * 0.01;
-            } else if(isNumber(numberStr)){
-                return Double.valueOf(removeFormatForNumberStr(numberStr));
-            }
-            return null;
+            return getNumber(numberStr);
         }
         return null;
+    }
+
+    public static String extractFooter(String str){
+        return extract(str, footerPattern);
+    }
+
+    public static String extractTimeStr(String str){
+        return extract(str, timePattern);
     }
 
     /**
@@ -133,18 +142,39 @@ public class RegExpHelper {
      * @return
      */
     public static Double getNumber(String number){
+        if(StringUtils.isEmpty(number) || !containDigit(number)){
+            return null;
+        }
         if(containVariable(number)){
             return extractFirstVariableValue(number);
-        } else {
-            String firstNumber = removeFormatForNumberStr(extractPercentOrNumberStr(number));
-            if(isPercent(firstNumber)){
-                return Double.valueOf(extractNumberStr(firstNumber)) * 0.01;
-            } else if(isNumber(firstNumber)){
-                return Double.valueOf(firstNumber);
-            } else {
-                return null;
+        }
+        String firstNumberStr = null, numberStr = null, unitStr = null;
+        if(contains(number, numberUnitPattern)){
+            firstNumberStr = removeFormatForNumberStr(extract(number, numberUnitPattern));
+            Matcher matcher = numberUnitPattern.matcher(firstNumberStr);
+            while(matcher.find()){
+                numberStr = matcher.group(2);  // number
+                if(matcher.group(8) != null){
+                    unitStr = matcher.group(8);  // unit
+                }
             }
         }
+
+        if(StringUtils.isNotEmpty(firstNumberStr)){
+            Double result = Double.valueOf(numberStr);
+            if(StringUtils.isNotEmpty(unitStr)){
+                switch (unitStr){
+                    case "bps" : result *= 0.0001; break;
+                    case "%" : result *= 0.01; break;
+                    case "k" : result *= 1e3; break;
+                    case "m" :
+                    case "mm" : result *= 1e6; break;
+                    case "bn" : result *= 1e9; break;
+                }
+            }
+            return result;
+        }
+        return null;
     }
 
     /**
@@ -176,12 +206,16 @@ public class RegExpHelper {
         return str.contains("=") && contains(str, variablePattern);
     }
 
+    public static boolean containTime(String str){
+        return containDigit(str) && contains(str, timePattern);
+    }
+
     public static boolean containDigit(String str){
         return contains(str, digitPattern);
     }
 
-    public static boolean containTime(String str){
-        return containDigit(str) && contains(str, timePattern);
+    public static boolean containArithmeticPattern(String str){
+        return containDigit(str) && contains(str, arithmeticPattern);
     }
 
     /**
@@ -222,6 +256,10 @@ public class RegExpHelper {
         return str != null && variablePattern.matcher(str).matches();
     }
 
+    public static boolean isFooter(String str){
+        return str != null && footerPattern.matcher(str).matches();
+    }
+
     /**
      * util functions
      */
@@ -244,7 +282,6 @@ public class RegExpHelper {
     }
 
     public static String extract(String str, Pattern pattern){
-        if(str == null) return null;
         Matcher matcher = pattern.matcher(str);
         while(matcher.find()){
             return matcher.group(1);
