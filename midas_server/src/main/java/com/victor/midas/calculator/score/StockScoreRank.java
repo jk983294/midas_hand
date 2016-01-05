@@ -196,12 +196,12 @@ public class StockScoreRank extends IndexCalcBase {
     private static final SectionalFunction positionRangeFunc = new SectionalFunction(0.00, 1d, 0.4d, 0d);
     private double positionInHistoryMinMaxPriceScore(int index){
         double score = 0d;
-        score += positionMinFunc.calculate(MathStockUtil.calculateChangePct(mmPriceUtil10.getFewDaysBeforeMinPrice(index - 1), end[index]));
-        score += positionMaxFunc.calculate(MathStockUtil.calculateChangePct(end[index], mmPriceUtil10.getFewDaysBeforeMaxPrice(index - 1)));
-        score += positionMinFunc.calculate(MathStockUtil.calculateChangePct(mmPriceUtil60.getFewDaysBeforeMinPrice(index - 1), end[index]));
-        score += positionMaxFunc.calculate(MathStockUtil.calculateChangePct(end[index], mmPriceUtil60.getFewDaysBeforeMaxPrice(index - 1)));
-        score += positionRangeFunc.calculate(MathStockUtil.calculateChangePct(mmPriceUtil10.getFewDaysBeforeMinPrice(index - 1), mmPriceUtil10.getFewDaysBeforeMaxPrice(index - 1)));
-        score += positionRangeFunc.calculate(MathStockUtil.calculateChangePct(mmPriceUtil60.getFewDaysBeforeMinPrice(index - 1), mmPriceUtil60.getFewDaysBeforeMaxPrice(index - 1)));
+        score += positionMinFunc.calculate(MathStockUtil.calculateChangePct(mmPriceUtil10.getMinPriceAmongTimeFrame(index - 1), end[index]));
+        score += positionMaxFunc.calculate(MathStockUtil.calculateChangePct(end[index], mmPriceUtil10.getMaxPriceAmongTimeFrame(index - 1)));
+        score += positionMinFunc.calculate(MathStockUtil.calculateChangePct(mmPriceUtil60.getMinPriceAmongTimeFrame(index - 1), end[index]));
+        score += positionMaxFunc.calculate(MathStockUtil.calculateChangePct(end[index], mmPriceUtil60.getMaxPriceAmongTimeFrame(index - 1)));
+        score += positionRangeFunc.calculate(MathStockUtil.calculateChangePct(mmPriceUtil10.getMinPriceAmongTimeFrame(index - 1), mmPriceUtil10.getMaxPriceAmongTimeFrame(index - 1)));
+        score += positionRangeFunc.calculate(MathStockUtil.calculateChangePct(mmPriceUtil60.getMinPriceAmongTimeFrame(index - 1), mmPriceUtil60.getMaxPriceAmongTimeFrame(index - 1)));
         return score / 6d;
     }
 

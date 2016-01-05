@@ -93,7 +93,8 @@ public class PerfCollector {
     public String toString() {
         sortUpsets();
         return "PerfCollector{" +
-                "perf=" + perfStats.getSum() +
+                "\nupsets = " + upsetsToString() +
+                "\nperf=" + perfStats.getSum() +
                 ", cnt=" + perfStats.getN() +
                 ", real perf=" + perfStats.getMean() +
                 ", std dev=" + perfStats.getStandardDeviation() +
@@ -105,7 +106,6 @@ public class PerfCollector {
                 " close = " + closeStatsDay2.getMean() + ", " + closeStatsDay2.getStandardDeviation() +
                 " high = " + highStatsDay2.getMean() + ", " + highStatsDay2.getStandardDeviation() +
                 " low = " + lowStatsDay2.getMean() + ", " + lowStatsDay2.getStandardDeviation() +
-                "\nupsets = " + upsetsToString() +
                 '}';
     }
 

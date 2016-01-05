@@ -71,7 +71,7 @@ public class ScoreTask extends TaskBase {
         }
         if(isFromFileSystem || !manager.isBigDataSet()){
             logger.info("start save stocks ...");
-            //stocksService.saveStocks(manager.getStocks());               // maybe train strategy has generate new data
+            stocksService.saveStocks(manager.getStocks());               // maybe train strategy has generate new data
         }
     }
 

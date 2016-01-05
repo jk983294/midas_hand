@@ -41,7 +41,9 @@ public class StockVo {
     /*** index Name -> index Component Names List*/
     private Map<String, List<String>> indexName2indexCmp;
 
-    public StockVo(){}
+    public StockVo(){
+        this(null, null, null);
+    }
 
     public StockVo(String stockName, String desp, StockType type) {
         this.stockName = stockName;

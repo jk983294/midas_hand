@@ -16,6 +16,7 @@ import com.victor.midas.dao.StockInfoDao;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,9 @@ public class TaskMgr {
 
     @Autowired
     private StocksService stocksService;
+
+    @Resource(name="filepath2prefix")
+    private Map<String, String> filepath2prefix;
 
     private TaskExecutor taskExecutor;
 

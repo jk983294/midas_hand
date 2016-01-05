@@ -17,10 +17,17 @@ public class MaxMinUtil {
     private double[] min;
     private int len;
 
+    private boolean useEndStartPair = true;
+
     private int[] maxIndex;
     private int[] minIndex;
 
     public MaxMinUtil(StockVo stock) throws MidasException {
+        init(stock);
+    }
+
+    public MaxMinUtil(StockVo stock, boolean useEndStartPair) throws MidasException {
+        this.useEndStartPair = useEndStartPair;
         init(stock);
     }
 
@@ -39,80 +46,80 @@ public class MaxMinUtil {
         maxIndex = new int[len];
         minIndex = new int[len];
         double maxPrice = Double.MIN_VALUE, minPrice = Double.MAX_VALUE;
-        int prevMaxIndex = 0, prevMinIndex = 0;
-        for (int i = 0; i < Math.min(timeFrame, len); i++) {
+        if(len > 0){
+            maxIndex[0] = minIndex[0] = 0;
+            maxPrice = getMaxPrice(0);
+            minPrice = getMinPrice(0);
+        }
+        for (int i = 1; i < Math.min(timeFrame, len); i++) {
             // deal max price
             if(maxPrice >= getMaxPrice(i)){
-                maxIndex[i] = prevMaxIndex;
+                maxIndex[i] = maxIndex[i - 1];
             } else {    // update max price
-                maxIndex[i] = prevMaxIndex = i;
+                maxIndex[i] = i;
                 maxPrice = getMaxPrice(i);
             }
             // deal min price
             if(minPrice <= getMinPrice(i)){
-                minIndex[i] = prevMinIndex;
+                minIndex[i] = minIndex[i - 1];
             } else {    // update min price
-                minIndex[i] = prevMinIndex = i;
+                minIndex[i] = i;
                 minPrice = getMinPrice(i);
             }
         }
 
         for (int i = timeFrame; i < len; i++) {
             // deal max price
-            if(i - prevMaxIndex >= timeFrame){ // out of boundary
-                maxPrice = Double.MIN_VALUE;
-                prevMaxIndex = i - timeFrame + 1;
-                for (int j = prevMaxIndex; j <= i; j++) {
-                    if(maxPrice >= getMaxPrice(i)){
-                        maxIndex[i] = prevMaxIndex;
-                    } else {    // update max price
-                        maxIndex[i] = prevMaxIndex = i;
-                        maxPrice = getMaxPrice(i);
+            if(i - maxIndex[i - 1] >= timeFrame){ // out of boundary
+                maxIndex[i] = i - timeFrame + 1;
+                maxPrice = getMaxPrice(i - timeFrame + 1);
+                for (int j = i - timeFrame + 2; j <= i; j++) {
+                    if(maxPrice < getMaxPrice(j)){
+                        maxIndex[i] = j;
+                        maxPrice = getMaxPrice(j);
                     }
                 }
             } else {
-                if(maxPrice >= getMaxPrice(i)){
-                    maxIndex[i] = prevMaxIndex;
-                } else {    // update max price
-                    maxIndex[i] = prevMaxIndex = i;
+                if(maxPrice < getMaxPrice(i)){
+                    maxIndex[i] = i;
                     maxPrice = getMaxPrice(i);
+                } else {
+                    maxIndex[i] = maxIndex[i - 1];
                 }
             }
 
             // deal min price
-            if(i - prevMinIndex >= timeFrame){ // out of boundary
-                minPrice = Double.MAX_VALUE;
-                prevMinIndex = i - timeFrame + 1;
-                for (int j = prevMinIndex; j <= i; j++) {
-                    if(minPrice <= getMinPrice(i)){
-                        minIndex[i] = prevMinIndex;
-                    } else {    // update min price
-                        minIndex[i] = prevMinIndex = i;
-                        minPrice = getMinPrice(i);
+            if(i - minIndex[i - 1] >= timeFrame){ // out of boundary
+                minIndex[i] = i - timeFrame + 1;
+                minPrice = getMinPrice(i - timeFrame + 1);
+                for (int j = i - timeFrame + 2; j <= i; j++) {
+                    if(minPrice > getMinPrice(j)){
+                        minIndex[i] = j;
+                        minPrice = getMinPrice(j);
                     }
                 }
             } else {
-                if(minPrice <= getMinPrice(i)){
-                    minIndex[i] = prevMinIndex;
-                } else {    // update min price
-                    minIndex[i] = prevMinIndex = i;
+                if(minPrice > getMinPrice(i)){
+                    minIndex[i] = i;
                     minPrice = getMinPrice(i);
+                } else {
+                    minIndex[i] = minIndex[i - 1];
                 }
             }
         }
     }
 
     /**
-     * get max price before index day among timeFrame days
+     * get max price before index day (include index day) among timeFrame days
      */
-    public double getFewDaysBeforeMaxPrice(int index){
+    public double getMaxPriceAmongTimeFrame(int index){
         return getMaxPrice(getMaxIndex(index));
     }
 
     /**
-     * get min price before index day among timeFrame days
+     * get min price before index day (include index day) among timeFrame days
      */
-    public double getFewDaysBeforeMinPrice(int index){
+    public double getMinPriceAmongTimeFrame(int index){
         return getMinPrice(getMinIndex(index));
     }
 
@@ -131,12 +138,18 @@ public class MaxMinUtil {
     }
 
 
+    /**
+     * could use max min pair instead of start / end pair
+     */
     public double getMaxPrice(int index){
-        return Math.max(start[index], end[index]);
+        return useEndStartPair ? Math.max(start[index], end[index]) : Math.max(max[index], min[index]);
     }
 
+    /**
+     * could use max min pair instead of start / end pair
+     */
     public double getMinPrice(int index){
-        return Math.min(start[index], end[index]);
+        return useEndStartPair ? Math.min(start[index], end[index]) : Math.max(max[index], min[index]);
     }
 
     public int getMaxIndex(int index) {

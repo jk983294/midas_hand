@@ -3,8 +3,8 @@ package com.victor.midas.calculator.score;
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.indicator.kline.IndexKLine;
-import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.calculator.util.MathStockUtil;
+import com.victor.midas.calculator.util.MaxMinUtil;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
@@ -23,6 +23,8 @@ public class StockRevertScoreRank extends IndexCalcBase {
     private double[] scores;
 
     private int len;
+
+    private MaxMinUtil mmPriceUtil90, mmPriceUtil5;
 
     private double maxVolume, subMaxVolume, firstRevertVolume;
     private int maxVolumeIndex, subMaxVolumeIndex, firstRevertIndex, fallDays;
@@ -56,9 +58,8 @@ public class StockRevertScoreRank extends IndexCalcBase {
         changePctStats.clear();
         for (int i = 5; i < len; i++) {
             score = 0d;
-            if(changePct[i] < 0d
-                    || (middleShadowPct[i] < 0d && changePct[i] < 0.01)
-                    || (changePct[i] < 0.01d && Math.abs(middleShadowPct[i]) < 0.01d)){
+            if((changePct[i] < 0d || (middleShadowPct[i] < 0d && changePct[i] < 0.01)
+                    || (changePct[i] < 0.01d && Math.abs(middleShadowPct[i]) < 0.01d))){
                 changePctStats.addValue(changePct[i]);
             } else {
                 changePctStats.clear();
@@ -71,10 +72,58 @@ public class StockRevertScoreRank extends IndexCalcBase {
                 score += volumeScore(i);
                 score += priceVolumeDivergenceScore(i);
                 score += shadowScore(i);
-                score += starShadowTrapScore(i);
+                score += trapScore(i);
+                //score += positionInHistoryMinMaxPriceScore(i);
             }
             scores[i] = score;
         }
+    }
+
+    private double trapScore(int index){
+        double score = 0d;
+        score += starMiddleShadowTrapScore(index);
+        score += volumeDownLossStopTrapScore(index);
+        return score;
+    }
+
+    /**
+     * consecutive star k line, it means
+     */
+    private static final SectionalFunction volumeDownLossStopFunc2 = new SectionalFunction(0d, -1d, 20d, 0.75d);
+    private double volumeDownLossStopTrapScore(int index){
+        if(MathStockUtil.isPriceStop(changePct[index]) && changePct[index] < 0d){
+            return volumeDownLossStopFunc2.calculate(volume[index] / volume[index - 1]);
+        }
+        return 0;
+    }
+
+    /**
+     * consecutive star k line, it means
+     */
+    private static final double STAR_SHADOW_THRESHOLD = 0.01d;
+    private static final SectionalFunction shadowFunc2 = new SectionalFunction(0d, -1d, STAR_SHADOW_THRESHOLD, 0d);
+    private double starMiddleShadowTrapScore(int index){
+        boolean isStarShadowAlways = true;
+        double score = 0d;
+        int cnt = 0;
+        for(int i = index - fallDays + 1; i < index; i++){
+            if(Math.abs(middleShadowPct[i]) > STAR_SHADOW_THRESHOLD){
+                isStarShadowAlways = false;
+                break;
+            }
+            score += shadowFunc2.calculate(Math.abs(middleShadowPct[i]));
+            cnt++;
+        }
+        if(isStarShadowAlways) return score / (cnt <= 0 ? 1 : cnt);
+        else return 0;
+    }
+
+    private static final SectionalFunction positionMaxFunc = new SectionalFunction(0.00, 0d, 0.3d, 1d);
+    private double positionInHistoryMinMaxPriceScore(int index){
+        double score = 0d;
+
+        score += positionMaxFunc.calculate(MathStockUtil.calculateChangePct(end[index], mmPriceUtil90.getMaxPriceAmongTimeFrame(index)));
+        return score / 1d;
     }
 
     private static final SectionalFunction shadowFunc1 = new SectionalFunction(0d, 0d, 0.1d, 1d);
@@ -90,24 +139,6 @@ public class StockRevertScoreRank extends IndexCalcBase {
             cnt++;
         }
         return score / (cnt <= 0 ? 1 : cnt);
-    }
-
-    private static final double STAR_SHADOW_THRESHOLD = 0.01d;
-    private static final SectionalFunction shadowFunc2 = new SectionalFunction(0d, -1d, STAR_SHADOW_THRESHOLD, 0d);
-    private double starShadowTrapScore(int index){
-        boolean isStarShadowAlways = true;
-        double score = 0d;
-        int cnt = 0;
-        for(int i = index - fallDays + 1; i < index; i++){
-            if(Math.abs(middleShadowPct[i]) > STAR_SHADOW_THRESHOLD){
-                isStarShadowAlways = false;
-                break;
-            }
-            score += shadowFunc2.calculate(Math.abs(middleShadowPct[i]));
-            cnt++;
-        }
-        if(isStarShadowAlways) return score / (cnt <= 0 ? 1 : cnt);
-        else return 0;
     }
 
     private static final SectionalFunction fallHeightFunc = new SectionalFunction(-0.2d, 0d, -0.033d, 1d, 0.1d, 0d);
@@ -205,6 +236,11 @@ public class StockRevertScoreRank extends IndexCalcBase {
         upShadowPct = (double[])stock.queryCmpIndex("k_u");
         downShadowPct = (double[])stock.queryCmpIndex("k_d");
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
+
+        mmPriceUtil90 = new MaxMinUtil(stock, false);
+        mmPriceUtil90.calcMaxMinIndex(90);
+        mmPriceUtil5 = new MaxMinUtil(stock, false);
+        mmPriceUtil5.calcMaxMinIndex(5);
 
         len = end.length;
         scores = new double[len];
