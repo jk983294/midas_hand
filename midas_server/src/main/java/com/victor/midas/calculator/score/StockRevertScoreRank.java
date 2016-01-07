@@ -83,11 +83,35 @@ public class StockRevertScoreRank extends IndexCalcBase {
         double score = 0d;
         score += starMiddleShadowTrapScore(index);
         score += volumeDownLossStopTrapScore(index);
+        score += downShadowTrapScore(index);
         return score;
     }
 
     /**
-     * consecutive star k line, it means
+     * when it is negative price stop, take its volume into consideration, the huger the volume is, the better
+     */
+    private static final SectionalFunction downShadowFunc = new SectionalFunction(0d, -1d, 20d, 0.75d);
+    private double downShadowTrapScore(int index){
+        boolean isDownShadowAlways = true;
+        double score = 0d;
+        int cnt = 0, downShadowCnt = 0, upShadowCnt = 0;
+        for(int i = index - fallDays + 1; i < index; i++){
+            if(downShadowPct[i] > Math.abs(middleShadowPct[i]) && downShadowPct[i] > 3 * upShadowPct[i]) downShadowCnt++;
+            if(upShadowPct[i] > Math.abs(middleShadowPct[i]) && upShadowPct[i] > 3 * downShadowPct[i]) upShadowCnt++;
+            score += downShadowFunc.calculate(Math.abs(middleShadowPct[i]));
+            cnt++;
+        }
+        if(maxVolumeIndex == index && downShadowPct[index] > Math.abs(middleShadowPct[index])
+                && downShadowPct[index] > 0.06){
+            return -1d;
+        }
+        if(downShadowCnt == cnt && mmPriceUtil90.getMaxIndexPeriod(index) < 8
+                && MathStockUtil.calculateChangePct(end[index], mmPriceUtil90.getMaxPrice(index)) < 0.1) return -1d;
+        return 0d;
+    }
+
+    /**
+     * when it is negative price stop, take its volume into consideration, the huger the volume is, the better
      */
     private static final SectionalFunction volumeDownLossStopFunc2 = new SectionalFunction(0d, -1d, 20d, 0.75d);
     private double volumeDownLossStopTrapScore(int index){
@@ -101,7 +125,7 @@ public class StockRevertScoreRank extends IndexCalcBase {
      * consecutive star k line, it means
      */
     private static final double STAR_SHADOW_THRESHOLD = 0.01d;
-    private static final SectionalFunction shadowFunc2 = new SectionalFunction(0d, -1d, STAR_SHADOW_THRESHOLD, 0d);
+    private static final SectionalFunction starMiddleShadowFunc = new SectionalFunction(0d, -1d, STAR_SHADOW_THRESHOLD, 0d);
     private double starMiddleShadowTrapScore(int index){
         boolean isStarShadowAlways = true;
         double score = 0d;
@@ -111,7 +135,7 @@ public class StockRevertScoreRank extends IndexCalcBase {
                 isStarShadowAlways = false;
                 break;
             }
-            score += shadowFunc2.calculate(Math.abs(middleShadowPct[i]));
+            score += starMiddleShadowFunc.calculate(Math.abs(middleShadowPct[i]));
             cnt++;
         }
         if(isStarShadowAlways) return score / (cnt <= 0 ? 1 : cnt);
@@ -150,6 +174,7 @@ public class StockRevertScoreRank extends IndexCalcBase {
 
     private static final SectionalFunction volumeUpFunc = new SectionalFunction(0.8d, 0d, 1.5d, 1d, 3d, 0d);
     private static final SectionalFunction volumeDownFunc = new SectionalFunction(0.8d, 0d, 1.5d, 1d, 3d, 0d);
+    private static final SectionalFunction volumeBenchFunc = new SectionalFunction(0d, 1d, 2d, 0d);
     private double volumeScore(int index){
         double score = 0d;
         int cnt = 0;
@@ -172,6 +197,14 @@ public class StockRevertScoreRank extends IndexCalcBase {
             score += volumeDownFunc.calculate(volume[i] / volume[i + 1]);
             cnt++;
         }
+//        double benchVolume = volume[index - fallDays];
+//        double benchVolumeRatio = benchVolume / volume[index - fallDays - 1];
+//        if(benchVolumeRatio < 1.5 && fallDays <= 2){
+//            for(int i = index - fallDays + 1; i < index; i++){
+//                score += volumeBenchFunc.calculate(volume[i] / benchVolume);
+//                cnt++;
+//            }
+//        }
         return score / (cnt <= 0 ? 1 : cnt);
     }
 
@@ -237,7 +270,7 @@ public class StockRevertScoreRank extends IndexCalcBase {
         downShadowPct = (double[])stock.queryCmpIndex("k_d");
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
 
-        mmPriceUtil90 = new MaxMinUtil(stock, false);
+        mmPriceUtil90 = new MaxMinUtil(stock, true);
         mmPriceUtil90.calcMaxMinIndex(90);
         mmPriceUtil5 = new MaxMinUtil(stock, false);
         mmPriceUtil5.calcMaxMinIndex(5);

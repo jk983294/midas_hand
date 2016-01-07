@@ -10,8 +10,10 @@ import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
 import com.victor.utilities.algorithm.search.TopKElements;
 import com.victor.utilities.utils.ArrayHelper;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -71,6 +73,7 @@ public class GeneralScoreManager implements ScoreManager {
         }
 
         logger.info("result : " + perfCollector.toString());
+        FileUtils.write(new File("D:\\stock_performance.txt"), perfCollector.toPerfString());
     }
 
     /**
@@ -78,7 +81,6 @@ public class GeneralScoreManager implements ScoreManager {
      */
     private void initStocks() throws MidasException, IOException {
         IndexCalculator calculator = new IndexCalculator(stocks, indexName);
-        calculator.setBigDataSet(false);
         calculator.calculate();
         isBigDataSet = calculator.isBigDataSet();
 

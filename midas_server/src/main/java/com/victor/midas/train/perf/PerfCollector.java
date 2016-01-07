@@ -76,9 +76,10 @@ public class PerfCollector {
                 if(index < stock.getDatesInt().length){
                     stockScore.setPerf(totalChangePct);
                     perfStats.addValue(totalChangePct);
-                    if(totalChangePct < 0){
-                        upsets.add(stockScore);
-                    }
+                    upsets.add(stockScore);
+//                    if(totalChangePct < 0){
+//                        upsets.add(stockScore);
+//                    }
                 }
             }
         }
@@ -91,6 +92,24 @@ public class PerfCollector {
 
     @Override
     public String toString() {
+        sortUpsets();
+        return "PerfCollector{" +
+                "\nperf=" + perfStats.getSum() +
+                ", cnt=" + perfStats.getN() +
+                ", real perf=" + perfStats.getMean() +
+                ", std dev=" + perfStats.getStandardDeviation() +
+                "\nday1 stats: open = " + openStatsDay1.getMean() + ", " + openStatsDay1.getStandardDeviation() +
+                " close = " + closeStatsDay1.getMean() + ", " + closeStatsDay1.getStandardDeviation() +
+                " high = " + highStatsDay1.getMean() + ", " + highStatsDay1.getStandardDeviation() +
+                " low = " + lowStatsDay1.getMean() + ", " + lowStatsDay1.getStandardDeviation() +
+                "\nday2 stats: open = " + openStatsDay2.getMean() + ", " + openStatsDay2.getStandardDeviation() +
+                " close = " + closeStatsDay2.getMean() + ", " + closeStatsDay2.getStandardDeviation() +
+                " high = " + highStatsDay2.getMean() + ", " + highStatsDay2.getStandardDeviation() +
+                " low = " + lowStatsDay2.getMean() + ", " + lowStatsDay2.getStandardDeviation() +
+                '}';
+    }
+
+    public String toPerfString() {
         sortUpsets();
         return "PerfCollector{" +
                 "\nupsets = " + upsetsToString() +
