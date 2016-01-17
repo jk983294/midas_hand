@@ -34,17 +34,16 @@ public class MktDataTask extends TaskBase {
 
 	@Override
 	public void doTask() throws Exception {
-        List<StockVo> stocks = getStockFromFileSystem("D:\\MktData\\RawData\\ALL");
+        List<StockVo> stocks = getStockFromFileSystem("F:\\Data\\MktData\\ALL");
         stocksService.saveStocks(stocks);
 		logger.info( description + " complete...");
 	}
 
     public static List<StockVo> getStockFromFileSystem(String path) throws Exception {
-        // "D:\\MktData\\RawData\\ALL"
         logger.info("load data from dir : " + path);
         List<StockVo> stocks = new ArrayList<>();
         fromDirectory(stocks, path);
-        //calcIndex(stocks);
+        calcIndex(stocks);
         return stocks;
     }
 
@@ -67,10 +66,10 @@ public class MktDataTask extends TaskBase {
         }
     }
 
-//    private static void calcIndex(List<StockVo> stocks) throws MidasException {
-//        IndexCalculator indexCalculator = new IndexCalculator(stocks, IndexChangePct.INDEX_NAME);
-//        indexCalculator.calculate();
-//    }
+    private static void calcIndex(List<StockVo> stocks) throws MidasException {
+        IndexCalculator indexCalculator = new IndexCalculator(stocks, IndexChangePct.INDEX_NAME);
+        indexCalculator.calculate();
+    }
 	
 	/**
 	 * read market data from file
@@ -171,7 +170,7 @@ public class MktDataTask extends TaskBase {
      */
     public List<String> getAllFilePaths() throws Exception{
         List<String> filepaths = new ArrayList<>();
-        filepaths.addAll(getAllFilePaths("D:\\MktData\\RawData\\ALL"));
+        filepaths.addAll(getAllFilePaths("F:\\Data\\MktData\\ALL"));
         return filepaths;
     }
 

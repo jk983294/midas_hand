@@ -41,7 +41,7 @@ public class ScoreTask extends TaskBase {
 
     private List<StockVo> getAllStock() throws Exception {
         if(isFromFileSystem){
-            return MktDataTask.getStockFromFileSystem("D:\\MktData\\RawData\\ALL");
+            return MktDataTask.getStockFromFileSystem("F:\\Data\\MktData\\ALL");
         } else {
             return stocksService.queryAllStock();
         }

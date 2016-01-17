@@ -74,7 +74,7 @@ public class MidasConstants {
     /**
      * SH index name
      */
-    public static final String SH_INDEX_NAME = "IDX000001";
+    public static final String SH_INDEX_NAME = "IDX999999";
 
     /**
      * type ahead actions

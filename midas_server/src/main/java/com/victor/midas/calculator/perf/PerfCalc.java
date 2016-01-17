@@ -30,7 +30,7 @@ public class PerfCalc {
     }
 
     public void calculate() throws IOException {
-        List<String> contents = FileUtils.readLines(new File("D:\\MktData\\RawData\\dan stock performance.txt"), "GBK");
+        List<String> contents = FileUtils.readLines(new File("F:\\Data\\MktData\\dan stock performance.txt"), "GBK");
         String stockCode, action;
         int date;
         int hand;

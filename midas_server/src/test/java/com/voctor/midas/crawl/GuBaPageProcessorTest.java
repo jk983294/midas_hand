@@ -22,7 +22,7 @@ public class GuBaPageProcessorTest {
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,000702,211665695.html").run();
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601918,201526977_2.html").run();
         Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601766,211862489_1.html")
-                .addPipeline(new JsonFilePipeline("D:\\MktData\\guba")).run();
+                .addPipeline(new JsonFilePipeline("F:\\Data\\MktData\\guba")).run();
 //        Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,cjpl,211591648.html").run();
     }
 
