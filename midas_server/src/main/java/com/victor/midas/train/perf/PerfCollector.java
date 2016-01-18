@@ -23,6 +23,8 @@ public class PerfCollector {
     private double[] changePct, end, start, max, min;
 
     private List<StockScore> upsets = new ArrayList<>();
+    private DescriptiveStatistics kellyGood = new DescriptiveStatistics();
+    private DescriptiveStatistics kellyBad = new DescriptiveStatistics();
 
     private DescriptiveStatistics perfStats = new DescriptiveStatistics();
     private DescriptiveStatistics openStatsDay1 = new DescriptiveStatistics();
@@ -77,12 +79,26 @@ public class PerfCollector {
                     stockScore.setPerf(totalChangePct);
                     perfStats.addValue(totalChangePct);
                     upsets.add(stockScore);
-//                    if(totalChangePct < 0){
-//                        upsets.add(stockScore);
-//                    }
+
+                    if(totalChangePct < 0){
+                        kellyBad.addValue(totalChangePct);
+                    } else {
+                        kellyGood.addValue(totalChangePct);
+                    }
                 }
             }
         }
+    }
+
+    public double kellyFormula(){
+        if(kellyBad.getN() + kellyGood.getN() > 0){
+            double p = ((double)kellyBad.getN()) / (kellyBad.getN() + kellyGood.getN());
+            double revenueWin = kellyGood.getMean(), revenueLoss = kellyBad.getMean();
+            if(Math.abs(revenueLoss * revenueWin) > 1e-9){
+                return (p * revenueWin + (1 - p) * revenueLoss) / revenueLoss * revenueWin;
+            }
+        }
+        return 0d;
     }
 
     private StockScoreComparator cmp = new StockScoreComparator();
@@ -93,7 +109,7 @@ public class PerfCollector {
     @Override
     public String toString() {
         sortUpsets();
-        return "PerfCollector{" +
+        return "PerfCollector {" +
                 "\nperf=" + perfStats.getSum() +
                 ", cnt=" + perfStats.getN() +
                 ", real perf=" + perfStats.getMean() +
@@ -106,12 +122,13 @@ public class PerfCollector {
                 " close = " + closeStatsDay2.getMean() + ", " + closeStatsDay2.getStandardDeviation() +
                 " high = " + highStatsDay2.getMean() + ", " + highStatsDay2.getStandardDeviation() +
                 " low = " + lowStatsDay2.getMean() + ", " + lowStatsDay2.getStandardDeviation() +
-                '}';
+                "\nkelly fraction = " + kellyFormula() +
+                "\n}";
     }
 
     public String toPerfString() {
         sortUpsets();
-        return "PerfCollector{" +
+        return "PerfCollector {" +
                 "\nupsets = " + upsetsToString() +
                 "\nperf=" + perfStats.getSum() +
                 ", cnt=" + perfStats.getN() +
@@ -125,7 +142,8 @@ public class PerfCollector {
                 " close = " + closeStatsDay2.getMean() + ", " + closeStatsDay2.getStandardDeviation() +
                 " high = " + highStatsDay2.getMean() + ", " + highStatsDay2.getStandardDeviation() +
                 " low = " + lowStatsDay2.getMean() + ", " + lowStatsDay2.getStandardDeviation() +
-                '}';
+                "\nkelly fraction = " + kellyFormula() +
+                "\n}";
     }
 
     private String upsetsToString(){
