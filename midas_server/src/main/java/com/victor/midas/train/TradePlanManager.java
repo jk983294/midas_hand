@@ -12,6 +12,7 @@ import com.victor.midas.train.strategy.common.TradeStrategy;
 import com.victor.midas.util.MidasException;
 import org.apache.log4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**

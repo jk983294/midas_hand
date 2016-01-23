@@ -3,7 +3,6 @@ package com.victor.utilities.utils;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -173,6 +172,13 @@ public class MathHelper {
             result[i] = Math.log(x[i]);
         }
         return result;
+    }
+
+    public static double[] multiplyInPlace(double[] x, double factor){
+        for (int i = 0; i < x.length; i++) {
+            x[i] *= factor;
+        }
+        return x;
     }
 
     public static double[] subtract(double[] a, double[] b){

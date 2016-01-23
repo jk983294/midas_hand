@@ -1,7 +1,6 @@
 package com.victor.midas.calculator.indicator;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
-import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
@@ -12,7 +11,7 @@ import com.victor.utilities.utils.MathHelper;
 import java.util.HashMap;
 
 /**
- * calculate Price Moving Average
+ * calculate MACD
  */
 public class IndexMACD extends IndexCalcBase {
 
@@ -22,10 +21,9 @@ public class IndexMACD extends IndexCalcBase {
 
     private double[] end;
 
-    private double[] pMa5;
-    private double[] pMa35;
-    private double[] macd;
-    private double[] signalLine;
+    private double[] pMaFast;
+    private double[] pMaSlow;
+    private double[] dif, dea, macdBar; // white line, yellow line, bar
     private int len;
 
     public IndexMACD(CalcParameter parameter, MaBase maMethod) {
@@ -48,18 +46,16 @@ public class IndexMACD extends IndexCalcBase {
 
     @Override
     public void calculate() throws MidasException {
-        pMa5 = maMethod.calculate(end, 5);
-        pMa35 = maMethod.calculate(end, 35);
-        macd = MathHelper.subtract(pMa5, pMa35);
-        signalLine = maMethod.calculate(macd, 5);
+        pMaFast = maMethod.calculate(end, 12);
+        pMaSlow = maMethod.calculate(end, 26);
+        dif = MathHelper.subtract(pMaFast, pMaSlow);
+        dea = maMethod.calculate(dif, 9);
+        macdBar = MathHelper.multiplyInPlace(MathHelper.subtract(dif, dea), 2d);
 
 
-        addIndexData("pMa5", pMa5);
-        addIndexData("pMa35", pMa35);
-        addIndexData("macd", macd);
-        addIndexData("signalLine", signalLine);
-        //addIndexData("pMaDiff", pMaDiff);
-        //addIndexData("pMaDiffPct", pMaDiffPct);
+        addIndexData("dif", dif);
+        addIndexData("dea", dea);
+        addIndexData("macdBar", macdBar);
     }
 
     @Override

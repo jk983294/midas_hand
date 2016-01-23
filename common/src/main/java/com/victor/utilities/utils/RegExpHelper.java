@@ -37,6 +37,8 @@ public class RegExpHelper {
     private static final Pattern numberUnitPattern = Pattern.compile(numberUnitPatternStr);
     private static final Pattern footerPattern = Pattern.compile(".*(\\(\\d+\\))$");
     private static final Pattern timePattern = Pattern.compile(".*(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}).*");
+    private static final Pattern intPattern = Pattern.compile("[-+]?\\d+");
+    private static final Pattern doublePattern = Pattern.compile("[-+]?\\d+\\.\\d+");
 
     /**
      * operator pattern
@@ -49,10 +51,9 @@ public class RegExpHelper {
      */
     private static final Pattern numberExtractPattern = Pattern.compile("(" + numberPatternStr + ")");
     private static final Pattern percentOrNumberExtractPattern = Pattern.compile("(" + numberPatternStr + "(\\s*%)?" + ")");
+
     /**
      * replace several space characters to one space
-     * @param str
-     * @return
      */
     public static String condense(String str){
         Matcher matcher = condensePattern.matcher(str);
@@ -61,8 +62,6 @@ public class RegExpHelper {
 
     /**
      * split by and or && ||
-     * @param str
-     * @return
      */
     public static List<String> splitByLogicOperators(String str){
         Matcher matcher = logicOperatorPattern.matcher(str);
@@ -79,8 +78,6 @@ public class RegExpHelper {
 
     /**
      * this will extract first number occurrence
-     * @param str
-     * @return
      */
     public static String extractNumberStr(String str){
         return extract(str, numberExtractPattern);
@@ -88,8 +85,6 @@ public class RegExpHelper {
 
     /**
      * this will extract first number or percent occurrence
-     * @param str
-     * @return
      */
     public static String extractPercentOrNumberStr(String str){
         return extract(str, percentOrNumberExtractPattern);
@@ -138,8 +133,6 @@ public class RegExpHelper {
 
     /**
      * deal with percent character "%" conversion
-     * @param number
-     * @return
      */
     public static Double getNumber(String number){
         if(StringUtils.isEmpty(number) || !containDigit(number)){
@@ -179,8 +172,6 @@ public class RegExpHelper {
 
     /**
      * contain and or && ||
-     * @param str
-     * @return
      */
     public static boolean containLogicOperators(String str){
         return contains(str, logicOperatorPattern);
@@ -242,6 +233,32 @@ public class RegExpHelper {
      */
     public static boolean isNumber(String str){
         return str != null && numberPattern.matcher(str).matches();
+    }
+
+    public static boolean isInt(String str){
+        return str != null && intPattern.matcher(str).matches();
+    }
+
+    public static boolean isDouble(String str){
+        return str != null && doublePattern.matcher(str).matches();
+    }
+
+    public static boolean isInts(List<String> strs){
+        for(String str : strs){
+            if(!isInt(str)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isDoubles(List<String> strs){
+        for(String str : strs){
+            if(!isDouble(str)){
+                return false;
+            }
+        }
+        return true;
     }
 
     public static boolean isPercent(String str){

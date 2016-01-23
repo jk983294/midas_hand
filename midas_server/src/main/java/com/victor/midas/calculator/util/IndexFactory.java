@@ -6,6 +6,8 @@ import com.victor.midas.util.MidasException;
 import com.victor.utilities.datastructures.graph.*;
 import com.victor.utilities.visual.VisualAssist;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -45,7 +47,6 @@ public class IndexFactory {
      * use dependency to get all calculators
      */
     public static List<ICalculator> getAllNeededCalculators(String calc) throws MidasException {
-        List<ICalculator> calculators = new ArrayList<>();
         Queue<String> toProcessCalcNames = new LinkedList<String>();
         Set<String> visited = new HashSet<>();
         toProcessCalcNames.add(calc);
@@ -69,12 +70,32 @@ public class IndexFactory {
 
         List<String> names = TopologicalSort.sortRevertThenGetRawData(dependency);
         VisualAssist.print("all calculators needed: ", names);
-        if(names.size() > 0){
-            for(String name : names){
-                calculators.add(calcName2calculator.get(name));
+        if(names.size() == 0) names.add(calc);
+        return getCalculatorCopy(names);
+    }
+
+    /**
+     * instead of use Factory calculator instances
+     * this function will reflect the constructor to create a new version of calculators to avoid training parameter pollution
+     */
+    private static List<ICalculator> getCalculatorCopy(List<String> names) throws MidasException {
+        List<ICalculator> calculators = new ArrayList<>();
+        CalcParameter parameterCopy = new CalcParameter();
+        for(String name : names){
+            try {
+                Constructor constructor = null;
+                constructor = calcName2calculator.get(name).getClass().getConstructor(new Class[]{CalcParameter.class});
+                ICalculator calculator = (ICalculator)constructor.newInstance(parameterCopy);
+                calculators.add(calculator);
+            } catch (NoSuchMethodException e) {
+                throw new MidasException("can not init calculator " + name, e);
+            } catch (InvocationTargetException e) {
+                throw new MidasException("can not init calculator " + name, e);
+            } catch (InstantiationException e) {
+                throw new MidasException("can not init calculator " + name, e);
+            } catch (IllegalAccessException e) {
+                throw new MidasException("can not init calculator " + name, e);
             }
-        } else {
-            calculators.add(calcName2calculator.get(calc));
         }
         return calculators;
     }

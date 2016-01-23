@@ -15,6 +15,7 @@ import com.victor.utilities.utils.ArrayHelper;
 import com.victor.utilities.utils.MathHelper;
 import org.apache.log4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +72,7 @@ public abstract class TradeStrategy {
         calculator = new IndexCalculator(allRawStocks, "");
         calculator.calculate();
         isSmallSetData = !calculator.isBigDataSet();
-        portfolio = new Portfolio(parameter.getTradeTaxRate());
+        portfolio = new Portfolio(parameter.tradeTaxRate);
         try {
             initStocks(allStockVos);
             datesSH = stockMap.get(MidasConstants.SH_INDEX_NAME).getStock().getDatesInt();
@@ -83,7 +84,7 @@ public abstract class TradeStrategy {
         }
     }
 
-    /** one time trading system simulation, generate performance */
+    /** one time trading system simulation, generate dayPerformance */
     public abstract void tradeSimulation() throws Exception;
 
     public abstract void turnOnRecordHistory();
@@ -94,7 +95,7 @@ public abstract class TradeStrategy {
     }
 
     /**
-     * get tradeSimulation's performance, must run tradeSimulation first
+     * get tradeSimulation's dayPerformance, must run tradeSimulation first
      */
     public double performance() throws Exception {
         return portfolio.performance();
@@ -125,7 +126,7 @@ public abstract class TradeStrategy {
         allStocks = new ArrayList<>();
         for(StockVo stock : allStockVos){
             StockTrain stockTrain = new StockTrain(stock);
-            stockTrain.initTrainDayIndex(parameter.getTrainStartDate(), parameter.getTrainEndDate(), parameter.getExceptionDays());
+            stockTrain.initTrainDayIndex(parameter.trainStartDate, parameter.trainEndDate, parameter.exceptionDays);
             if(stock.getStockType() == StockType.Index){
                 indexes.add(stockTrain);
             } else {

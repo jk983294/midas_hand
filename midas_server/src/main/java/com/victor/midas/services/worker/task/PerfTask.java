@@ -36,7 +36,7 @@ public class PerfTask extends TaskBase {
 	public void doTask() throws Exception {
         PerfCalc perfCalc = new PerfCalc(stocksService.getStockBasicInfo());
         perfCalc.calculate();
-        IoHelper.toJsonFileWithIndent(perfCalc.getResult(), "F:\\Data\\MktData\\dan stock performance.txt");
+        IoHelper.toJsonFileWithIndent(perfCalc.getResult(), "F:\\Data\\MktData\\dan stock dayPerformance.txt");
 		logger.info( description + " complete...");
 	}
 

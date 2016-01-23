@@ -98,9 +98,9 @@ public class IndexVolumeMa extends IndexCalcBase {
     @Override
     public void applyParameter(CalcParameter parameter) {
         this.parameter = parameter;
-        volumeMaShort = parameter.getVolumeMaShort();
-        volumeMaMedium = parameter.getVolumeMaMedium();
-        volumeMaLong = parameter.getVolumeMaLong();
-        volumeMaYear = parameter.getVolumeMaYear();
+        volumeMaShort = parameter.volumeMaShort;
+        volumeMaMedium = parameter.volumeMaMedium;
+        volumeMaLong = parameter.volumeMaLong;
+        volumeMaYear = parameter.volumeMaYear;
     }
 }

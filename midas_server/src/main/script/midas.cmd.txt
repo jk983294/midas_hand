@@ -1,0 +1,2 @@
+trainSingle start end step
+trainSingle 1 10 1

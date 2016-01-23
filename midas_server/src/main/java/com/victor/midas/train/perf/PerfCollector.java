@@ -1,6 +1,7 @@
 package com.victor.midas.train.perf;
 
 import com.victor.midas.calculator.util.MathStockUtil;
+import com.victor.midas.model.train.SingleParameterTrainResult;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
@@ -11,7 +12,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import java.util.*;
 
 /**
- * performance collector
+ * dayPerformance collector
  */
 public class PerfCollector {
 
@@ -101,6 +102,36 @@ public class PerfCollector {
         return 0d;
     }
 
+    public double kellyAnnualizedPerformance(double kellyFraction, double expectedDayPerformance){
+        return Math.pow(1d + kellyFraction * expectedDayPerformance, 250d);
+    }
+
+    public SingleParameterTrainResult getResult(){
+        SingleParameterTrainResult result = new SingleParameterTrainResult();
+        result.cnt = perfStats.getN();
+        result.dayPerformance = perfStats.getMean();
+        result.stdDev = perfStats.getStandardDeviation();
+        result.d1Open = openStatsDay1.getMean();
+        result.d1OpenStdDev = openStatsDay1.getStandardDeviation();
+        result.d1Close = closeStatsDay1.getMean();
+        result.d1CloseStdDev = closeStatsDay1.getStandardDeviation();
+        result.d1High = highStatsDay1.getMean();
+        result.d1HighStdDev = highStatsDay1.getStandardDeviation();
+        result.d1Low = lowStatsDay1.getMean();
+        result.d1LowStdDev = lowStatsDay1.getStandardDeviation();
+        result.d2Open = openStatsDay2.getMean();
+        result.d2OpenStdDev = openStatsDay2.getStandardDeviation();
+        result.d2Close = closeStatsDay2.getMean();
+        result.d2CloseStdDev = closeStatsDay2.getStandardDeviation();
+        result.d2High = highStatsDay2.getMean();
+        result.d2HighStdDev = highStatsDay2.getStandardDeviation();
+        result.d2Low = lowStatsDay2.getMean();
+        result.d2LowStdDev = lowStatsDay2.getStandardDeviation();
+        result.kellyFraction = kellyFormula();
+        result.kellyAnnualizedPerformance = kellyAnnualizedPerformance(result.kellyFraction, result.dayPerformance);
+        return result;
+    }
+
     private StockScoreComparator cmp = new StockScoreComparator();
     public void sortUpsets(){
         Collections.sort(upsets, cmp);
@@ -109,40 +140,14 @@ public class PerfCollector {
     @Override
     public String toString() {
         sortUpsets();
-        return "PerfCollector {" +
-                "\nperf=" + perfStats.getSum() +
-                ", cnt=" + perfStats.getN() +
-                ", real perf=" + perfStats.getMean() +
-                ", std dev=" + perfStats.getStandardDeviation() +
-                "\nday1 stats: open = " + openStatsDay1.getMean() + ", " + openStatsDay1.getStandardDeviation() +
-                " close = " + closeStatsDay1.getMean() + ", " + closeStatsDay1.getStandardDeviation() +
-                " high = " + highStatsDay1.getMean() + ", " + highStatsDay1.getStandardDeviation() +
-                " low = " + lowStatsDay1.getMean() + ", " + lowStatsDay1.getStandardDeviation() +
-                "\nday2 stats: open = " + openStatsDay2.getMean() + ", " + openStatsDay2.getStandardDeviation() +
-                " close = " + closeStatsDay2.getMean() + ", " + closeStatsDay2.getStandardDeviation() +
-                " high = " + highStatsDay2.getMean() + ", " + highStatsDay2.getStandardDeviation() +
-                " low = " + lowStatsDay2.getMean() + ", " + lowStatsDay2.getStandardDeviation() +
-                "\nkelly fraction = " + kellyFormula() +
-                "\n}";
+        return getResult().toString();
     }
 
     public String toPerfString() {
         sortUpsets();
         return "PerfCollector {" +
                 "\nupsets = " + upsetsToString() +
-                "\nperf=" + perfStats.getSum() +
-                ", cnt=" + perfStats.getN() +
-                ", real perf=" + perfStats.getMean() +
-                ", std dev=" + perfStats.getStandardDeviation() +
-                "\nday1 stats: open = " + openStatsDay1.getMean() + ", " + openStatsDay1.getStandardDeviation() +
-                " close = " + closeStatsDay1.getMean() + ", " + closeStatsDay1.getStandardDeviation() +
-                " high = " + highStatsDay1.getMean() + ", " + highStatsDay1.getStandardDeviation() +
-                " low = " + lowStatsDay1.getMean() + ", " + lowStatsDay1.getStandardDeviation() +
-                "\nday2 stats: open = " + openStatsDay2.getMean() + ", " + openStatsDay2.getStandardDeviation() +
-                " close = " + closeStatsDay2.getMean() + ", " + closeStatsDay2.getStandardDeviation() +
-                " high = " + highStatsDay2.getMean() + ", " + highStatsDay2.getStandardDeviation() +
-                " low = " + lowStatsDay2.getMean() + ", " + lowStatsDay2.getStandardDeviation() +
-                "\nkelly fraction = " + kellyFormula() +
+                getResult().toString() +
                 "\n}";
     }
 

@@ -29,7 +29,7 @@ public abstract class MultiStockStrategyBase extends TradeStrategy {
         super(allStockVos, parameter, needTrain);
     }
 
-    /** one time trading system simulation, generate performance */
+    /** one time trading system simulation, generate dayPerformance */
     public abstract void tradeSimulation() throws Exception;
 
     public abstract double tradePerformance();
@@ -72,7 +72,7 @@ public abstract class MultiStockStrategyBase extends TradeStrategy {
         allStocks = new ArrayList<>();
         for(StockVo stock : allStockVos){
             StockTrain stockTrain = new StockTrain(stock);
-            stockTrain.initTrainDayIndex(parameter.getTrainStartDate(), parameter.getTrainEndDate(), parameter.getExceptionDays());
+            stockTrain.initTrainDayIndex(parameter.trainStartDate, parameter.trainEndDate, parameter.exceptionDays);
             if(stock.getStockType() == StockType.Index){
                 indexes.add(stockTrain);
             } else {

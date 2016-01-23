@@ -30,7 +30,7 @@ public class PerfCalc {
     }
 
     public void calculate() throws IOException {
-        List<String> contents = FileUtils.readLines(new File("F:\\Data\\MktData\\dan stock performance.txt"), "GBK");
+        List<String> contents = FileUtils.readLines(new File("F:\\Data\\MktData\\dan stock dayPerformance.txt"), "GBK");
         String stockCode, action;
         int date;
         int hand;
@@ -106,7 +106,7 @@ public class PerfCalc {
 
     public Map<String, Object> getResult(){
         Map<String, Object> result = new HashMap<>();
-        result.put("performance", getAllMoney() / initFund - 1d);
+        result.put("dayPerformance", getAllMoney() / initFund - 1d);
         result.put("remain money", fund);
         result.put("remain", stock2hand);
         return result;

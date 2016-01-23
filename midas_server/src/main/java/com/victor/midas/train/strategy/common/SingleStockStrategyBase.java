@@ -112,7 +112,7 @@ public abstract class SingleStockStrategyBase extends TradeStrategy {
     public abstract void initStrategySpecifiedData() throws MidasException;
 
 
-    /** one time trading system simulation, generate performance */
+    /** one time trading system simulation, generate dayPerformance */
     @Override
     public void tradeSimulation() throws Exception{
         portfolio.init();

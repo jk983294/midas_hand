@@ -42,11 +42,11 @@ public class IndexCalculator {
         isBigDataSet = stocks.size() > 100;
         filterUtil = new StockFilterUtil(this.stocks);
         filterUtil.filter();
+        initCalculator();
     }
 
     public void calculate() throws MidasException {
         logger.info("calculation index start...");
-        initCalculator();
         if(isBigDataSet && lastAggregationIndex >= 0){
             for(int i = 0; i <= lastAggregationIndex; i++){
                 calculate(calculators.get(i));
@@ -117,23 +117,11 @@ public class IndexCalculator {
         }
     }
 
-//    private void calcForIndex() throws MidasException {
-//        logger.info("calculation for Index ");
-//        for(StockVo stock : filterUtil.getIndexStocks()){
-//            try {
-//                for (IndexCalcBase indexCalcBase : indexCalcbasesCommonForIndex){
-//                    indexCalcBase.calculate(stock);
-//                }
-//                for (IndexCalcBase indexCalcBase : indexCalcbasesForIndex){
-//                    indexCalcBase.calculate(stock);
-//                }
-//            } catch (Exception e){
-//                logger.error(e);
-//                throw new MidasException("problem meet when calculate index for " + stock, e);
-//            }
-//        }
-//        logger.info("calculation for Index finish... ");
-//    }
+    public void apply(CalcParameter parameter) throws MidasException {
+        this.parameter = parameter;
+        IndexFactory.applyNewParameter(parameter, calculators);
+        calculate();
+    }
 
     public CalcParameter getParameter() {
         return parameter;

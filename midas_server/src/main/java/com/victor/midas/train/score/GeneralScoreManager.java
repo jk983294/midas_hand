@@ -1,10 +1,12 @@
 package com.victor.midas.train.score;
 
 import com.victor.midas.calculator.IndexCalculator;
-import com.victor.midas.calculator.score.StockScoreRank;
+import com.victor.midas.model.train.SingleParameterTrainResult;
+import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
+import com.victor.midas.train.common.Trainee;
 import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
@@ -20,14 +22,14 @@ import java.util.*;
 /**
  * used for calculate score, and record score
  */
-public class GeneralScoreManager implements ScoreManager {
+public class GeneralScoreManager implements ScoreManager, Trainee {
 
     private static final Logger logger = Logger.getLogger(GeneralScoreManager.class);
 
     private String indexName;
+    private IndexCalculator calculator;
     private List<StockVo> stocks;
     private Map<String, StockVo> name2stock;    // stock name map to date index
-    private StockVo indexSH;
     private List<StockVo> tradableStocks;
     private int tradableCnt;
     private int[] dates;                        // benchmark time line
@@ -35,7 +37,7 @@ public class GeneralScoreManager implements ScoreManager {
     private int len;                            // benchmark stock's date len
 
     private List<StockScoreRecord> scoreRecords;
-
+    private PerfCollector perfCollector;
     private boolean isBigDataSet;
 
     public GeneralScoreManager(List<StockVo> stocks, String indexName) throws Exception {
@@ -46,10 +48,7 @@ public class GeneralScoreManager implements ScoreManager {
 
     public void process() throws Exception {
         logger.info("start score simulation ...");
-        scoreRecords = new ArrayList<>();
         double[] scores;
-        PerfCollector perfCollector = new PerfCollector(name2stock);
-
         int cob;
         for (int i = 0; i < len; i++) {
             cob = dates[i];
@@ -77,27 +76,33 @@ public class GeneralScoreManager implements ScoreManager {
     }
 
     /**
-     * in strategy, it use related calculator only, so it is needed to use all calculators to init
+     * this is differ from initForTrain, everything in initStocks will be initialized once
      */
     private void initStocks() throws MidasException, IOException {
-        IndexCalculator calculator = new IndexCalculator(stocks, indexName);
+        calculator = new IndexCalculator(stocks, indexName);
         calculator.calculate();
         isBigDataSet = calculator.isBigDataSet();
-
         StockFilterUtil filterUtil = calculator.getFilterUtil();
-        indexSH = filterUtil.getIndexSH();
         tradableStocks = filterUtil.getTradableStocks();
+        name2stock = filterUtil.getName2stock();
+        dates = filterUtil.getIndexSH().getDatesInt();
+        len = dates.length;
+        tradableCnt = tradableStocks.size();
 
-        dates = indexSH.getDatesInt();
+        initForTrain();
+        logger.info("init stock finished...");
+    }
+
+    /**
+     * init all cob indexes, init a new PerfCollector for collection
+     */
+    private void initForTrain(){
+        perfCollector = new PerfCollector(name2stock);
+        scoreRecords = new ArrayList<>();
         for(StockVo stock : tradableStocks){
             stock.setCobIndex(0);
         }
-        len = dates.length;
-        tradableCnt = tradableStocks.size();
         index = 0;
-        name2stock = filterUtil.getName2stock();
-
-        logger.info("init stock finished...");
     }
 
     public boolean isBigDataSet() {
@@ -110,5 +115,17 @@ public class GeneralScoreManager implements ScoreManager {
 
     public List<StockVo> getStocks() {
         return stocks;
+    }
+
+    @Override
+    public SingleParameterTrainResult getPerformance() {
+        return perfCollector.getResult();
+    }
+
+    @Override
+    public void apply(CalcParameter parameter) throws Exception {
+        calculator.apply(parameter);
+        initForTrain();
+        process();
     }
 }

@@ -64,6 +64,37 @@ public class RegExpHelperTest {
     }
 
     @Test
+    public void testIsInt(){
+        assertEquals(false, RegExpHelper.isInt("\t hello\t \nworld \t\n"));
+        assertEquals(false, RegExpHelper.isInt("3.1415"));
+        assertEquals(true, RegExpHelper.isInt("479"));
+        assertEquals(false, RegExpHelper.isInt("-3.12"));
+        assertEquals(true, RegExpHelper.isInt("-567"));
+        assertEquals(false, RegExpHelper.isInt("-0.2364"));
+        assertEquals(false, RegExpHelper.isInt("+0.2364"));
+        assertEquals(false, RegExpHelper.isInt("+4."));
+        assertEquals(false, RegExpHelper.isInt("-1.2364e12"));
+        assertEquals(false, RegExpHelper.isInt("-1.2364e-12"));
+        assertEquals(false, RegExpHelper.isInt("-1,234,345,234.5435"));
+        assertEquals(false, RegExpHelper.isInt("-1,234,5,234.5435"));
+        assertEquals(false, RegExpHelper.isInt("-1.2364e"));
+        assertEquals(false, RegExpHelper.isInt(""));
+    }
+
+    @Test
+    public void testIsDouble(){
+        assertEquals(false, RegExpHelper.isDouble("\t hello\t \nworld \t\n"));
+        assertEquals(true, RegExpHelper.isDouble("3.1415"));
+        assertEquals(false, RegExpHelper.isDouble("479"));
+        assertEquals(true, RegExpHelper.isDouble("-3.12"));
+        assertEquals(false, RegExpHelper.isDouble("-567"));
+        assertEquals(true, RegExpHelper.isDouble("-0.2364"));
+        assertEquals(true, RegExpHelper.isDouble("+0.2364"));
+        assertEquals(true, RegExpHelper.isDouble("+4.1"));
+        assertEquals(false, RegExpHelper.isDouble(""));
+    }
+
+    @Test
     public void testIsPercentOrNumber(){
         assertEquals(false, RegExpHelper.isPercentOrNumber("\t hello\t \nworld \t\n"));
         assertEquals(true, RegExpHelper.isPercentOrNumber("3.1415"));

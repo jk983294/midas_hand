@@ -58,7 +58,8 @@ public class TaskMgr {
             case create : addTask( new CreateCollectionTask( taskDao , stockInfoDao, stockDao, miscDao, params ) ); break;
             case load : addTask(new MktDataTask(taskDao, stocksService, params)); break;
             case calculate : addTask(new CalculateTask(taskDao, stocksService, params)); break;
-            case train : addTask(new TrainTask(taskDao, stocksService, params)); break;
+            case trainSingle :
+            case trainStrategy : addTask(new TrainTask(taskDao, stocksService, params, cmdType)); break;
             case plan : addTask(new PlanTask(taskDao, stocksService, params)); break;
             case score : addTask(new ScoreTask(taskDao, stocksService, false, params)); break;
             case crawl : addTask(new CrawlTask(taskDao, stocksService, params)); break;

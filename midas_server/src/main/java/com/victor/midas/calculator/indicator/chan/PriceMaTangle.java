@@ -93,7 +93,7 @@ public class PriceMaTangle extends IndexCalcBase {
     @Override
     public void applyParameter(CalcParameter parameter) {
         this.parameter = parameter;
-        bullLine = parameter.getBullLine();
-        bearLine = parameter.getBearLine();
+        bullLine = parameter.bullLine;
+        bearLine = parameter.bearLine;
     }
 }
