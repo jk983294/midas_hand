@@ -1,5 +1,6 @@
 package com.victor.midas.services.worker.task;
 
+import com.victor.midas.calculator.score.StockRevertScoreRank;
 import com.victor.midas.calculator.score.StockScoreRank;
 import com.victor.midas.model.common.CmdType;
 import com.victor.midas.model.vo.CalcParameter;
@@ -14,10 +15,13 @@ import com.victor.midas.train.common.Trainee;
 import com.victor.midas.train.score.GeneralScoreManager;
 import com.victor.midas.train.strategy.single.SrStrategyS;
 import com.victor.midas.util.MidasException;
+import com.victor.utilities.utils.JsonHelper;
 import com.victor.utilities.utils.PerformanceUtil;
 import com.victor.utilities.utils.RegExpHelper;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.util.List;
 
 public class TrainTask extends TaskBase {
@@ -51,14 +55,18 @@ public class TrainTask extends TaskBase {
         List<StockVo> stocks = stocksService.queryAllStock();
         if(params != null && params.size() == 3){
             SingleParameterTrainer trainer = null;
-            Trainee trainee = new GeneralScoreManager(stocks, StockScoreRank.INDEX_NAME);
             if(RegExpHelper.isInts(params)){
-                trainer = new SingleParameterTrainer(trainee, Integer.valueOf(params.get(0)), Integer.valueOf(params.get(1)), Integer.valueOf(params.get(2)));
+                trainer = new SingleParameterTrainer(Integer.valueOf(params.get(0)), Integer.valueOf(params.get(1)), Integer.valueOf(params.get(2)));
             } else if(RegExpHelper.isDoubles(params)){
-                trainer = new SingleParameterTrainer(trainee, Double.valueOf(params.get(0)), Double.valueOf(params.get(1)), Double.valueOf(params.get(2)));
+                trainer = new SingleParameterTrainer(Double.valueOf(params.get(0)), Double.valueOf(params.get(1)), Double.valueOf(params.get(2)));
             }
             if(trainer != null){
+                Trainee trainee = new GeneralScoreManager(stocks, StockRevertScoreRank.INDEX_NAME);
+                trainee.setIsInTrain(true);
+                trainer.setTrainee(trainee);
                 trainer.process();
+                FileUtils.write(new File("E:\\stock_train_result.txt"), new JsonHelper().toJson(trainer.getResults()));
+                stocksService.saveSingleParameterTrainResults(trainer.getResults());
                 //trainDao.saveTrainResult(manager.getTrainResult());
             }
         }

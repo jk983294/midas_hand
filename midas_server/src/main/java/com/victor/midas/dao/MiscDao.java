@@ -2,6 +2,7 @@ package com.victor.midas.dao;
 
 import com.victor.midas.model.db.misc.FocusedStockNamesDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
+import com.victor.midas.model.train.SingleParameterTrainResults;
 import com.victor.midas.util.MidasConstants;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,11 @@ public class MiscDao {
 
     private static final Logger logger = Logger.getLogger(StockDao.class);
 
-    private static Query allStockNamesQuery = null;
+    private static Query allStockNamesQuery, singleTrainResultQuery;
 
     static {
         allStockNamesQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_ALL_STOCK_NAMES));
+        singleTrainResultQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_SINGLE_TRAIN_RESULT));
     }
 
     @Autowired
@@ -38,6 +40,11 @@ public class MiscDao {
         return mongoTemplate.findOne(new Query(Criteria.where("_id").is(FocusedStockNamesDb.MISC_NAME)), FocusedStockNamesDb.class, COLLECTION_NAME);
     }
 
+    public SingleParameterTrainResults querySingleParameterTrainResults(){
+        SingleParameterTrainResults results = mongoTemplate.findOne(singleTrainResultQuery, SingleParameterTrainResults.class, COLLECTION_NAME);
+        return results;
+    }
+
     /**
      * save Misc to DB
      */
@@ -47,6 +54,10 @@ public class MiscDao {
 
     public void saveMisc(FocusedStockNamesDb focusedStockNamesDb){
         mongoTemplate.save(focusedStockNamesDb, COLLECTION_NAME);
+    }
+
+    public void saveMisc(SingleParameterTrainResults results){
+        mongoTemplate.save(results, COLLECTION_NAME);
     }
 
 

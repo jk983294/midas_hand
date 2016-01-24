@@ -1,6 +1,7 @@
 package com.victor.utilities.utils;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.util.MathArrays;
 
 import java.lang.reflect.Array;
@@ -47,8 +48,10 @@ public class ArrayHelper {
 
     public static <T> List<T> array2list(T[] original){
         List<T> list = new ArrayList<>();
-        for (int i = 0; i < original.length; i++) {
-            list.add(original[i]);
+        if(original != null){
+            for (int i = 0; i < original.length; i++) {
+                list.add(original[i]);
+            }
         }
         return list;
     }
@@ -125,6 +128,12 @@ public class ArrayHelper {
             return data.get(index);
         }
         return null;
+    }
+
+    public static void clear(DescriptiveStatistics... statisticses){
+        for(DescriptiveStatistics statistics : statisticses){
+            statistics.clear();
+        }
     }
 
 }

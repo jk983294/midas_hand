@@ -2,9 +2,11 @@ package com.victor.utilities.algorithm.search;
 
 import com.victor.utilities.utils.ArrayHelper;
 import com.victor.utilities.utils.MathHelper;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,6 +15,7 @@ import java.util.List;
 public class TopKElements  {
 
     public static <T extends Comparable> T[] getFirstK(List<T> unsorted, int k){
+        if(CollectionUtils.isEmpty(unsorted)) return null;
         T[] array = ArrayHelper.list2array(unsorted);
         return getFirstK(array, k);
     }

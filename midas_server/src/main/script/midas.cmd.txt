@@ -1,2 +1,5 @@
+for small dataset test, change com.victor.midas.util.StockFilterUtil.needSmallSetForTest
+
 trainSingle start end step
 trainSingle 1 10 1
+trainSingle 0.8 1.2 0.1.

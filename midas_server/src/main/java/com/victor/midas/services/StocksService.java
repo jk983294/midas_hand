@@ -13,6 +13,7 @@ import com.victor.midas.dao.*;
 import com.victor.midas.model.db.DayFocusDb;
 import com.victor.midas.model.db.StockInfoDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
+import com.victor.midas.model.train.SingleParameterTrainResults;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 
@@ -110,6 +111,14 @@ public class StocksService {
 
     public List<String> queryAllStockNames(){
         return miscDao.queryStockNames().getStockNames();
+    }
+
+    public SingleParameterTrainResults querySingleParameterTrainResults(){
+        return miscDao.querySingleParameterTrainResults();
+    }
+
+    public void saveSingleParameterTrainResults(SingleParameterTrainResults results){
+        miscDao.saveMisc(results);
     }
 
     public List<StockCrawlData> queryAllStockCrawlData(){

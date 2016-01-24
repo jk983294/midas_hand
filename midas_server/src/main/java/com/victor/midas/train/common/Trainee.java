@@ -10,4 +10,6 @@ public interface Trainee {
 
     public void apply(CalcParameter parameter) throws Exception;
 
+    public void setIsInTrain(boolean isInTrain);
+
 }

@@ -23,6 +23,7 @@ public class MidasConstants {
      * misc collection MiscName for MongoDB index
      */
     public static final String MISC_ALL_STOCK_NAMES = "AllStockNames";
+    public static final String MISC_SINGLE_TRAIN_RESULT = "SingleTrainResult";
 
     /**
      * collection name

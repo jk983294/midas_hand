@@ -2,6 +2,7 @@ package com.victor.midas.endpoint;
 
 import com.victor.midas.model.db.DayFocusDb;
 import com.victor.midas.model.db.StockInfoDb;
+import com.victor.midas.model.train.SingleParameterTrainResults;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.TrainResult;
 import com.victor.midas.model.vo.score.StockScoreRecord;
@@ -61,6 +62,14 @@ public class StocksEndpoint {
         logger.info("fetch train result for trainId : " + trainId);
         if(trainId == null || trainId < 0) return stocksService.queryLastTrainResult();
         else return stocksService.queryTrainResult(trainId);
+    }
+
+    @GET
+    @RequestMapping("/singleTrainResult")
+    @Produces(MediaType.APPLICATION_JSON)
+    public SingleParameterTrainResults getSingleTrainResult() throws MidasException {
+        logger.info("fetch single train result ");
+        return stocksService.querySingleParameterTrainResults();
     }
 
     @GET

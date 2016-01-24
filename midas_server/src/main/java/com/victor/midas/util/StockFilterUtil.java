@@ -18,6 +18,7 @@ public class StockFilterUtil {
     private List<StockVo> indexStocks = new ArrayList<>();
     private Map<String, StockVo> name2stock = new HashMap<>();
     private StockVo indexSH;
+    private boolean needSmallSetForTest = false;
 
     public StockFilterUtil(List<StockVo> allStockVos) {
         this.allStockVos = allStockVos;
@@ -27,7 +28,8 @@ public class StockFilterUtil {
         for(StockVo stock : allStockVos){
             name2stock.put(stock.getStockName(), stock);
             if(stock.getStockType() != StockType.Index){
-                tradableStocks.add(stock);
+                if(!needSmallSetForTest || (needSmallSetForTest && tradableStocks.size() < 10))
+                    tradableStocks.add(stock);
             } else if(stock.getStockType() == StockType.Index){
                 indexStocks.add(stock);
                 if(MidasConstants.SH_INDEX_NAME.equalsIgnoreCase(stock.getStockName())){

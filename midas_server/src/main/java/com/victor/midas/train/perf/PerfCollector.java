@@ -7,6 +7,7 @@ import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
+import com.victor.utilities.utils.ArrayHelper;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.*;
@@ -19,6 +20,7 @@ public class PerfCollector {
     private Map<String, StockVo> name2stock;    // stock name map to date index
     private String stockCode;
     private int index;                          // benchmark stock's date index
+    private boolean isInTrain = false;
 
     private int cobRangeFrom, cobRangeTo;
     private double[] changePct, end, start, max, min;
@@ -39,8 +41,14 @@ public class PerfCollector {
 
     public PerfCollector(Map<String, StockVo> name2stock) {
         this.name2stock = name2stock;
-        cobRangeFrom = 20140601;
         cobRangeTo = name2stock.get(MidasConstants.SH_INDEX_NAME).getEnd();
+        clear();
+    }
+
+    public void clear(){
+        cobRangeFrom = 20140601;
+        upsets.clear();
+        ArrayHelper.clear(kellyGood, kellyBad, perfStats, openStatsDay1, closeStatsDay1, highStatsDay1, lowStatsDay1, openStatsDay2, closeStatsDay2, highStatsDay2, lowStatsDay2);
     }
 
     public void addRecord(StockScoreRecord record) throws MidasException {
@@ -79,7 +87,7 @@ public class PerfCollector {
                 if(index < stock.getDatesInt().length){
                     stockScore.setPerf(totalChangePct);
                     perfStats.addValue(totalChangePct);
-                    upsets.add(stockScore);
+                    if(!isInTrain) upsets.add(stockScore);
 
                     if(totalChangePct < 0){
                         kellyBad.addValue(totalChangePct);
@@ -132,6 +140,8 @@ public class PerfCollector {
         return result;
     }
 
+
+
     private StockScoreComparator cmp = new StockScoreComparator();
     public void sortUpsets(){
         Collections.sort(upsets, cmp);
@@ -166,5 +176,9 @@ public class PerfCollector {
             else if(o1.getPerf() < o2.getPerf()) return -1;
             else return 0;
         }
+    }
+
+    public void setIsInTrain(boolean isInTrain) {
+        this.isInTrain = isInTrain;
     }
 }

@@ -29,7 +29,6 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
     private String indexName;
     private IndexCalculator calculator;
     private List<StockVo> stocks;
-    private Map<String, StockVo> name2stock;    // stock name map to date index
     private List<StockVo> tradableStocks;
     private int tradableCnt;
     private int[] dates;                        // benchmark time line
@@ -38,7 +37,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
 
     private List<StockScoreRecord> scoreRecords;
     private PerfCollector perfCollector;
-    private boolean isBigDataSet;
+    private boolean isBigDataSet, isInTrain = false;
 
     public GeneralScoreManager(List<StockVo> stocks, String indexName) throws Exception {
         this.stocks = stocks;
@@ -71,8 +70,10 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
             ScoreHelper.perfCollect(stockScores, cob, perfCollector, scoreRecords);
         }
 
-        logger.info("result : " + perfCollector.toString());
-        FileUtils.write(new File("D:\\stock_performance.txt"), perfCollector.toPerfString());
+        if(!isInTrain){
+            logger.info("result : " + perfCollector.toString());
+            FileUtils.write(new File("D:\\stock_performance.txt"), perfCollector.toPerfString());
+        }
     }
 
     /**
@@ -84,10 +85,10 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
         isBigDataSet = calculator.isBigDataSet();
         StockFilterUtil filterUtil = calculator.getFilterUtil();
         tradableStocks = filterUtil.getTradableStocks();
-        name2stock = filterUtil.getName2stock();
         dates = filterUtil.getIndexSH().getDatesInt();
         len = dates.length;
         tradableCnt = tradableStocks.size();
+        perfCollector = new PerfCollector(filterUtil.getName2stock());
 
         initForTrain();
         logger.info("init stock finished...");
@@ -97,7 +98,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
      * init all cob indexes, init a new PerfCollector for collection
      */
     private void initForTrain(){
-        perfCollector = new PerfCollector(name2stock);
+        perfCollector.clear();
         scoreRecords = new ArrayList<>();
         for(StockVo stock : tradableStocks){
             stock.setCobIndex(0);
@@ -127,5 +128,11 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
         calculator.apply(parameter);
         initForTrain();
         process();
+    }
+
+    @Override
+    public void setIsInTrain(boolean isInTrain) {
+        this.isInTrain = isInTrain;
+        perfCollector.setIsInTrain(isInTrain);
     }
 }

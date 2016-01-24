@@ -1,13 +1,21 @@
 package com.victor.midas.model.train;
 
 
+import com.victor.midas.model.db.misc.MiscBase;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class SingleParameterTrainResults {
+public class SingleParameterTrainResults extends MiscBase {
 
     private List<SingleParameterTrainResult> results = new ArrayList<>();
     private TrainType type;
+
+    public SingleParameterTrainResults() {
+    }
+    public SingleParameterTrainResults(String miscName) {
+        super(miscName);
+    }
 
     public void add(SingleParameterTrainResult result){
         results.add(result);
@@ -31,5 +39,13 @@ public class SingleParameterTrainResults {
 
     public TrainType getType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        return "SingleParameterTrainResults{" +
+                "results=" + results +
+                ", type=" + type +
+                '}';
     }
 }

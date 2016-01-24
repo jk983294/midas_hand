@@ -4,6 +4,7 @@ import com.victor.midas.model.train.SingleParameterTrainResults;
 import com.victor.midas.model.train.TrainType;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.common.Trainee;
+import com.victor.midas.util.MidasConstants;
 import org.apache.log4j.Logger;
 
 /**
@@ -20,10 +21,9 @@ public class SingleParameterTrainer {
     public int singleIntStart, singleIntEnd, singleIntStep;
     public double singleDoubleStart, singleDoubleEnd, singleDoubleStep;
 
-    private SingleParameterTrainResults results = new SingleParameterTrainResults();
+    private SingleParameterTrainResults results = new SingleParameterTrainResults(MidasConstants.MISC_SINGLE_TRAIN_RESULT);
 
-    public SingleParameterTrainer(Trainee trainee, int start, int end, int step) {
-        this.trainee = trainee;
+    public SingleParameterTrainer(int start, int end, int step) {
         this.singleIntStart = start;
         this.singleIntEnd = end;
         this.singleIntStep = step;
@@ -31,8 +31,7 @@ public class SingleParameterTrainer {
         results.setType(this.type);
     }
 
-    public SingleParameterTrainer(Trainee trainee, double start, double end, double step) {
-        this.trainee = trainee;
+    public SingleParameterTrainer(double start, double end, double step) {
         this.singleDoubleStart = start;
         this.singleDoubleEnd = end;
         this.singleDoubleStep = step;
@@ -45,23 +44,28 @@ public class SingleParameterTrainer {
         if(type == TrainType.SingleInt){
             for (int i = singleIntStart; i <= singleIntEnd; i += singleIntStep) {
                 parameter.singleInt = i;
-                process(parameter);
-                results.getLastResults().parameter = i;
+                process(parameter, i);
             }
         } else if(type == TrainType.SingleDouble){
             for (double i = singleDoubleStart; i <= singleDoubleEnd; i += singleDoubleStep) {
                 parameter.singleDouble = i;
-                process(parameter);
-                results.getLastResults().parameter = i;
+                process(parameter, i);
             }
         }
     }
 
-    private void process(CalcParameter parameter) throws Exception {
+    private void process(CalcParameter parameter, double param) throws Exception {
+        logger.info("start training with parameter " + param);
         trainee.apply(parameter);
         results.add(trainee.getPerformance());
+        results.getLastResults().parameter = param;
     }
 
+    public SingleParameterTrainResults getResults() {
+        return results;
+    }
 
-
+    public void setTrainee(Trainee trainee) {
+        this.trainee = trainee;
+    }
 }

@@ -19,9 +19,7 @@ public class StockRevertScoreRank extends IndexCalcBase {
     public final static String INDEX_NAME = "score_revert";
 
     private double[] end, start, max, min, volume, total, changePct, upShadowPct, downShadowPct, middleShadowPct;
-
     private double[] scores;
-
     private int len;
 
     private MaxMinUtil mmPriceUtil90, mmPriceUtil5;
@@ -29,6 +27,7 @@ public class StockRevertScoreRank extends IndexCalcBase {
     private double maxVolume, subMaxVolume, firstRevertVolume;
     private int maxVolumeIndex, subMaxVolumeIndex, firstRevertIndex, fallDays;
     private boolean hasFirstRevert, hasSubMaxVolume;
+    private double trainParam = 1d;
 
     private DescriptiveStatistics changePctStats = new DescriptiveStatistics();
 
@@ -184,7 +183,7 @@ public class StockRevertScoreRank extends IndexCalcBase {
         }
         if(hasFirstRevert){
             for(int i = maxVolumeIndex; i < firstRevertIndex - 1; i++){
-                score += volumeDownFunc.calculate(volume[i] / volume[i + 1]);
+                score += (volumeDownFunc.calculate(volume[i] / volume[i + 1]) * trainParam);
                 cnt++;
             }
             for(int i = firstRevertIndex - 1; i < subMaxVolumeIndex; i++){
@@ -278,5 +277,11 @@ public class StockRevertScoreRank extends IndexCalcBase {
         len = end.length;
         scores = new double[len];
         cmpIndexName2Index = new HashMap<>();
+    }
+
+    @Override
+    public void applyParameter(CalcParameter parameter) {
+        this.parameter = parameter;
+        this.trainParam = parameter.singleDouble;
     }
 }
