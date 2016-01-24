@@ -71,10 +71,11 @@
             "jquery-1.11.1","bootstrap",
             "angular", "angular-route","angular-animate", "ng-table", "angular-resource",
             "ui-bootstrap-tpls-0.11.2", "select",
-            "jquery.flot","jquery.flot.time","jquery.flot.tooltip_0.5"
+            "jquery.flot","jquery.flot.time","jquery.flot.tooltip_0.5",
+            "d3", "nv.d3", "angular-nvd3"
         ],
         cssFiles = [
-            "bootstrap.min","bootstrap-theme.min","ng-table.min", "select.min", "mytheme"
+            "bootstrap.min","bootstrap-theme.min","ng-table.min", "select.min", "nv.d3.min", "mytheme"
         ];
 
     var initConfig = isDevEnv();
@@ -107,6 +108,7 @@
     loadJS("app/controllers/trainResultController.js");
     loadJS("app/controllers/planController.js");
     loadJS("app/controllers/scoreController.js");
+    loadJS("app/controllers/singleTrainController.js");
 
 
 })();

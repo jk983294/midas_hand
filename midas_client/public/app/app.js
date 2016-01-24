@@ -13,7 +13,7 @@
 
 var urlBase = 'app/partials/';
 var midasApp = angular.module('midasApp', ['ngRoute', 'ngTable', 'flotang',
-    'ui.bootstrap', 'ui.select',
+    'ui.bootstrap', 'ui.select', 'nvd3',
     'formatFilters','DataService', 'UtilService']);
 
 midasApp.config(['$routeProvider',
@@ -45,6 +45,10 @@ midasApp.config(['$routeProvider',
             .when('/Score', {
                 controller: 'scoreController',
                 templateUrl: urlBase + 'scoreContent.html'
+            })
+            .when('/SingleTrain', {
+                controller: 'singleTrainController',
+                templateUrl: urlBase + 'singleTrainContent.html'
             })
             .otherwise({
                 redirectTo: '/Overview'

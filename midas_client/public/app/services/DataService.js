@@ -20,6 +20,7 @@ var serviceUrls = (function(){
     var scoreRangeUrl = isRemote ? urlBase + 'stocks/score/:cobFrom/:cobTo' : 'app/data/score.json';
     var conceptScoreUrl = isRemote ? urlBase + 'stocks/conceptScore' : 'app/data/conceptScore.json';
     var conceptScoreRangeUrl = isRemote ? urlBase + 'stocks/conceptScore/:cobFrom/:cobTo' : 'app/data/conceptScore.json';
+    var singleTrainResultUrl = isRemote ? urlBase + 'stocks/singleTrainResult' : 'app/data/SingleTrainResults.json';
     return {
         stockInfosUrl : stockInfosUrl,
         stockDetailUrl : stockDetailUrl,
@@ -33,7 +34,8 @@ var serviceUrls = (function(){
         scoreRangeUrl : scoreRangeUrl,
         conceptScoreUrl : conceptScoreUrl,
         conceptScoreRangeUrl : conceptScoreRangeUrl,
-        planUrl : planUrl
+        planUrl : planUrl,
+        singleTrainResultUrl : singleTrainResultUrl
     };
 })();
 
@@ -165,12 +167,22 @@ dataService.factory('ConceptScoreRangeQuery', ['$resource',
     }
 ]);
 
+dataService.factory('singleTrainResultQuery', ['$resource',
+    function($resource){
+        return $resource(
+            serviceUrls.singleTrainResultUrl,
+            {  },
+            {'query': { method: 'GET'}}
+        );
+    }
+]);
+
 dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'StocksCmp',
     'TypeAheadTips', 'TypeAheadAction', 'TaskQuery', 'TrainResult', 'PlanQuery',
-    'ScoreQuery', 'ScoreRangeQuery', 'ConceptScoreQuery', 'ConceptScoreRangeQuery',
+    'ScoreQuery', 'ScoreRangeQuery', 'ConceptScoreQuery', 'ConceptScoreRangeQuery', 'singleTrainResultQuery',
     function($resource, StockInfos, StockDetail, StocksCmp,
              TypeAheadTips, TypeAheadAction, TaskQuery, TrainResult, PlanQuery,
-             ScoreQuery, ScoreRangeQuery, ConceptScoreQuery, ConceptScoreRangeQuery){
+             ScoreQuery, ScoreRangeQuery, ConceptScoreQuery, ConceptScoreRangeQuery, singleTrainResultQuery){
         var stockInfos = {};
 
         // get future object
@@ -232,6 +244,10 @@ dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'Stoc
             });
         }
 
+        function getSingleTrainResult(){
+            return singleTrainResultQuery.query();
+        }
+
         var dateFormats = ['dd-MMMM-yyyy', 'yyyy-MM-dd', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
 
         var alerts = [];
@@ -252,6 +268,7 @@ dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'Stoc
             getScoresRange : getScoresRange,
             getConceptScores : getConceptScores,
             getConceptScoresRange : getConceptScoresRange,
+            getSingleTrainResult : getSingleTrainResult,
 
             dateFormats : dateFormats,
 

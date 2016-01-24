@@ -1,0 +1,24 @@
+{
+  "name": "midas_client",
+  "description": "midas client",
+  "main": [
+    "bootup.js"
+  ],
+  "moduleType": [],
+  "keywords": [
+    "midas"
+  ],
+  "authors": [
+    "kun"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

@@ -80,6 +80,13 @@ utilService.factory('Utils',
             for(var i = 0, len = p1.length; i < len; i++ ) properties.push( [ p1[i] , p2[i] ] );
             return properties;
         }
+
+        function mergeForD3Point(x, y){
+            var data = new Array();
+            for(var i = 0, len = x.length; i < len; i++ ) data.push( { x : x[i], y : y[i]} );
+            return data;
+        }
+
         function urlWithOutHash(url){
             return url.substr(0,url.indexOf('#'));
         }
@@ -230,6 +237,7 @@ utilService.factory('Utils',
             object2PropArray : object2PropArray,
             extractProperty : extractProperty,
             merge2Array : merge2Array,
+            mergeForD3Point : mergeForD3Point,
             binaryIndexOf : binaryIndexOf,
             array2remove : array2remove,
             isInArray : isInArray,
