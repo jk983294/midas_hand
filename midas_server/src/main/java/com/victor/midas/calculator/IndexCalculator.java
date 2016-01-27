@@ -29,6 +29,11 @@ public class IndexCalculator {
         ctor(stocks, calcName);
     }
 
+    /**
+     * because some calculator need shIndex, so reuse IndexCalculator(List<StockVo> stocks, String calcName)
+     * List<StockVo> stocks contain stock and shIndex
+     */
+    @Deprecated
     public IndexCalculator(StockVo stock, String calcName) throws MidasException {
         List<StockVo> stocks = new ArrayList<>();
         stocks.add(stock);
@@ -60,33 +65,36 @@ public class IndexCalculator {
 	}
 
     private void calculate(ICalculator calculator) throws MidasException {
-        List<StockVo> stockCollection = null;
         if(calculator.getCalculatorType() == MidasConstants.CalculatorType.Tradable){
-            stockCollection = filterUtil.getTradableStocks();
+            calculate(calculator, filterUtil.getTradableStocks());
         } else if(calculator.getCalculatorType() == MidasConstants.CalculatorType.All){
-            stockCollection = filterUtil.getAllStockVos();
+            // first calculate index then tradable, for some tradable may use index results
+            calculate(calculator, filterUtil.getIndexStocks());
+            calculate(calculator, filterUtil.getTradableStocks());
         } else if(calculator.getCalculatorType() == MidasConstants.CalculatorType.Index){
-            stockCollection = filterUtil.getIndexStocks();
+            calculate(calculator, filterUtil.getIndexStocks());
         } else if(calculator.getCalculatorType() == MidasConstants.CalculatorType.Aggregation){
-            try {
-                calculator.calculate();
-                return;
-            } catch (Exception e){
-                logger.error(e);
-                throw new MidasException(String.format("problem meet when calculate aggregation index %s", calculator.getIndexName()), e);
-            }
-        }
-        if(CollectionUtils.isNotEmpty(stockCollection)){
-            for(StockVo stock : stockCollection){
-                try {
-                    calculator.calculate(stock);
-                } catch (Exception e){
-                    logger.error(e);
-                    throw new MidasException(String.format("problem meet when calculate tradable index %s for %s", calculator.getIndexName(), stock.getStockName()), e);
-                }
-            }
+            calculateStock(calculator, null);
         }
 
+    }
+
+    private void calculate(ICalculator calculator, List<StockVo> stockCollection) throws MidasException {
+        if(CollectionUtils.isNotEmpty(stockCollection)){
+            for(StockVo stock : stockCollection){
+                calculateStock(calculator, stock);
+            }
+        }
+    }
+
+    private void calculateStock(ICalculator calculator, StockVo stock) throws MidasException {
+        try {
+            if(stock == null) calculator.calculate();
+            else calculator.calculate(stock);
+        } catch (Exception e){
+            logger.error(e);
+            throw new MidasException(String.format("problem meet when calculate index %s for %s", calculator.getIndexName(), stock == null ? "aggregation" : stock.getStockName()), e);
+        }
     }
 
     private void initCalculator(){

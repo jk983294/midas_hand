@@ -57,15 +57,14 @@ public class TopologicalSort {
         return sorted;
     }
 
-    public static <T extends Comparable<T>> List<T> sortRevertThenGetRawData(Graph<T> graph) {
+    public static <T extends Comparable<T>> List<T> sortThenGetRawData(Graph<T> graph) {
         List<GraphNode<T>> list = sort(graph);
         List<T> list1 = new ArrayList<>();
         if(CollectionUtils.isNotEmpty(list)){
-            for(GraphNode<T> node : graph.getNodes()){
+            for(GraphNode<T> node : list){
                 list1.add(node.getValue());
             }
         }
-        Collections.reverse(list1);
         return list1;
     }
 }

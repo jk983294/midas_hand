@@ -12,6 +12,8 @@ public class StockScoreRecord {
     @Id
     private int cob;
 
+    private StockSeverity severity = StockSeverity.Normal;
+
     private List<StockScore> records;
 
     public StockScoreRecord(int cob, List<StockScore> records) {
@@ -33,5 +35,13 @@ public class StockScoreRecord {
 
     public void setRecords(List<StockScore> records) {
         this.records = records;
+    }
+
+    public StockSeverity getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(StockSeverity severity) {
+        this.severity = severity;
     }
 }

@@ -68,7 +68,7 @@ public class IndexFactory {
             }
         }
 
-        List<String> names = TopologicalSort.sortRevertThenGetRawData(dependency);
+        List<String> names = TopologicalSort.sortThenGetRawData(dependency);
         VisualAssist.print("all calculators needed: ", names);
         if(names.size() == 0) names.add(calc);
         return getCalculatorCopy(names);

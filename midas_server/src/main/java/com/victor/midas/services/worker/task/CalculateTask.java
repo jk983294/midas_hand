@@ -6,8 +6,10 @@ import com.victor.midas.dao.TaskDao;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
+import com.victor.midas.util.MidasConstants;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CalculateTask extends TaskBase {
@@ -27,7 +29,11 @@ public class CalculateTask extends TaskBase {
 	public void doTask() throws Exception {
         if(params.size() == 2){         // calculate SH600598 score_revert
             StockVo stock = stocksService.queryStock(params.get(0));
-            IndexCalculator indexCalculator = new IndexCalculator(stock, params.get(1));
+            StockVo shStock = stocksService.queryStock(MidasConstants.SH_INDEX_NAME);
+            List<StockVo> stockVos = new ArrayList<>();
+            stockVos.add(stock);
+            stockVos.add(shStock);
+            IndexCalculator indexCalculator = new IndexCalculator(stockVos, params.get(1));
             indexCalculator.calculate();
             stocksService.getStockDao().updateStock(stock);
         } else if(params.size() == 1){  // calculate score_revert

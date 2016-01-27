@@ -6,6 +6,7 @@ import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
+import com.victor.midas.model.vo.score.StockSeverity;
 import com.victor.midas.train.common.Trainee;
 import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasException;
@@ -47,7 +48,9 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
 
     public void process() throws Exception {
         logger.info("start score simulation ...");
-        double[] scores;
+        double[] scores, shBadDepth;
+        StockSeverity severity;
+        shBadDepth = (double[])calculator.getFilterUtil().getIndexSH().queryCmpIndex("badDepth");
         int cob;
         for (int i = 0; i < len; i++) {
             cob = dates[i];
@@ -67,7 +70,12 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
             }
             /*** find best stock with top score */
             stockScores = ArrayHelper.array2list(TopKElements.getFirstK(stockScores, 5));
-            ScoreHelper.perfCollect(stockScores, cob, perfCollector, scoreRecords);
+            if(shBadDepth[i] > -1d){
+                severity = StockSeverity.Normal;
+            } else {
+                severity = StockSeverity.Warning;
+            }
+            ScoreHelper.perfCollect(stockScores, cob, perfCollector, scoreRecords, severity);
         }
 
         if(!isInTrain){

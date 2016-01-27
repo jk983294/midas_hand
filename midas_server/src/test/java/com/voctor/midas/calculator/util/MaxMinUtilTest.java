@@ -24,9 +24,13 @@ public class MaxMinUtilTest {
         stock.addIndex(MidasConstants.INDEX_NAME_MAX, max);
         stock.addIndex(MidasConstants.INDEX_NAME_MIN, min);
         MaxMinUtil maxMinUtil = new MaxMinUtil();
+        maxMinUtil.setUseEndStartPair(false);
         maxMinUtil.init(stock);
         maxMinUtil.calcMaxMinIndex(5);
         VisualAssist.print("max", maxMinUtil.getMaxIndex());
         VisualAssist.print("min", maxMinUtil.getMinIndex());
+
+        VisualAssist.print("max", maxMinUtil.getMaxIndexRecursive(6));
+        VisualAssist.print("min", maxMinUtil.getMinIndexRecursive(15));
     }
 }

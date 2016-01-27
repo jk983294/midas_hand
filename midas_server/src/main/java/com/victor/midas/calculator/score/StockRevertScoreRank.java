@@ -1,6 +1,7 @@
 package com.victor.midas.calculator.score;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.divergence.IndexBadDepth;
 import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.indicator.kline.IndexKLine;
 import com.victor.midas.calculator.util.MathStockUtil;
@@ -18,7 +19,7 @@ public class StockRevertScoreRank extends IndexCalcBase {
 
     public final static String INDEX_NAME = "score_revert";
 
-    private double[] end, start, max, min, volume, total, changePct, upShadowPct, downShadowPct, middleShadowPct;
+    private double[] end, start, max, min, volume, total, changePct, upShadowPct, downShadowPct, middleShadowPct, badDepth;
     private double[] scores;
     private int len;
 
@@ -27,7 +28,6 @@ public class StockRevertScoreRank extends IndexCalcBase {
     private double maxVolume, subMaxVolume, firstRevertVolume;
     private int maxVolumeIndex, subMaxVolumeIndex, firstRevertIndex, fallDays;
     private boolean hasFirstRevert, hasSubMaxVolume;
-    private double trainParam = 1d;
 
     private DescriptiveStatistics changePctStats = new DescriptiveStatistics();
 
@@ -44,6 +44,7 @@ public class StockRevertScoreRank extends IndexCalcBase {
     public void setRequiredCalculators() {
         requiredCalculators.add(IndexChangePct.INDEX_NAME);
         requiredCalculators.add(IndexKLine.INDEX_NAME);
+        requiredCalculators.add(IndexBadDepth.INDEX_NAME);
     }
 
     @Override
@@ -75,6 +76,8 @@ public class StockRevertScoreRank extends IndexCalcBase {
                 //score += positionInHistoryMinMaxPriceScore(i);
             }
             scores[i] = score;
+            // badDepth override
+            if(badDepth[i] < -1d) scores[i] = badDepth[i];
         }
     }
 
@@ -178,22 +181,22 @@ public class StockRevertScoreRank extends IndexCalcBase {
         double score = 0d;
         int cnt = 0;
         for(int i = index - fallDays + 1; i < maxVolumeIndex; i++){
-            score += volumeUpFunc.calculate(volume[i + 1] / volume[i]);
+            score += (volumeUpFunc.calculate(volume[i + 1] / volume[i]) * 0.9);
             cnt++;
         }
         if(hasFirstRevert){
             for(int i = maxVolumeIndex; i < firstRevertIndex - 1; i++){
-                score += (volumeDownFunc.calculate(volume[i] / volume[i + 1]) * trainParam);
+                score += (volumeDownFunc.calculate(volume[i] / volume[i + 1]) * 0.4);
                 cnt++;
             }
             for(int i = firstRevertIndex - 1; i < subMaxVolumeIndex; i++){
-                score += volumeUpFunc.calculate(volume[i + 1] / volume[i]);
+                score += (volumeUpFunc.calculate(volume[i + 1] / volume[i]) * 0.1);
                 cnt++;
             }
         }
         // if no first revert, means volume always decrease
         for(int i = subMaxVolumeIndex; i < index; i++){
-            score += volumeDownFunc.calculate(volume[i] / volume[i + 1]);
+            score += (volumeDownFunc.calculate(volume[i] / volume[i + 1]) * 1d);
             cnt++;
         }
 //        double benchVolume = volume[index - fallDays];
@@ -268,6 +271,8 @@ public class StockRevertScoreRank extends IndexCalcBase {
         upShadowPct = (double[])stock.queryCmpIndex("k_u");
         downShadowPct = (double[])stock.queryCmpIndex("k_d");
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
+        badDepth = (double[])stock.queryCmpIndex("badDepth");
+
 
         mmPriceUtil90 = new MaxMinUtil(stock, true);
         mmPriceUtil90.calcMaxMinIndex(90);
@@ -279,9 +284,4 @@ public class StockRevertScoreRank extends IndexCalcBase {
         cmpIndexName2Index = new HashMap<>();
     }
 
-    @Override
-    public void applyParameter(CalcParameter parameter) {
-        this.parameter = parameter;
-        this.trainParam = parameter.singleDouble;
-    }
 }

@@ -28,16 +28,12 @@ public abstract class IndexCalcBase implements ICalculator {
     // for some index needs aggregation index, then use this to reference SH index
     protected StockFilterUtil filterUtil;
 
+    protected double singleDouble = 1d;
+    protected int singleInt = 1;
+
     protected IndexCalcBase(CalcParameter parameter) {
         this.parameter = parameter;
         setRequiredCalculators();
-    }
-
-    /**
-     * one index name could map to several component indexes
-     */
-    public String getIndexNameOfStock(String stockName){
-        return stockName +"_"+ getIndexName();
     }
 
     /**
@@ -45,7 +41,6 @@ public abstract class IndexCalcBase implements ICalculator {
      */
     public void calculate(StockVo stock) throws MidasException {
         this.stock = stock;
-
         initIndex();
         calculate();
         stock.addIndex(getIndexName(), cmpIndexName2Index);
@@ -66,23 +61,13 @@ public abstract class IndexCalcBase implements ICalculator {
         return MidasConstants.CalculatorType.All;
     }
 
-//    protected Map<String, Object> generateCmpName2IndexData(String cmpName, double[] indexData){
-//        Map<String, Object> map = new HashMap<>();
-//        map.put(cmpName, indexData);
-//        return map;
-//    }
-//
-//    protected Map<String, Object> generateCmpName2IndexData(String cmpName, int[] indexData){
-//        Map<String, Object> map = new HashMap<>();
-//        map.put(cmpName, indexData);
-//        return map;
-//    }
-
     protected void addIndexData(String cmpName, int[] indexData){
+        if(indexData == null) return;
         cmpIndexName2Index.put(cmpName, indexData);
     }
 
     protected void addIndexData(String cmpName, double[] indexData){
+        if(indexData == null) return;
         cmpIndexName2Index.put(cmpName, indexData);
     }
 
@@ -97,6 +82,8 @@ public abstract class IndexCalcBase implements ICalculator {
     @Override
     public void applyParameter(CalcParameter parameter) {
         this.parameter = parameter;
+        this.singleDouble = parameter.singleDouble;
+        this.singleInt = parameter.singleInt;
     }
 
     @Override

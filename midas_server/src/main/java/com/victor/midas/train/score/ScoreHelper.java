@@ -2,6 +2,7 @@ package com.victor.midas.train.score;
 
 import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
+import com.victor.midas.model.vo.score.StockSeverity;
 import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasException;
 import org.apache.commons.collections.CollectionUtils;
@@ -18,6 +19,18 @@ public class ScoreHelper {
             StockScoreRecord stockScoreRecord = new StockScoreRecord(cob, stockScores);
             scoreRecords.add(stockScoreRecord);
             perfCollector.addRecord(stockScoreRecord);
+        }
+    }
+
+    public static void perfCollect(List<StockScore> stockScores, int cob, PerfCollector perfCollector,
+                                   List<StockScoreRecord> scoreRecords, StockSeverity severity) throws MidasException {
+        if(CollectionUtils.isNotEmpty(stockScores)){
+            StockScoreRecord stockScoreRecord = new StockScoreRecord(cob, stockScores);
+            scoreRecords.add(stockScoreRecord);
+            stockScoreRecord.setSeverity(severity);
+            if(severity.ordinal() <= StockSeverity.Normal.ordinal()){
+                perfCollector.addRecord(stockScoreRecord);
+            }
         }
     }
 }

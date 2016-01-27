@@ -18,7 +18,7 @@ import java.util.HashMap;
  */
 public class IndexPriceMA extends IndexCalcBase {
 
-    private static final String INDEX_NAME = "pMA";
+    public static final String INDEX_NAME = "pMA";
 
     private MaBase maMethod = new SMA();
 

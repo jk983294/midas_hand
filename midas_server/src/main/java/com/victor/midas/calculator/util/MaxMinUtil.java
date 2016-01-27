@@ -160,6 +160,22 @@ public class MaxMinUtil {
         return minIndex[index];
     }
 
+    public int getMaxIndexRecursive(int index) {
+        int current = index;
+        do {
+            current = maxIndex[current];
+        } while (current >= 0 && current != maxIndex[current]);
+        return maxIndex[current];
+    }
+
+    public int getMinIndexRecursive(int index) {
+        int current = index;
+        do {
+            current = minIndex[current];
+        } while (current >= 0 && current != minIndex[current]);
+        return minIndex[current];
+    }
+
     public int[] getMaxIndex() {
         return maxIndex;
     }
@@ -174,5 +190,9 @@ public class MaxMinUtil {
 
     public void setMinIndex(int[] minIndex) {
         this.minIndex = minIndex;
+    }
+
+    public void setUseEndStartPair(boolean useEndStartPair) {
+        this.useEndStartPair = useEndStartPair;
     }
 }

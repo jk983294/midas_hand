@@ -7,13 +7,17 @@ import com.victor.utilities.utils.ArrayHelper;
  * applies weighting factors which decrease exponentially.
  */
 public class EMA implements MaBase{
-    /**
-     * decrease factor
-     */
-    private double alpha = 0.7;
+
+    private double getAlpha(int interval){
+        if(interval > 3){
+            return 2d / (interval + 1);
+        }
+        return 0.7;
+    }
 
     @Override
     public double[] calculate(double[] data, double[] oldResult, int interval) {
+        double alpha = getAlpha(interval);
         if(ArrayHelper.isNull(oldResult) || oldResult.length < interval + 2){
             return calculate(data, interval);
         }
@@ -29,6 +33,7 @@ public class EMA implements MaBase{
 
     @Override
     public void calculateInPlace(double[] data, int interval, double[] result) {
+        double alpha = getAlpha(interval);
         result[0] = data[0];
         for( int i = 1; i < data.length; i++) {
             result[i] = alpha * data[i] + (1-alpha) * result[i-1];
@@ -37,6 +42,7 @@ public class EMA implements MaBase{
 
     @Override
     public double[] calculate(double[] data, int interval) {
+        double alpha = getAlpha(interval);
         double[] result = new double[data.length];
         result[0] = data[0];
         for( int i = 1; i < data.length; i++) {

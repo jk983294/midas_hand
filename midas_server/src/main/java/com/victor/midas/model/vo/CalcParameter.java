@@ -17,8 +17,8 @@ public class CalcParameter implements Cloneable {
     /** train related */
     public int trainStartDate, trainEndDate, backTestStartDate, backTestEndDate;
     /** single parameter train related */
-    public int singleInt;
-    public double singleDouble;
+    public int singleInt = 1;
+    public double singleDouble = 1d;
     /** due to incomplete data, first several days is not valid*/
     public int exceptionDays;
 

@@ -52,7 +52,6 @@ public class IndexMACD extends IndexCalcBase {
         dea = maMethod.calculate(dif, 9);
         macdBar = MathHelper.multiplyInPlace(MathHelper.subtract(dif, dea), 2d);
 
-
         addIndexData("dif", dif);
         addIndexData("dea", dea);
         addIndexData("macdBar", macdBar);

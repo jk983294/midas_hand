@@ -3,3 +3,10 @@ for small dataset test, change com.victor.midas.util.StockFilterUtil.needSmallSe
 trainSingle start end step
 trainSingle 1 10 1
 trainSingle 0.8 1.2 0.1.
+trainSingle 0.001 1.5 0.05.
+
+calculate SH600598 score_revert
+calculate IDX999999 score_revert
+calculate IDX999999 badDepth
+calculate score_revert
+calculate
