@@ -1,7 +1,7 @@
 /**
  * used to format web GUI
  */
-var levels = new Array("danger", "success");
+var levels = new Array("danger", "warning", "success");
 /**
  *   Usage:  format_number(12345.678, 2);
  *   result: 12345.68
@@ -41,14 +41,21 @@ angular.module('formatFilters', []).filter('addPct', function() {
     return function(input) {
         return input + '%';
     };
+}).filter('stockSeverityLevel', function() {
+    return function(data) {
+        if( data === 'Warning'  ) return levels[1];
+        else if( data === 'Danger'  ) return levels[0];
+        else if( data === 'Disaster'  ) return levels[0];
+        else return '';
+    };
 }).filter('changePctLevel', function() {
     return function(change) {
         if( change <= 0.0  ) return levels[0];
-        else  return levels[1];
+        else  return levels[2];
     };
 }).filter('taskClass', function() {
     return function(status) {
-        if( status === "Finished"  ) return levels[1];
+        if( status === "Finished"  ) return levels[2];
         else  return levels[0];
     };
 }).filter('scoreList', function() {
