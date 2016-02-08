@@ -68,8 +68,7 @@ public class IndexBadDepth extends IndexCalcBase {
             for( int i = 5; i < len; i++) {
                 changePctFromMa = MathStockUtil.calculateChangePct(end[i], ma[i]);
                 volumeChange = MathStockUtil.calculateChangePct(vMa[i - 5], total[i]);
-                if(end[i] < ma[i] && changePctFromMa < 0.0091 && Math.abs(middleShadowPct[i]) < 0.0051
-                        && volumeChange < -0.205){
+                if(end[i] < ma[i] && changePctFromMa < 0.0091 && Math.abs(middleShadowPct[i]) < 0.0051){
                     badDepth[i] = -5d;
                 }
             }
