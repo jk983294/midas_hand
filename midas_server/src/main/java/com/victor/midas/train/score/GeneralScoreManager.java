@@ -50,7 +50,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
         logger.info("start score simulation ...");
         double[] scores, shBadDepth;
         StockSeverity severity;
-        shBadDepth = (double[])calculator.getFilterUtil().getIndexSH().queryCmpIndex("badDepth");
+        shBadDepth = (double[])calculator.getFilterUtil().getMarketIndex().queryCmpIndex("badDepth");
         int cob;
         for (int i = 0; i < len; i++) {
             cob = dates[i];
@@ -93,7 +93,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
         isBigDataSet = calculator.isBigDataSet();
         StockFilterUtil filterUtil = calculator.getFilterUtil();
         tradableStocks = filterUtil.getTradableStocks();
-        dates = filterUtil.getIndexSH().getDatesInt();
+        dates = filterUtil.getMarketIndex().getDatesInt();
         len = dates.length;
         tradableCnt = tradableStocks.size();
         perfCollector = new PerfCollector(filterUtil.getName2stock());

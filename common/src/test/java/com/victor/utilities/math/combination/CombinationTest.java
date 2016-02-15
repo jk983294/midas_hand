@@ -9,14 +9,14 @@ import com.victor.utilities.visual.VisualAssist;
 public class CombinationTest {
 
     public static void main(String[] args) {
-        int[] choice = ArrayHelper.buildArray(3, 0);
+        int[] choice = ArrayHelper.newArray(3, 0);
         do {
             VisualAssist.print(choice);
         } while (Combinations.allChoices(choice, 3, 2));
 
 
         VisualAssist.print("another type : ");
-        choice = ArrayHelper.buildArray(3, 0);
+        choice = ArrayHelper.newArray(3, 0);
         int[] choiceCnt = new int[]{3, 2, 1};
         do {
             VisualAssist.print(choice);

@@ -41,7 +41,7 @@ public class PerfCollector {
 
     public PerfCollector(Map<String, StockVo> name2stock) {
         this.name2stock = name2stock;
-        cobRangeTo = name2stock.get(MidasConstants.SH_INDEX_NAME).getEnd();
+        cobRangeTo = name2stock.get(MidasConstants.MARKET_INDEX_NAME).getEnd();
         clear();
     }
 

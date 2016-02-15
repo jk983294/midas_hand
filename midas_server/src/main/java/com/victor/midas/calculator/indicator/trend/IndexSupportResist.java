@@ -3,7 +3,6 @@ package com.victor.midas.calculator.indicator.trend;
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.indicator.kline.IndexKLine;
-import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.calculator.util.MaxMinUtil;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.calculator.util.strategy.CalcUtilSR;
@@ -317,7 +316,7 @@ public class IndexSupportResist extends IndexCalcBase {
         total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
         k_state = (int[])stock.queryCmpIndex("k_state");
         if(filterUtil != null)
-        isBad = (int[])filterUtil.getIndexSH().queryCmpIndex("isBad");
+        isBad = (int[])filterUtil.getMarketIndex().queryCmpIndex("isBad");
         len = end.length;
 
         sr_sig = new int[len];

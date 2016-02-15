@@ -2,19 +2,17 @@ package com.victor.midas.calculator.divergence;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.indicator.IndexChangePct;
-import com.victor.midas.calculator.indicator.IndexMACD;
-import com.victor.midas.calculator.indicator.IndexPriceMA;
+import com.victor.midas.calculator.indicator.IndexOfMarketIndex;
 import com.victor.midas.calculator.indicator.kline.IndexKLine;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.calculator.util.MaxMinUtil;
 import com.victor.midas.model.common.StockType;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.math.stats.ma.MaBase;
 import com.victor.utilities.math.stats.ma.SMA;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import com.victor.utilities.utils.ArrayHelper;
 
 import java.util.HashMap;
 
@@ -30,6 +28,7 @@ public class IndexBadDepth extends IndexCalcBase {
     private double[] end, start, max, min, total, changePct, middleShadowPct;
     private double[] vMa5;
     private double[] dif, dea, macdBar; // white line, yellow line, bar
+    private int[] index2MarketIndex;
 
     private MaxMinUtil mmPriceUtil60, mmPriceUtil5;
 
@@ -57,10 +56,12 @@ public class IndexBadDepth extends IndexCalcBase {
         addIndexData("badDepth", badDepth);
     }
 
-    private void calculateIndex(){
-        int minIndex, maxIndex, cob, cobIndex;
-        int[] dates = filterUtil.getIndexSH().getDatesInt();
-        double changePctFromMa, changePctFromHigh, volumeChange;
+    private void calculateIndex() throws MidasException {
+        int minIndex, maxIndex, cob, cobIndex, suspendedPeriod;
+        int[] dates = filterUtil.getMarketIndex().getDatesInt();
+        double[] marketIndexEnd = (double[])filterUtil.getMarketIndex().queryCmpIndex(MidasConstants.INDEX_NAME_END);
+        double changePctFromMa, marketIndexChangePct, volumeChange;
+        // check market index, price position against price MA
         if(stock.getStockType() == StockType.Index){
             MaBase maMethod = new SMA();
             double[] ma = maMethod.calculate(end, 5);
@@ -73,7 +74,19 @@ public class IndexBadDepth extends IndexCalcBase {
                 }
             }
         } else {
-//            for( int i = 5; i < len; i++) {
+            // check stock suspend period
+            for(int i = 5; i < len; i++) {
+                suspendedPeriod = index2MarketIndex[i] - index2MarketIndex[i - 1];
+                if(suspendedPeriod > 1){
+                    badDepth[i - 1] = -5d;      // if suspended, then previous day can not take it into account
+                    marketIndexChangePct = MathStockUtil.calculateChangePct(marketIndexEnd[index2MarketIndex[i - 1]], marketIndexEnd[index2MarketIndex[i] - 1]);
+                    if(marketIndexChangePct < -0.01d){
+                        ArrayHelper.setValue(badDepth, i, Double.valueOf(Math.abs(marketIndexChangePct) * 40d).intValue(), -5d);
+                    }
+                }
+            }
+
+//            for(int i = 5; i < len; i++) {
 //                minIndex = mmPriceUtil5.getMinIndexRecursive(i);
 //                maxIndex = mmPriceUtil5.getMaxIndexRecursive(minIndex);
 //                changePctFromHigh = MathStockUtil.calculateChangePct(max[i], max[maxIndex]);
@@ -81,29 +94,6 @@ public class IndexBadDepth extends IndexCalcBase {
 //                if(i - maxIndex > 10 && volumeChange < 0.8 && changePctFromHigh > 0d && changePctFromHigh < 0.03){
 //                    badDepth[i] += -5d;
 //                }
-//            }
-            stock.setCobIndex(0);
-            boolean isNotSameDay = false;
-            int stopCnt = 0;
-//            for (int i = 0; i < dates.length; i++) {
-//                cob = dates[i];
-//                cobIndex = stock.getCobIndex();
-//                if(!stock.isSameDayWithIndex(cob)){
-//                    if(isNotSameDay) stopCnt++;
-//                    else {
-//                        isNotSameDay = true;
-//                        stopCnt = 1;
-//                    }
-//                } else {
-//                    if(isNotSameDay){
-//                        for( int j = Math.max(cobIndex - 1, 0); j < cobIndex + singleInt && j < len; j++) {
-//                            badDepth[j] = -5d;
-//                        }
-//                    }
-//                    isNotSameDay = false;
-//                    stopCnt = 0;
-//                }
-//                stock.advanceIndex(cob);
 //            }
         }
 
@@ -128,6 +118,10 @@ public class IndexBadDepth extends IndexCalcBase {
         mmPriceUtil5.calcMaxMinIndex( 15);
         vMa5 = maMethod.calculate(total, 5);
         len = end.length;
+
+        if(stock.getStockType() != StockType.Index){
+            index2MarketIndex = (int[])stock.queryCmpIndex(IndexOfMarketIndex.INDEX_NAME);
+        }
 
         badDepth = new double[len];
         cmpIndexName2Index = new HashMap<>();

@@ -16,7 +16,7 @@ public class MidasConstants {
         Tradable,
         Index,
         All,            // apply to both index and tradable
-        Aggregation     // only apply to sh index
+        Aggregation     // only apply to market index
     }
 
     /**
@@ -73,9 +73,9 @@ public class MidasConstants {
     public static final double TAX_RATE = 0.0015;
 
     /**
-     * SH index name
+     * market index name
      */
-    public static final String SH_INDEX_NAME = "IDX999999";
+    public static final String MARKET_INDEX_NAME = "IDX999999";
 
     /**
      * type ahead actions

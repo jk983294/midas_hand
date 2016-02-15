@@ -17,14 +17,14 @@ public class StockFilterUtil {
     private List<StockVo> tradableStocks = new ArrayList<>();
     private List<StockVo> indexStocks = new ArrayList<>();
     private Map<String, StockVo> name2stock = new HashMap<>();
-    private StockVo indexSH;
+    private StockVo marketIndex;
     private boolean needSmallSetForTest = false;
 
     public StockFilterUtil(List<StockVo> allStockVos) {
         this.allStockVos = allStockVos;
     }
 
-    public void filter(){
+    public void filter() throws MidasException {
         for(StockVo stock : allStockVos){
             name2stock.put(stock.getStockName(), stock);
             if(stock.getStockType() != StockType.Index){
@@ -32,10 +32,13 @@ public class StockFilterUtil {
                     tradableStocks.add(stock);
             } else if(stock.getStockType() == StockType.Index){
                 indexStocks.add(stock);
-                if(MidasConstants.SH_INDEX_NAME.equalsIgnoreCase(stock.getStockName())){
-                    indexSH = stock;
+                if(MidasConstants.MARKET_INDEX_NAME.equalsIgnoreCase(stock.getStockName())){
+                    marketIndex = stock;
                 }
             }
+        }
+        if(marketIndex == null){
+            throw new MidasException("no market index is found.");
         }
     }
 
@@ -47,8 +50,8 @@ public class StockFilterUtil {
         return indexStocks;
     }
 
-    public StockVo getIndexSH() {
-        return indexSH;
+    public StockVo getMarketIndex() {
+        return marketIndex;
     }
 
     public Map<String, StockVo> getName2stock() {

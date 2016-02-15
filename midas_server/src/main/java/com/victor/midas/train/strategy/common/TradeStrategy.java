@@ -2,7 +2,6 @@ package com.victor.midas.train.strategy.common;
 
 import com.victor.midas.calculator.IndexCalculator;
 import com.victor.midas.calculator.common.ICalculator;
-import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.common.StockType;
@@ -15,7 +14,6 @@ import com.victor.utilities.utils.ArrayHelper;
 import com.victor.utilities.utils.MathHelper;
 import org.apache.log4j.Logger;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,8 +40,8 @@ public abstract class TradeStrategy {
 
     protected boolean isSmallSetData;
 
-    /** benchmark date from SH index*/
-    protected int[] datesSH;
+    /** benchmark date from market index*/
+    protected int[] marketDates;
 
     protected Portfolio portfolio;
 
@@ -54,7 +52,7 @@ public abstract class TradeStrategy {
     protected double[] upbounds;
     protected double[] lowbounds;
 
-    /** SH index correlation*/
+    /** market index correlation*/
     protected double[] stockIndexTotal;
 
     /** provide some calculators relate to discrete parameter iteration*/
@@ -75,7 +73,7 @@ public abstract class TradeStrategy {
         portfolio = new Portfolio(parameter.tradeTaxRate);
         try {
             initStocks(allStockVos);
-            datesSH = stockMap.get(MidasConstants.SH_INDEX_NAME).getStock().getDatesInt();
+            marketDates = stockMap.get(MidasConstants.MARKET_INDEX_NAME).getStock().getDatesInt();
             // TODO find a way to extract aggregation calculator's result
             //stockIndexTotal = calculator.getAggregationCalculator().getVolumeCorr().getAvgTotal();
         } catch (Exception e){
@@ -206,12 +204,12 @@ public abstract class TradeStrategy {
         this.portfolio = portfolio;
     }
 
-    public int[] getDatesSH() {
-        return datesSH;
+    public int[] getMarketDates() {
+        return marketDates;
     }
 
-    public void setDatesSH(int[] datesSH) {
-        this.datesSH = datesSH;
+    public void setMarketDates(int[] marketDates) {
+        this.marketDates = marketDates;
     }
 
     public CalcParameter getParameter() {

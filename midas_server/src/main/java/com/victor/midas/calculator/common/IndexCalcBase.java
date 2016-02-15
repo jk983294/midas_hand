@@ -25,7 +25,7 @@ public abstract class IndexCalcBase implements ICalculator {
     protected Map<String, Object> cmpIndexName2Index;
 
     protected Set<String> requiredCalculators = new LinkedHashSet<>();
-    // for some index needs aggregation index, then use this to reference SH index
+    // for some index needs aggregation index, then use this to reference market index
     protected StockFilterUtil filterUtil;
 
     protected double singleDouble = 1d;

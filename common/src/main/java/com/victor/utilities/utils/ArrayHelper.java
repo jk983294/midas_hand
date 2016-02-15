@@ -85,7 +85,8 @@ public class ArrayHelper {
     /**
      * build new array given initial value
      */
-    public static double[] buildArray(int lens, double initialValue ) {
+    public static double[] newArray(int lens, double initialValue) {
+        if(lens <= 0) return null;
         double[] array = new double[lens];
         for (int i = 0; i < lens; i++) {
             array[i] = initialValue;
@@ -93,7 +94,8 @@ public class ArrayHelper {
         return array;
     }
 
-    public static int[] buildArray(int lens, int initialValue ) {
+    public static int[] newArray(int lens, int initialValue) {
+        if(lens <= 0) return null;
         int[] array = new int[lens];
         for (int i = 0; i < lens; i++) {
             array[i] = initialValue;
@@ -103,6 +105,18 @@ public class ArrayHelper {
 
     public static void fill(int[] array, int from, int to, int value) {
         for (int i = from; i < to; i++) {
+            array[i] = value;
+        }
+    }
+
+    public static void setValue(int[] array, int from, int howMany, int value) {
+        for (int i = from; i < Math.min(from + howMany, array.length); i++) {
+            array[i] = value;
+        }
+    }
+
+    public static void setValue(double[] array, int from, int howMany, double value) {
+        for (int i = from; i < Math.min(from + howMany, array.length); i++) {
             array[i] = value;
         }
     }

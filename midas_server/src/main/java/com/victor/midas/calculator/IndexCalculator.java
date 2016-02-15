@@ -30,8 +30,8 @@ public class IndexCalculator {
     }
 
     /**
-     * because some calculator need shIndex, so reuse IndexCalculator(List<StockVo> stocks, String calcName)
-     * List<StockVo> stocks contain stock and shIndex
+     * because some calculator need market Index, so reuse IndexCalculator(List<StockVo> stocks, String calcName)
+     * List<StockVo> stocks contain stock and market Index
      */
     @Deprecated
     public IndexCalculator(StockVo stock, String calcName) throws MidasException {

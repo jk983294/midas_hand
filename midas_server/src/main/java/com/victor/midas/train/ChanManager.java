@@ -4,9 +4,6 @@ import com.victor.midas.calculator.IndexCalculator;
 import com.victor.midas.calculator.chan.ChanMorphology;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.model.vo.concept.StockConcept;
-import com.victor.midas.model.vo.concept.StockConceptStats;
-import com.victor.midas.model.vo.concept.StockCrawlData;
 import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.train.perf.PerfCollector;
@@ -17,7 +14,6 @@ import com.victor.utilities.utils.ArrayHelper;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -29,7 +25,7 @@ public class ChanManager {
 
     private List<StockVo> stocks;
     private Map<String, StockVo> name2stock;    // stock name map to date index
-    private StockVo indexSH;
+    private StockVo marketIndex;
     private List<StockVo> tradableStocks;
     private int tradableCnt;
     private int[] dates;                        // benchmark time line
@@ -95,10 +91,10 @@ public class ChanManager {
 
         StockFilterUtil filterUtil = new StockFilterUtil(stocks);
         filterUtil.filter();
-        indexSH = filterUtil.getIndexSH();
+        marketIndex = filterUtil.getMarketIndex();
         tradableStocks = filterUtil.getTradableStocks();
 
-        dates = indexSH.getDatesInt();
+        dates = marketIndex.getDatesInt();
         for(StockVo stock : tradableStocks){
             stock.setCobIndex(0);
         }

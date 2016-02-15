@@ -180,34 +180,31 @@ public class StockVo {
     }
 
     /**
-     * check if current date in stock is the same date with SH index
+     * check if current date in stock is the same date with market index
      */
-    public boolean isSameDayWithIndex(int dateSH, int dateIndex){
-        return dateIndex < datesInt.length && datesInt[dateIndex] == dateSH;
+    public boolean isSameDayWithIndex(int marketCob, int dateIndex){
+        return dateIndex < datesInt.length && datesInt[dateIndex] == marketCob;
     }
 
-    public boolean isSameDayWithIndex(int dateSH){
-        return cobIndex < datesInt.length && datesInt[cobIndex] == dateSH;
+    public boolean isSameDayWithIndex(int marketCob){
+        return cobIndex < datesInt.length && datesInt[cobIndex] == marketCob;
     }
 
     /**
-     * advance current date in stock, make it the next day with SH index
+     * advance current date in stock, make it the next day with market index
      */
     public void advanceIndex(){
         ++cobIndex;
     }
 
-    public void advanceIndex(int dateSH){
-        if(isSameDayWithIndex(dateSH)){
+    public void advanceIndex(int marketCob){
+        if(isSameDayWithIndex(marketCob)){
             ++cobIndex;
         }
     }
 
-    /**
-     * advance current date in stock, make it the next day with SH index
-     */
-    public int advanceIndex(int dateSH, int dateIndex){
-        if(isSameDayWithIndex(dateSH, dateIndex)) return ++dateIndex; else return 0;
+    public int advanceIndex(int marketCob, int dateIndex){
+        if(isSameDayWithIndex(marketCob, dateIndex)) return ++dateIndex; else return 0;
     }
 
     public String getStockName() {

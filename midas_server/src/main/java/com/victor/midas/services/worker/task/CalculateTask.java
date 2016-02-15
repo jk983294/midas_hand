@@ -29,7 +29,7 @@ public class CalculateTask extends TaskBase {
 	public void doTask() throws Exception {
         if(params.size() == 2){         // calculate SH600598 score_revert
             StockVo stock = stocksService.queryStock(params.get(0));
-            StockVo shStock = stocksService.queryStock(MidasConstants.SH_INDEX_NAME);
+            StockVo shStock = stocksService.queryStock(MidasConstants.MARKET_INDEX_NAME);
             List<StockVo> stockVos = new ArrayList<>();
             stockVos.add(stock);
             stockVos.add(shStock);

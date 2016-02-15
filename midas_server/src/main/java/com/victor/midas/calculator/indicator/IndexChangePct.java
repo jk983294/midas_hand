@@ -1,6 +1,7 @@
 package com.victor.midas.calculator.indicator;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.indicator.kline.IndexKLine;
 import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.model.vo.CalcParameter;
@@ -25,6 +26,11 @@ public class IndexChangePct extends IndexCalcBase {
 
     public IndexChangePct(CalcParameter parameter) {
         super(parameter);
+    }
+
+    @Override
+    public void setRequiredCalculators() {
+        requiredCalculators.add(IndexOfMarketIndex.INDEX_NAME);
     }
 
     @Override

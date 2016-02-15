@@ -16,7 +16,7 @@ public interface ICalculator {
     // aggregation use whole set to init
     public void init_aggregation(StockFilterUtil filterUtil);
 
-    // for aggregation, pass in null since indexSH will be retrieved in StockFilterUtil
+    // for aggregation, pass in null since marketIndex will be retrieved in StockFilterUtil
     public void calculate(StockVo stock) throws MidasException;
 
     public void calculate() throws MidasException;

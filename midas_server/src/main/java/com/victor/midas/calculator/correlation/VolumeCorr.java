@@ -29,17 +29,17 @@ public class VolumeCorr extends AggregationCalcBase {
     public void calculate() throws MidasException {
         double[] stockIndexTotal;
         double totalAll;
-        int dateSH, currentDayTradableCnt;
+        int marketCob, currentDayTradableCnt;
         String stockName;
         for (int i = 0; i < len; i++) {
-            dateSH = dates[i];
+            marketCob = dates[i];
             totalAll = 0;
             currentDayTradableCnt = 0;
             for (int j = 0; j < tradableCnt; j++) {
                 StockVo stock = tradableStocks.get(j);
                 stockName = stock.getStockName();
                 index = name2index.get(stockName);
-                if(stock.isSameDayWithIndex(dateSH, index)){
+                if(stock.isSameDayWithIndex(marketCob, index)){
                     stockIndexTotal = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
                     totalAll += stockIndexTotal[index];
                     name2index.put(stockName, index + 1);       //advanceIndex

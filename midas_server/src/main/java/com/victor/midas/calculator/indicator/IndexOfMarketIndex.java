@@ -1,7 +1,6 @@
 package com.victor.midas.calculator.indicator;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
-import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.model.common.StockType;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
@@ -10,14 +9,15 @@ import com.victor.midas.util.MidasException;
 import java.util.HashMap;
 
 /**
- * calculate change percentage per day
+ * tradable stock intersection days of market index
  */
 public class IndexOfMarketIndex extends IndexCalcBase {
 
-    public final static String INDEX_NAME = "indexOfMarketIndex";
+    public final static String INDEX_NAME = "index2MarketIndex";
+    public final static String INDEX_NAME1 = "marketIndex2Index";
 
-    private int[] indexOfMarketIndex;
-
+    private int[] index2MarketIndex;
+    private int[] marketIndex2Index;
     private double[] end;
 
     private int len;
@@ -34,33 +34,32 @@ public class IndexOfMarketIndex extends IndexCalcBase {
     @Override
     public void calculate() throws MidasException {
         if(!StockType.Index.equals(stock.getStockType())){
-            int[] dates = filterUtil.getIndexSH().getDatesInt();
+            int[] marketDates = filterUtil.getMarketIndex().getDatesInt();
+            marketIndex2Index = new int[marketDates.length];
             stock.setCobIndex(0);
-            boolean isNotSameDay = false;
-            int cob, cobIndex;
-            for (int i = 0; i < dates.length; i++) {
-                cob = dates[i];
+            int marketCob, cobIndex;
+            for (int i = 0; i < marketDates.length; i++) {
+                marketCob = marketDates[i];
                 cobIndex = stock.getCobIndex();
-                if(!stock.isSameDayWithIndex(cob)){
-                    if(!isNotSameDay) isNotSameDay = true;
+                if(stock.isSameDayWithIndex(marketCob)){
+                    index2MarketIndex[cobIndex] = i;
+                    marketIndex2Index[i] = cobIndex;
                 } else {
-                    if(isNotSameDay){
-                    }
-                    isNotSameDay = false;
+                    marketIndex2Index[i] = -1;
                 }
-                stock.advanceIndex(cob);
+                stock.advanceIndex(marketCob);
             }
 
-            addIndexData(INDEX_NAME, indexOfMarketIndex);
+            addIndexData(INDEX_NAME, index2MarketIndex);
+//            addIndexData(INDEX_NAME1, marketIndex2Index);
         }
-
     }
 
     @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         len = end.length;
-        indexOfMarketIndex = new int[len];
+        index2MarketIndex = new int[len];
         cmpIndexName2Index = new HashMap<>();
     }
 

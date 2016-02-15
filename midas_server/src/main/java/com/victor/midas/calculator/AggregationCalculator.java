@@ -7,7 +7,6 @@ import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,18 +17,18 @@ public class AggregationCalculator {
 
     private List<StockVo> stocks;
     private CalcParameter parameter;
-    private StockVo indexSH;
+    private StockVo marketIndex;
     private List<StockVo> tradableStocks;
     private List<StockVo> indexStocks;
 
     /** aggregation calculators*/
     private VolumeCorr volumeCorr;
 
-    public AggregationCalculator(List<StockVo> stocks) {
+    public AggregationCalculator(List<StockVo> stocks) throws MidasException {
         this.stocks = stocks;
         StockFilterUtil filterUtil = new StockFilterUtil(stocks);
         filterUtil.filter();
-        indexSH = filterUtil.getIndexSH();
+        marketIndex = filterUtil.getMarketIndex();
         tradableStocks = filterUtil.getTradableStocks();
         indexStocks = filterUtil.getIndexStocks();
         parameter = new CalcParameter();
@@ -38,7 +37,7 @@ public class AggregationCalculator {
     public void calculate() throws MidasException {
         logger.info("aggregation calculator start...");
         try {
-//            volumeCorr = new VolumeCorr(stocks, indexSH, tradableStocks);
+//            volumeCorr = new VolumeCorr(stocks, marketIndex, tradableStocks);
 //            volumeCorr.calculate();
         } catch (Exception e){
             logger.error(e);
@@ -59,8 +58,8 @@ public class AggregationCalculator {
         return volumeCorr;
     }
 
-    public StockVo getIndexSH() {
-        return indexSH;
+    public StockVo getMarketIndex() {
+        return marketIndex;
     }
 
     public List<StockVo> getTradableStocks() {

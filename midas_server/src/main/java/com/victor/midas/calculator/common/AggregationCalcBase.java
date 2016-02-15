@@ -19,7 +19,7 @@ public abstract class AggregationCalcBase implements ICalculator {
     protected Set<String> requiredCalculators = new LinkedHashSet<>();
     protected List<StockVo> stocks;
     protected CalcParameter parameter;
-    protected StockVo indexSH;
+    protected StockVo marketIndex;
     protected List<StockVo> tradableStocks;
     protected int tradableCnt;
     protected Map<String, Integer> name2index;    // stock name map to date index
@@ -42,9 +42,9 @@ public abstract class AggregationCalcBase implements ICalculator {
     public void init_aggregation(StockFilterUtil filterUtil){
         if(filterUtil != null){
             this.stocks = filterUtil.getAllStockVos();
-            this.indexSH = filterUtil.getIndexSH();
+            this.marketIndex = filterUtil.getMarketIndex();
             this.tradableStocks = filterUtil.getTradableStocks();
-            dates = indexSH.getDatesInt();
+            dates = marketIndex.getDatesInt();
             name2index = new HashMap<>();
             for(StockVo stock : tradableStocks){
                 name2index.put(stock.getStockName(), 0);

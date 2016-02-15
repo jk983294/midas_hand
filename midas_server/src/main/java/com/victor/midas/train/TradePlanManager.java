@@ -12,7 +12,6 @@ import com.victor.midas.train.strategy.common.TradeStrategy;
 import com.victor.midas.util.MidasException;
 import org.apache.log4j.Logger;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -49,7 +48,7 @@ public class TradePlanManager {
         item.setParameter(parameterResult);
         trainResult.addResult(item);
         logger.info("start generate focus ...");
-        FocusGenerator focusGenerator = new FocusGenerator(strategy.getTradableStocks(), strategy.getDatesSH());
+        FocusGenerator focusGenerator = new FocusGenerator(strategy.getTradableStocks(), strategy.getMarketDates());
         focusGenerator.execute();
         focus = focusGenerator.getFocus();
     }

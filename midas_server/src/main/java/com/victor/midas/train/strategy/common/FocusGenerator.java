@@ -19,31 +19,31 @@ public class FocusGenerator {
     private List<DayFocusDb> focus;
 
     private List<StockTrain> tradableStocks;
-    /** benchmark date from SH index*/
-    private int[] datesSH;
+    /** benchmark date from market index*/
+    private int[] marketDates;
 
-    public FocusGenerator(List<StockTrain> tradableStocks, int[] datesSH) {
+    public FocusGenerator(List<StockTrain> tradableStocks, int[] marketDates) {
         this.tradableStocks = tradableStocks;
-        this.datesSH = datesSH;
+        this.marketDates = marketDates;
         focus = new ArrayList<>();
     }
 
     public void execute() throws MidasException {
-        int dateSH;
+        int marketCob;
         List<InnerStock> stocks = assemblyData();
-        for (int i = 0; i < datesSH.length; i++) {
-            dateSH = datesSH[i];
+        for (int i = 0; i < marketDates.length; i++) {
+            marketCob = marketDates[i];
             List<FocusStock> focusSingleDay = new ArrayList<>();
             for (InnerStock stock : stocks){
-                if(stock.isSameDayWithIndex(dateSH)){
+                if(stock.isSameDayWithIndex(marketCob)){
                     if(StockDecision.isWillBuyDecision(stock.currentProd())){
                         focusSingleDay.add(generateFocusStock(stock));
                     }
                 }
-                stock.advanceIndex(dateSH);
+                stock.advanceIndex(marketCob);
             }
             if(focusSingleDay.size() > 0){
-                focus.add(new DayFocusDb(dateSH, focusSingleDay));
+                focus.add(new DayFocusDb(marketCob, focusSingleDay));
             }
         }
     }
@@ -55,7 +55,7 @@ public class FocusGenerator {
     private List<InnerStock> assemblyData() throws MidasException {
         List<InnerStock> stocks = new ArrayList<>();
         for (StockTrain stock : tradableStocks){
-            stocks.add(new InnerStock(stock.getStock(), datesSH[0]));
+            stocks.add(new InnerStock(stock.getStock(), marketDates[0]));
         }
         return stocks;
     }
@@ -84,17 +84,17 @@ public class FocusGenerator {
         }
 
         /**
-         * check if current date in stock is the same date with SH index
+         * check if current date in stock is the same date with market index
          */
-        public boolean isSameDayWithIndex(int dateSH){
-            return index < len && dates[index] == dateSH;
+        public boolean isSameDayWithIndex(int marketCob){
+            return index < len && dates[index] == marketCob;
         }
 
         /**
-         * advance current date in stock, make it the next day with SH index
+         * advance current date in stock, make it the next day with market index
          */
-        public void advanceIndex(int dateSH){
-            if(isSameDayWithIndex(dateSH)) ++index;
+        public void advanceIndex(int marketCob){
+            if(isSameDayWithIndex(marketCob)) ++index;
         }
 
         public int currentProd(){

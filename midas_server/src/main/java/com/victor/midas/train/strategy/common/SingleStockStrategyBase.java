@@ -50,8 +50,8 @@ public abstract class SingleStockStrategyBase extends TradeStrategy {
             int startDate = dates[startIndex], endDate = dates[endIndex], shDate, ShLen;
             int currentStockIndex = startIndex;
             // go through time line
-            for (shStockIndex = 0, ShLen = datesSH.length; shStockIndex < ShLen; shStockIndex++) {
-                shDate = datesSH[shStockIndex];
+            for (shStockIndex = 0, ShLen = marketDates.length; shStockIndex < ShLen; shStockIndex++) {
+                shDate = marketDates[shStockIndex];
                 if(shDate >= startDate && shDate <= endDate && shDate == dates[currentStockIndex]){
                     stock.setCurrentIndex(currentStockIndex);       // important!!!
 

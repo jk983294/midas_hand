@@ -56,8 +56,8 @@ public class TrainManager {
         } else {
             // if have discrete parameters, iterate all combinations
             int[] choiceCnt = Combinations.getChoiceCnt(discreteParams);
-            int[] choiceIndex = ArrayHelper.buildArray(choiceCnt.length, 0);
-            int[] newParams = ArrayHelper.buildArray(choiceCnt.length, 0);
+            int[] choiceIndex = ArrayHelper.newArray(choiceCnt.length, 0);
+            int[] newParams = ArrayHelper.newArray(choiceCnt.length, 0);
             do {
                 newParams = Combinations.getChoice(discreteParams, choiceIndex, newParams);
                 /**generate discrete parameter combination, then use discrete calculator to calculate those index */

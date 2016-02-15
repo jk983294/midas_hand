@@ -1,7 +1,6 @@
 package com.victor.midas.train.score;
 
 import com.victor.midas.calculator.IndexCalculator;
-import com.victor.midas.calculator.score.StockScoreRank;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.concept.StockConcept;
 import com.victor.midas.model.vo.concept.StockConceptStats;
@@ -31,7 +30,7 @@ public class ConceptScoreManager implements ScoreManager {
     private List<StockConceptStats> stockConceptStatses;
     private Map<StockConcept, StockConceptStats> concept2stats;
     private Map<String, StockVo> name2stock;    // stock name map to date index
-    private StockVo indexSH;
+    private StockVo marketIndex;
     private List<StockVo> tradableStocks;
     private int tradableCnt;
     private int[] dates;                        // benchmark time line
@@ -117,10 +116,10 @@ public class ConceptScoreManager implements ScoreManager {
         isBigDataSet = calculator.isBigDataSet();
 
         StockFilterUtil filterUtil = calculator.getFilterUtil();
-        indexSH = filterUtil.getIndexSH();
+        marketIndex = filterUtil.getMarketIndex();
         tradableStocks = filterUtil.getTradableStocks();
 
-        dates = indexSH.getDatesInt();
+        dates = marketIndex.getDatesInt();
         for(StockVo stock : tradableStocks){
             stock.setCobIndex(0);
         }
