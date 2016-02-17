@@ -149,7 +149,7 @@ public class MaxMinUtil {
      * could use max min pair instead of start / end pair
      */
     public double getMinPrice(int index){
-        return useEndStartPair ? Math.min(start[index], end[index]) : Math.max(max[index], min[index]);
+        return useEndStartPair ? Math.min(start[index], end[index]) : Math.min(max[index], min[index]);
     }
 
     public int getMaxIndex(int index) {

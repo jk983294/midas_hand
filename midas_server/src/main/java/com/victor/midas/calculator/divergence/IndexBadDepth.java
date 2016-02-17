@@ -58,7 +58,6 @@ public class IndexBadDepth extends IndexCalcBase {
 
     private void calculateIndex() throws MidasException {
         int minIndex, maxIndex, cob, cobIndex, suspendedPeriod;
-        int[] dates = filterUtil.getMarketIndex().getDatesInt();
         double[] marketIndexEnd = (double[])filterUtil.getMarketIndex().queryCmpIndex(MidasConstants.INDEX_NAME_END);
         double changePctFromMa, marketIndexChangePct, volumeChange;
         // check market index, price position against price MA
@@ -74,7 +73,7 @@ public class IndexBadDepth extends IndexCalcBase {
                 }
             }
         } else {
-            // check stock suspend period
+            // check stock suspend period impact
             for(int i = 5; i < len; i++) {
                 suspendedPeriod = index2MarketIndex[i] - index2MarketIndex[i - 1];
                 if(suspendedPeriod > 1){
