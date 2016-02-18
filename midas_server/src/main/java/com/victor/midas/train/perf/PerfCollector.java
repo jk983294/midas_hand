@@ -21,6 +21,16 @@ public class PerfCollector {
     private String stockCode;
     private int index;                          // benchmark stock's date index
     private boolean isInTrain = false;
+    /**
+     * buyTiming = 1 holdHalfDays = 1 means buy at 1st day's close, sell at 2nd day's open
+     * buyTiming = 0 holdHalfDays = 2 means buy at 1st day's open, sell at 2nd day's open
+     * buyTiming = 0 holdHalfDays = 3 means buy at 1st day's open, sell at 2nd day's close
+     */
+    public int holdHalfDays = 3;                // 1 day contains 2 half day
+    public int buyTiming = 0;                   // 0 open 1 close
+    private int holdDays = 1;
+    private boolean isSellAtOpen = false;
+    private boolean isBuyAtOpen = true;
 
     private int cobRangeFrom, cobRangeTo;
     private double[] changePct, end, start, max, min;
@@ -30,29 +40,33 @@ public class PerfCollector {
     private DescriptiveStatistics kellyBad = new DescriptiveStatistics();
 
     private DescriptiveStatistics perfStats = new DescriptiveStatistics();
-    private DescriptiveStatistics openStatsDay1 = new DescriptiveStatistics();
-    private DescriptiveStatistics closeStatsDay1 = new DescriptiveStatistics();
-    private DescriptiveStatistics highStatsDay1 = new DescriptiveStatistics();
-    private DescriptiveStatistics lowStatsDay1 = new DescriptiveStatistics();
-    private DescriptiveStatistics openStatsDay2 = new DescriptiveStatistics();
-    private DescriptiveStatistics closeStatsDay2 = new DescriptiveStatistics();
-    private DescriptiveStatistics highStatsDay2 = new DescriptiveStatistics();
-    private DescriptiveStatistics lowStatsDay2 = new DescriptiveStatistics();
+    private DayStatistics[] dayStatisticses;
 
-    public PerfCollector(Map<String, StockVo> name2stock) {
+    public PerfCollector(Map<String, StockVo> name2stock) throws MidasException {
         this.name2stock = name2stock;
         cobRangeTo = name2stock.get(MidasConstants.MARKET_INDEX_NAME).getEnd();
+        holdDays = (holdHalfDays + buyTiming) / 2 + 1;
+        if(holdDays < 2) throw new MidasException("T + 1, so holding day should big than 1");
+        isSellAtOpen = (holdHalfDays + buyTiming) % 2 == 0;
+        isBuyAtOpen = buyTiming % 2 == 0;
+        dayStatisticses = new DayStatistics[holdDays];
+        for (int i = 0; i < holdDays; i++) {
+            dayStatisticses[i] = new DayStatistics();
+        }
         clear();
     }
 
     public void clear(){
         cobRangeFrom = 20140601;
         upsets.clear();
-        ArrayHelper.clear(kellyGood, kellyBad, perfStats, openStatsDay1, closeStatsDay1, highStatsDay1, lowStatsDay1, openStatsDay2, closeStatsDay2, highStatsDay2, lowStatsDay2);
+        ArrayHelper.clear(kellyGood, kellyBad, perfStats);
+        for (int i = 0; i < holdDays; i++) {
+            dayStatisticses[i].clear();
+        }
     }
 
     public void addRecord(StockScoreRecord record) throws MidasException {
-        double totalChangePct = 0d;
+        double totalChangePct, buyPrice, sellPrice;
         if(record.getCob() >= cobRangeFrom && record.getCob() <= cobRangeTo){
             for(StockScore stockScore : record.getRecords()){
                 if(stockScore.getScore() <= 0.5) continue;
@@ -65,26 +79,20 @@ public class PerfCollector {
                 max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
                 min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
 
-                totalChangePct = 0d;
-                // first day, buy from beginning, earning is the difference
-                if(index < stock.getDatesInt().length){
-                    totalChangePct += MathStockUtil.calculateChangePct(start[index], end[index]);
-                    openStatsDay1.addValue(MathStockUtil.calculateChangePct(end[index - 1], start[index]));
-                    closeStatsDay1.addValue(MathStockUtil.calculateChangePct(end[index - 1], end[index]));
-                    highStatsDay1.addValue(MathStockUtil.calculateChangePct(end[index - 1], max[index]));
-                    lowStatsDay1.addValue(MathStockUtil.calculateChangePct(end[index - 1], min[index]));
-                    //addPerf(MathStockUtil.calculateChangePct(start[index], end[index]));
+                int dateCnt = stock.getDatesInt().length;
+                for (int i = 0; i < holdDays; i++) {
+                    if(index + i < dateCnt){
+                        dayStatisticses[i].recordStatistics(end[index + i - 1], start[index + i], end[index + i], max[index + i], min[index + i]);
+                    }
                 }
-                // second, sell at end
-                if(index + 1 < stock.getDatesInt().length){
-                    totalChangePct += changePct[index + 1];
-                    openStatsDay2.addValue(MathStockUtil.calculateChangePct(end[index], start[index + 1]));
-                    closeStatsDay2.addValue(MathStockUtil.calculateChangePct(end[index], end[index + 1]));
-                    highStatsDay2.addValue(MathStockUtil.calculateChangePct(end[index], max[index + 1]));
-                    lowStatsDay2.addValue(MathStockUtil.calculateChangePct(end[index], min[index + 1]));
-                    //addPerf(changePct[index + 1]);
-                }
-                if(index < stock.getDatesInt().length){
+                if(index < dateCnt){
+                    buyPrice = isBuyAtOpen ? start[index] : end[index];
+                    if(index + holdDays - 1 < dateCnt){
+                        sellPrice = isSellAtOpen ? start[index + holdDays - 1] : end[index + holdDays - 1];
+                    } else {    // last day's close liquidate out
+                        sellPrice = end[dateCnt - 1];
+                    }
+                    totalChangePct = MathStockUtil.calculateChangePct(buyPrice, sellPrice);
                     stockScore.setPerf(totalChangePct);
                     perfStats.addValue(totalChangePct);
                     if(!isInTrain) upsets.add(stockScore);
@@ -119,22 +127,22 @@ public class PerfCollector {
         result.cnt = perfStats.getN();
         result.dayPerformance = perfStats.getMean();
         result.stdDev = perfStats.getStandardDeviation();
-        result.d1Open = openStatsDay1.getMean();
-        result.d1OpenStdDev = openStatsDay1.getStandardDeviation();
-        result.d1Close = closeStatsDay1.getMean();
-        result.d1CloseStdDev = closeStatsDay1.getStandardDeviation();
-        result.d1High = highStatsDay1.getMean();
-        result.d1HighStdDev = highStatsDay1.getStandardDeviation();
-        result.d1Low = lowStatsDay1.getMean();
-        result.d1LowStdDev = lowStatsDay1.getStandardDeviation();
-        result.d2Open = openStatsDay2.getMean();
-        result.d2OpenStdDev = openStatsDay2.getStandardDeviation();
-        result.d2Close = closeStatsDay2.getMean();
-        result.d2CloseStdDev = closeStatsDay2.getStandardDeviation();
-        result.d2High = highStatsDay2.getMean();
-        result.d2HighStdDev = highStatsDay2.getStandardDeviation();
-        result.d2Low = lowStatsDay2.getMean();
-        result.d2LowStdDev = lowStatsDay2.getStandardDeviation();
+        result.d1Open = dayStatisticses[0].openStats.getMean();
+        result.d1OpenStdDev = dayStatisticses[0].openStats.getStandardDeviation();
+        result.d1Close = dayStatisticses[0].closeStats.getMean();
+        result.d1CloseStdDev = dayStatisticses[0].closeStats.getStandardDeviation();
+        result.d1High = dayStatisticses[0].highStats.getMean();
+        result.d1HighStdDev = dayStatisticses[0].highStats.getStandardDeviation();
+        result.d1Low = dayStatisticses[0].lowStats.getMean();
+        result.d1LowStdDev = dayStatisticses[0].lowStats.getStandardDeviation();
+        result.d2Open = dayStatisticses[holdDays - 1].openStats.getMean();
+        result.d2OpenStdDev = dayStatisticses[holdDays - 1].openStats.getStandardDeviation();
+        result.d2Close = dayStatisticses[holdDays - 1].closeStats.getMean();
+        result.d2CloseStdDev = dayStatisticses[holdDays - 1].closeStats.getStandardDeviation();
+        result.d2High = dayStatisticses[holdDays - 1].highStats.getMean();
+        result.d2HighStdDev = dayStatisticses[holdDays - 1].highStats.getStandardDeviation();
+        result.d2Low = dayStatisticses[holdDays - 1].lowStats.getMean();
+        result.d2LowStdDev = dayStatisticses[holdDays - 1].lowStats.getStandardDeviation();
         result.kellyFraction = kellyFormula();
         result.kellyAnnualizedPerformance = kellyAnnualizedPerformance(result.kellyFraction, result.dayPerformance);
         return result;
