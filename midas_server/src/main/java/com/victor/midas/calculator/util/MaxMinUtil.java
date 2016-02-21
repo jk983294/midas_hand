@@ -164,16 +164,22 @@ public class MaxMinUtil {
         int current = index;
         do {
             current = maxIndex[current];
+            if(maxIndex[current] == minIndex[current]){
+                current--;
+            }
         } while (current >= 0 && current != maxIndex[current]);
-        return maxIndex[current];
+        return Math.max(0, current);
     }
 
     public int getMinIndexRecursive(int index) {
         int current = index;
         do {
             current = minIndex[current];
+            if(maxIndex[current] == minIndex[current]){
+                current--;
+            }
         } while (current >= 0 && current != minIndex[current]);
-        return minIndex[current];
+        return Math.max(0, current);
     }
 
     public int[] getMaxIndex() {

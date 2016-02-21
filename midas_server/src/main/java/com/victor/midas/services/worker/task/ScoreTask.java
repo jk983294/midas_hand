@@ -2,6 +2,7 @@ package com.victor.midas.services.worker.task;
 
 import com.victor.midas.calculator.score.StockRevertScoreRank;
 import com.victor.midas.calculator.score.StockScoreRank;
+import com.victor.midas.calculator.score.StockSupportScoreRank;
 import com.victor.midas.dao.ConceptScoreDao;
 import com.victor.midas.dao.ScoreDao;
 import com.victor.midas.dao.TaskDao;
@@ -80,6 +81,7 @@ public class ScoreTask extends TaskBase {
         String indexName = getIndexName(cmdParameter);
         switch(cmdParameter){
             case score_ma:
+            case score_support:
             case score_revert: return new GeneralScoreManager(stocks, indexName);
             case score_concept: {
                 List<StockCrawlData> crawlData = stocksService.queryAllStockCrawlData();
@@ -95,6 +97,7 @@ public class ScoreTask extends TaskBase {
             case score_ma:  return StockScoreRank.INDEX_NAME;
             case score_revert: return StockRevertScoreRank.INDEX_NAME;
             case score_concept: return StockScoreRank.INDEX_NAME;
+            case score_support: return StockSupportScoreRank.INDEX_NAME;
             default : logger.error("no such IndexName in score task.");
         }
         return StockScoreRank.INDEX_NAME;

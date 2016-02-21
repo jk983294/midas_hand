@@ -2,6 +2,7 @@ package com.victor.midas.services.worker.task;
 
 import com.victor.midas.calculator.score.StockRevertScoreRank;
 import com.victor.midas.calculator.score.StockScoreRank;
+import com.victor.midas.calculator.score.StockSupportScoreRank;
 import com.victor.midas.model.common.CmdType;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.dao.TaskDao;
@@ -61,7 +62,7 @@ public class TrainTask extends TaskBase {
                 trainer = new SingleParameterTrainer(Double.valueOf(params.get(0)), Double.valueOf(params.get(1)), Double.valueOf(params.get(2)));
             }
             if(trainer != null){
-                Trainee trainee = new GeneralScoreManager(stocks, StockRevertScoreRank.INDEX_NAME);
+                Trainee trainee = new GeneralScoreManager(stocks, StockSupportScoreRank.INDEX_NAME);
                 trainee.setIsInTrain(true);
                 trainer.setTrainee(trainee);
                 trainer.process();

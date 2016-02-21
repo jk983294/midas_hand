@@ -1,6 +1,7 @@
 package com.victor.midas.calculator.score;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.common.model.DirectionType;
 import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.calculator.util.MaxMinUtil;
@@ -26,8 +27,10 @@ public class PricePositionScore extends IndexCalcBase {
 
     private double[] end, start, max, min, total;
     private double[] vMa5;
+    private DirectionType direction = DirectionType.Chaos;
     private final static int[] timeFrames = new int[]{5, 10, 20, 30, 60};
     private final static int timeFrameCnt = timeFrames.length;
+    private List<KeyValue<Integer, Double>> all = new ArrayList<>();
     private List<KeyValue<Integer, Double>> tops = new ArrayList<>();
     private List<KeyValue<Integer, Double>> bottoms = new ArrayList<>();
     private List<KeyValue<Integer, Double>> topsFiltered = new ArrayList<>();
@@ -61,56 +64,77 @@ public class PricePositionScore extends IndexCalcBase {
         int[] dates = stock.getDatesInt();
         double toBottomScore, toTopScore, volumeChange, nearness, nearest = 100;
 
-        SectionalFunction topFunction = new SectionalFunction(-0.06d, 0d, 0d, -1d, 0.06d, 0d);
-        SectionalFunction bottomFunction = new SectionalFunction(-0.08d, 0d, -0.02d, 1d, 0.04d, 0d);
+        SectionalFunction resistFunction = new SectionalFunction(-0.06d, 0d, 0, -1d, +0.06d, 0d);
+        SectionalFunction supportFunction = new SectionalFunction(0.002 - 0.06d, 0d, 0.002, 1d, 0.002 + 0.06d, 0d);
 
         for(int i = 5; i < len; i++) {
-//            if(dates[i] == 20151225){
+//            if(dates[i] == 20160216){
 //                System.out.println("wow");
 //            }
 
             findTopsBottoms(i);
             filterTopBottom(i);
+            decideCurrentDirection(i);
+            SectionalFunction function = resistFunction;
+
+            if(direction == DirectionType.Chaos){
+                continue;
+            } else if(direction == DirectionType.Up){
+                function = resistFunction;
+            } else {
+                function = supportFunction;
+            }
 
             toTopScore = toBottomScore = 0;
             if(topsFiltered.size() > 1 ){
                 for (int j = 0; j < topsFiltered.size(); j++) {
                     // when it touch previous top, it tends to decline
-                    toTopScore += topFunction.calculate(MathStockUtil.calculateChangePct(topsFiltered.get(j).getValue(), maxMinUtils[0].getMaxPrice(i)));
+                    toTopScore += function.calculate(MathStockUtil.calculateChangePct(topsFiltered.get(j).getValue(), maxMinUtils[0].getMaxPrice(i)));
                 }
             }
             if(bottomsFiltered.size() > 1){
                 for (int j = 0; j < bottomsFiltered.size(); j++) {
                     // don't use today's min, should use end price, it may have just touch the bottom, then bounce too high to get into trade
-                    toBottomScore += bottomFunction.calculate(MathStockUtil.calculateChangePct(bottomsFiltered.get(j).getValue(), end[i]));
+                    toBottomScore += function.calculate(MathStockUtil.calculateChangePct(bottomsFiltered.get(j).getValue(), end[i]));
                 }
             }
+            if(DirectionType.Down == direction){
+                pricePositionScore[i] = toBottomScore;
+            } else if(DirectionType.Up == direction){
+                pricePositionScore[i] = toTopScore;
+            } else {
+                pricePositionScore[i] = 0;
+            }
             pricePositionScore[i] = toBottomScore + toTopScore;
-
-//            changePctFromHigh = MathStockUtil.calculateChangePct(max[i], max[maxIndex]);
-//            volumeChange = vMa5[i] / vMa5[maxIndex];
-//            if(i - maxIndex > 10 && volumeChange < 0.8 && changePctFromHigh > 0d && changePctFromHigh < 0.03){
-//                badDepth[i] += -5d;
-//            }
+//            pricePositionScore[i] = direction.ordinal();
         }
 
         // check market index, price position against price MA
         if(stock.getStockType() == StockType.Index){
-//            MaBase maMethod = new SMA();
-//            double[] ma = maMethod.calculate(end, 5);
-//            double[] vMa = maMethod.calculate(total, 5);
-//            for( int i = 5; i < len; i++) {
-//                changePctFromMa = MathStockUtil.calculateChangePct(end[i], ma[i]);
-//                volumeChange = MathStockUtil.calculateChangePct(vMa[i - 5], total[i]);
-//                if(end[i] < ma[i] && changePctFromMa < 0.0091 ){
-//                    pricePositionScore[i] = -5d;
-//                }
-//            }
-        } else {
-
-
         }
 
+    }
+
+    private void decideCurrentDirection(int i){
+        direction = DirectionType.Chaos;
+        double currentTrendChangePct, previousTrendChangePct;
+        if(all.size() > 1){
+            KeyValue<Integer, Double> firstBottom = bottoms.get(0);
+            KeyValue<Integer, Double> firstTop = tops.get(0);
+            direction = firstTop.getKey() > firstBottom.getKey() ? DirectionType.Down : DirectionType.Up;
+            previousTrendChangePct = MathStockUtil.calculateChangePct(maxMinUtils[0].getMinPrice(firstBottom.getKey()), maxMinUtils[0].getMaxPrice(firstTop.getKey()));
+            if(DirectionType.Down == direction){
+                currentTrendChangePct = MathStockUtil.calculateChangePct(end[i], maxMinUtils[0].getMaxPrice(firstTop.getKey()));
+                if(Math.abs(currentTrendChangePct) < Math.abs(previousTrendChangePct) * 0.022){
+                    direction = DirectionType.getOpposite(direction);
+                }
+            } else {
+                currentTrendChangePct = MathStockUtil.calculateChangePct(maxMinUtils[0].getMinPrice(firstBottom.getKey()), end[i]);
+                if(Math.abs(currentTrendChangePct) < Math.abs(previousTrendChangePct) * 0.051){
+                    direction = DirectionType.getOpposite(direction);
+                }
+            }
+        }
     }
 
     private void filterTopBottom(int i){
@@ -163,6 +187,7 @@ public class PricePositionScore extends IndexCalcBase {
         boolean isCurrentBottom = false;
 
         timeFrameIndex = 0;
+        all.clear();
         tops.clear();
         bottoms.clear();
         currentIndex = i;
@@ -174,24 +199,28 @@ public class PricePositionScore extends IndexCalcBase {
                 currentIndex = i;
                 minIndex = maxMinUtils[timeFrameIndex].getMinIndexRecursive(currentIndex);
                 maxIndex = maxMinUtils[timeFrameIndex].getMaxIndexRecursive(currentIndex);
-                if(minIndex == i && maxIndex == i){
+                if((minIndex == i && maxIndex == i) || minIndex == maxIndex){
                     timeFrameIndex++;
                 } else if(minIndex == i && maxIndex < i){
                     isCurrentBottom = false;
                     currentIndex = maxIndex;
                     tops.add(new KeyValue<>(currentIndex, maxMinUtils[timeFrameIndex].getMaxPrice(currentIndex)));
+                    all.add(tops.get(tops.size() - 1));
                 } else if(maxIndex == i && minIndex < i){
                     isCurrentBottom = true;
                     currentIndex = minIndex;
                     bottoms.add(new KeyValue<>(currentIndex, maxMinUtils[timeFrameIndex].getMinPrice(currentIndex)));
+                    all.add(bottoms.get(bottoms.size() - 1));
                 } else if(minIndex < maxIndex){
                     isCurrentBottom = false;
                     currentIndex = maxIndex;
                     tops.add(new KeyValue<>(currentIndex, maxMinUtils[timeFrameIndex].getMaxPrice(currentIndex)));
+                    all.add(tops.get(tops.size() - 1));
                 } else {
                     isCurrentBottom = true;
                     currentIndex = minIndex;
                     bottoms.add(new KeyValue<>(currentIndex, maxMinUtils[timeFrameIndex].getMinPrice(currentIndex)));
+                    all.add(bottoms.get(bottoms.size() - 1));
                 }
             } else if(topSize > bottomSize || (topSize == bottomSize && !isCurrentBottom)){
                 currentIndex = tops.get(topSize - 1).getKey();
@@ -202,6 +231,7 @@ public class PricePositionScore extends IndexCalcBase {
                     isCurrentBottom = true;
                     currentIndex = minIndex;
                     bottoms.add(new KeyValue<>(currentIndex, maxMinUtils[timeFrameIndex].getMinPrice(currentIndex)));
+                    all.add(bottoms.get(bottoms.size() - 1));
                 }
             } else if(topSize < bottomSize || (topSize == bottomSize && isCurrentBottom)){
                 currentIndex = bottoms.get(bottomSize - 1).getKey();
@@ -212,6 +242,7 @@ public class PricePositionScore extends IndexCalcBase {
                     isCurrentBottom = false;
                     currentIndex = maxIndex;
                     tops.add(new KeyValue<>(currentIndex, maxMinUtils[timeFrameIndex].getMaxPrice(currentIndex)));
+                    all.add(tops.get(tops.size() - 1));
                 }
             }
 
