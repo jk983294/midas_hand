@@ -1,5 +1,6 @@
 package com.victor.midas.calculator.chan.model;
 
+import com.victor.midas.calculator.common.model.DirectionType;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.utilities.math.function.LineUpDownSideFunction;
 import com.victor.utilities.math.function.SectionalFunction;

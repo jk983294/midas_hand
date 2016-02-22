@@ -1,6 +1,7 @@
 package com.victor.midas.calculator.chan.model;
 
 
+import com.victor.midas.calculator.common.model.FractalType;
 import com.victor.midas.calculator.util.MathStockUtil;
 
 public class MergedKLine {

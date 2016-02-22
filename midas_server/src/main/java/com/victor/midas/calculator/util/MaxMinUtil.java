@@ -161,21 +161,29 @@ public class MaxMinUtil {
     }
 
     public int getMaxIndexRecursive(int index) {
+        return getMaxIndexRecursive(index, false);
+    }
+
+    public int getMinIndexRecursive(int index) {
+        return getMinIndexRecursive(index, false);
+    }
+
+    public int getMaxIndexRecursive(int index, boolean isIgnoreSameDayHighLow) {
         int current = index;
         do {
             current = maxIndex[current];
-            if(maxIndex[current] == minIndex[current]){
+            if(isIgnoreSameDayHighLow && maxIndex[current] == minIndex[current]){
                 current--;
             }
         } while (current >= 0 && current != maxIndex[current]);
         return Math.max(0, current);
     }
 
-    public int getMinIndexRecursive(int index) {
+    public int getMinIndexRecursive(int index, boolean isIgnoreSameDayHighLow) {
         int current = index;
         do {
             current = minIndex[current];
-            if(maxIndex[current] == minIndex[current]){
+            if(isIgnoreSameDayHighLow && maxIndex[current] == minIndex[current]){
                 current--;
             }
         } while (current >= 0 && current != minIndex[current]);

@@ -1,11 +1,10 @@
 package com.victor.midas.calculator.chan;
 
 import com.victor.midas.calculator.chan.model.ChanStroke;
-import com.victor.midas.calculator.chan.model.FractalType;
 import com.victor.midas.calculator.chan.model.MergedKLine;
 import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.common.model.FractalType;
 import com.victor.midas.calculator.indicator.IndexChangePct;
-import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;

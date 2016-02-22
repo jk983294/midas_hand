@@ -1,5 +1,8 @@
 package com.victor.midas.calculator.chan.model;
 
+import com.victor.midas.calculator.common.model.DirectionType;
+import com.victor.midas.calculator.common.model.FractalType;
+
 /**
  * one stroke is from top fractal to bottom or vice verse
  */

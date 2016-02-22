@@ -68,9 +68,9 @@ public class PricePositionScore extends IndexCalcBase {
         SectionalFunction supportFunction = new SectionalFunction(0.002 - 0.06d, 0d, 0.002, 1d, 0.002 + 0.06d, 0d);
 
         for(int i = 5; i < len; i++) {
-//            if(dates[i] == 20160216){
-//                System.out.println("wow");
-//            }
+            if(dates[i] == 20150911){
+                System.out.println("wow");
+            }
 
             findTopsBottoms(i);
             filterTopBottom(i);
@@ -106,7 +106,7 @@ public class PricePositionScore extends IndexCalcBase {
                 pricePositionScore[i] = 0;
             }
             pricePositionScore[i] = toBottomScore + toTopScore;
-//            pricePositionScore[i] = direction.ordinal();
+            pricePositionScore[i] = direction.ordinal();
         }
 
         // check market index, price position against price MA
@@ -197,8 +197,8 @@ public class PricePositionScore extends IndexCalcBase {
             bottomSize = bottoms.size();
             if(topSize == 0 && bottomSize == 0){
                 currentIndex = i;
-                minIndex = maxMinUtils[timeFrameIndex].getMinIndexRecursive(currentIndex);
-                maxIndex = maxMinUtils[timeFrameIndex].getMaxIndexRecursive(currentIndex);
+                minIndex = maxMinUtils[timeFrameIndex].getMinIndexRecursive(currentIndex, true);
+                maxIndex = maxMinUtils[timeFrameIndex].getMaxIndexRecursive(currentIndex, true);
                 if((minIndex == i && maxIndex == i) || minIndex == maxIndex){
                     timeFrameIndex++;
                 } else if(minIndex == i && maxIndex < i){
