@@ -5,8 +5,8 @@ package com.victor.midas.calculator.common.model;
  */
 public enum DirectionType {
 
-    Up,
     Down,
+    Up,
     Chaos;
 
     @Override

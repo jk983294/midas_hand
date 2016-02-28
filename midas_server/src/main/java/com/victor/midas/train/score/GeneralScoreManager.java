@@ -80,7 +80,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
 
         if(!isInTrain){
             logger.info("result : " + perfCollector.toString());
-            FileUtils.write(new File("D:\\stock_performance.txt"), perfCollector.toPerfString());
+            FileUtils.write(new File("E:\\stock_performance.txt"), perfCollector.toPerfString());
         }
     }
 
