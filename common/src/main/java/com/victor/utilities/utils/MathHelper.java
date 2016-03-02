@@ -199,4 +199,8 @@ public class MathHelper {
         return Longs.tryParse(str);
     }
 
+    public static double log(double a, double b){
+        return Math.log(b) / Math.log(a);
+    }
+
 }

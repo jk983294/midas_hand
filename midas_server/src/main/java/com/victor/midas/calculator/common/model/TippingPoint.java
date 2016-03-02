@@ -6,6 +6,7 @@ public class TippingPoint {
     public int cobIndex, arrayIndex;
     public double price;
     public FractalType type;
+    public double averageTimeElapse, averageChangePct, averageVolume;    // to get this point, how many days past and come
 
     public TippingPoint(int cobIndex, int arrayIndex, double price, FractalType type) {
         this.cobIndex = cobIndex;

@@ -13,6 +13,7 @@ import com.victor.midas.util.MidasException;
 import com.victor.utilities.math.stats.ma.MaBase;
 import com.victor.utilities.math.stats.ma.SMA;
 import com.victor.utilities.utils.ArrayHelper;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.HashMap;
 
@@ -85,15 +86,17 @@ public class IndexBadDepth extends IndexCalcBase {
                 }
             }
 
-//            for(int i = 5; i < len; i++) {
-//                minIndex = mmPriceUtil5.getMinIndexRecursive(i);
-//                maxIndex = mmPriceUtil5.getMaxIndexRecursive(minIndex);
-//                changePctFromHigh = MathStockUtil.calculateChangePct(max[i], max[maxIndex]);
-//                volumeChange = vMa5[i] / vMa5[maxIndex];
-//                if(i - maxIndex > 10 && volumeChange < 0.8 && changePctFromHigh > 0d && changePctFromHigh < 0.03){
-//                    badDepth[i] += -5d;
-//                }
-//            }
+            // abnormal data
+            for(int i = 5; i < len; i++) {
+                if(Math.abs(changePct[i]) > 0.11d) badDepth[i - 1] = -5d;
+            }
+
+//            // for those drop too fast
+            for(int i = 0; i < len; i++) {
+                if(changePct[i] < -0.099){
+                    badDepth[i] = -5d;
+                }
+            }
         }
 
     }

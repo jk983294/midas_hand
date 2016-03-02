@@ -4,6 +4,7 @@ import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.common.model.DirectionType;
 import com.victor.midas.calculator.common.model.FractalType;
 import com.victor.midas.calculator.common.model.TippingPoint;
+import com.victor.midas.calculator.divergence.IndexBadDepth;
 import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.calculator.util.MaxMinUtil;
@@ -12,7 +13,10 @@ import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.math.function.SectionalFunction;
+import com.victor.utilities.math.stats.ma.MaBase;
+import com.victor.utilities.math.stats.ma.SMA;
 import com.victor.utilities.model.KeyValue;
+import com.victor.utilities.utils.MathHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,10 +29,11 @@ public class PricePositionScore extends IndexCalcBase {
 
     public final static String INDEX_NAME = "pricePositionScore";
 
+    private MaBase maMethod = new SMA();
+
     private double[] pricePositionScore;
 
-    private double[] end, start, max, min, total;
-    private double[] vMa5;
+    private double[] end, start, max, min, total, badDepth;
     private DirectionType direction = DirectionType.Chaos;
     private final static int[] timeFrames = new int[]{5, 10, 20, 30, 60};
     private final static int timeFrameCnt = timeFrames.length;
@@ -54,6 +59,7 @@ public class PricePositionScore extends IndexCalcBase {
     @Override
     public void setRequiredCalculators() {
         requiredCalculators.add(IndexChangePct.INDEX_NAME);
+        requiredCalculators.add(IndexBadDepth.INDEX_NAME);
     }
 
     @Override
@@ -69,12 +75,15 @@ public class PricePositionScore extends IndexCalcBase {
         SectionalFunction resistFunction = new SectionalFunction(-0.06d, 0d, 0, -1d, +0.06d, 0d);
         SectionalFunction supportFunction = new SectionalFunction(0.002 - 0.06d, 0d, 0.002, 1d, 0.002 + 0.06d, 0d);
 
+        double[] vMa = maMethod.calculate(total, 5);
+
         for(int i = 5; i < len; i++) {
 //            if(dates[i] == 20150910){
 //                System.out.println("wow");
 //            }
 
             findTopsBottoms(i);
+            calculateTimeElapse(i);
             filterTopBottom(i);
             decideCurrentDirection(i);
             if(all.size() >= 2 && direction != DirectionType.Chaos){
@@ -85,13 +94,13 @@ public class PricePositionScore extends IndexCalcBase {
                 if(topsFiltered.size() > 1 ){
                     for (int j = 0; j < topsFiltered.size(); j++) {
                         // when it touch previous top, it tends to decline
-                        toTopScore += function.calculate(MathStockUtil.calculateChangePct(topsFiltered.get(j).price, maxMinUtils[0].getMaxPrice(i)));
+                        toTopScore += MathHelper.log(27, 27 + topsFiltered.get(j).averageTimeElapse) * function.calculate(MathStockUtil.calculateChangePct(topsFiltered.get(j).price, maxMinUtils[0].getMaxPrice(i)));
                     }
                 }
                 if(bottomsFiltered.size() > 1){
                     for (int j = 0; j < bottomsFiltered.size(); j++) {
                         // don't use today's min, should use end price, it may have just touch the bottom, then bounce too high to get into trade
-                        toBottomScore += function.calculate(MathStockUtil.calculateChangePct(bottomsFiltered.get(j).price, end[i]));
+                        toBottomScore += MathHelper.log(27, 27 + bottomsFiltered.get(j).averageTimeElapse) * function.calculate(MathStockUtil.calculateChangePct(bottomsFiltered.get(j).price, end[i]));
                     }
                 }
 //                if(MathStockUtil.calculateChangePct(bottoms.get(0).price, end[i]) > 0.2){
@@ -103,7 +112,8 @@ public class PricePositionScore extends IndexCalcBase {
                 } else if(DirectionType.Up == direction){
                     pricePositionScore[i] = toTopScore;
                 }
-                pricePositionScore[i] = toBottomScore + toTopScore + firstBottomScore;
+                pricePositionScore[i] = toBottomScore + toTopScore;
+                if(badDepth[i] < -1.5d) pricePositionScore[i] = badDepth[i];
 //              pricePositionScore[i] = direction.ordinal();
             }
         }
@@ -257,6 +267,29 @@ public class PricePositionScore extends IndexCalcBase {
         } while (currentIndex > 0 && i - currentIndex < maxLookBackPeriod && timeFrameIndex < timeFrameCnt);
     }
 
+    private void calculateTimeElapse(int index){
+        double averageDays, averageChangePct;
+        int cnt;
+        for (int i = 0; i < all.size(); i++) {
+            cnt = 0;
+            averageDays = averageChangePct = 0d;
+            if(i + 1 < all.size()){
+                averageDays += (all.get(i + 1).cobIndex - all.get(i).cobIndex);
+                averageChangePct += Math.abs(MathStockUtil.calculateChangePct(all.get(i + 1).price, all.get(i).price));
+                cnt++;
+            }
+            if(i - 1 >= 0){
+                averageDays += (all.get(i).cobIndex - all.get(i - 1).cobIndex);
+                averageChangePct += Math.abs(MathStockUtil.calculateChangePct(all.get(i).price, all.get(i - 1).price));
+                cnt++;
+            }
+            if(cnt > 0){
+                all.get(i).averageTimeElapse = averageDays / cnt;
+                all.get(i).averageChangePct = averageChangePct / cnt;
+            }
+        }
+    }
+
     @Override
     protected void initIndex() throws MidasException {
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
@@ -264,6 +297,7 @@ public class PricePositionScore extends IndexCalcBase {
         max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
         min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
         total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
+        badDepth = (double[])stock.queryCmpIndex(IndexBadDepth.INDEX_NAME);
         maxMinUtils = new MaxMinUtil[timeFrameCnt];
         for (int i = 0; i < timeFrameCnt; i++) {
             maxMinUtils[i] = new MaxMinUtil(stock, false);
