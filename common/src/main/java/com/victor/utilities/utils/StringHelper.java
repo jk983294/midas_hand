@@ -24,4 +24,12 @@ public class StringHelper {
     public static List<String> split(String str, String delimters){
         return toList(Splitter.on(CharMatcher.anyOf(delimters)).trimResults().omitEmptyStrings().split(str).iterator());
     }
+
+    public static String toString(List list){
+        StringBuilder sb = new StringBuilder();
+        for(Object object : list){
+            sb.append(object.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }

@@ -61,7 +61,11 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
                 index = stock.getCobIndex();
                 if(stock.isSameDayWithIndex(cob)){
                     scores = (double[])stock.queryCmpIndex(indexName);
-                    stockScores.add(new StockScore(stock.getStockName(), scores[index], cob));
+                    if(!Double.isNaN(scores[index])){
+                        stockScores.add(new StockScore(stock.getStockName(), scores[index], cob));
+                    } else {
+                        throw new MidasException("NaN score found for "+ stock.getStockName() + " cob " + stock.getDatesInt()[index]);
+                    }
                 }
             }
             /*** move iterator forward */

@@ -1,14 +1,38 @@
 package com.victor.midas.model.train;
 
 
-public class SingleParameterTrainResult {
+import com.victor.midas.train.perf.DayStatistics;
 
+public class SingleParameterTrainResult {
+    // day1 is buy day
     public double parameter, dayPerformance, kellyAnnualizedPerformance, stdDev, kellyFraction;
     public double d1Open, d1Close, d1High, d1Low;
     public double d1OpenStdDev, d1CloseStdDev, d1HighStdDev, d1LowStdDev;
     public double d2Open, d2Close, d2High, d2Low;
     public double d2OpenStdDev, d2CloseStdDev, d2HighStdDev, d2LowStdDev;
     public long cnt;
+
+    public void setBuyDayStatistics(DayStatistics buyDayStatistics){
+        d1Open = buyDayStatistics.openStats.getMean();
+        d1OpenStdDev = buyDayStatistics.openStats.getStandardDeviation();
+        d1Close = buyDayStatistics.closeStats.getMean();
+        d1CloseStdDev = buyDayStatistics.closeStats.getStandardDeviation();
+        d1High = buyDayStatistics.highStats.getMean();
+        d1HighStdDev = buyDayStatistics.highStats.getStandardDeviation();
+        d1Low = buyDayStatistics.lowStats.getMean();
+        d1LowStdDev = buyDayStatistics.lowStats.getStandardDeviation();
+    }
+
+    public void setSellDayStatistics(DayStatistics sellDayStatistics){
+        d2Open = sellDayStatistics.openStats.getMean();
+        d2OpenStdDev = sellDayStatistics.openStats.getStandardDeviation();
+        d2Close = sellDayStatistics.closeStats.getMean();
+        d2CloseStdDev = sellDayStatistics.closeStats.getStandardDeviation();
+        d2High = sellDayStatistics.highStats.getMean();
+        d2HighStdDev = sellDayStatistics.highStats.getStandardDeviation();
+        d2Low = sellDayStatistics.lowStats.getMean();
+        d2LowStdDev = sellDayStatistics.lowStats.getStandardDeviation();
+    }
 
 
     public double getParameter() {

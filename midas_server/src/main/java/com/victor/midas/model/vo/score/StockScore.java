@@ -12,7 +12,11 @@ public class StockScore implements Comparable<StockScore> {
 
     private double score, perf;
 
-    private int cob;
+    private int cob;        // prediction day cob
+
+    public int buyCob, sellCob;
+    public int buyTiming, sellTiming;
+    public double marketPerf;
 
     public StockScore() {
     }
@@ -71,6 +75,46 @@ public class StockScore implements Comparable<StockScore> {
         this.cob = cob;
     }
 
+    public int getBuyCob() {
+        return buyCob;
+    }
+
+    public void setBuyCob(int buyCob) {
+        this.buyCob = buyCob;
+    }
+
+    public int getSellCob() {
+        return sellCob;
+    }
+
+    public void setSellCob(int sellCob) {
+        this.sellCob = sellCob;
+    }
+
+    public int getBuyTiming() {
+        return buyTiming;
+    }
+
+    public void setBuyTiming(int buyTiming) {
+        this.buyTiming = buyTiming;
+    }
+
+    public int getSellTiming() {
+        return sellTiming;
+    }
+
+    public void setSellTiming(int sellTiming) {
+        this.sellTiming = sellTiming;
+    }
+
+    public double getMarketPerf() {
+        return marketPerf;
+    }
+
+    public void setMarketPerf(double marketPerf) {
+        this.marketPerf = marketPerf;
+    }
+
     @Override
     public int compareTo(StockScore o) {
         return (Double.valueOf(score)).compareTo(o.getScore());
@@ -84,6 +128,11 @@ public class StockScore implements Comparable<StockScore> {
                 ", score=" + score +
                 ", perf=" + perf +
                 ", cob=" + cob +
+                ", buyCob=" + buyCob +
+                ", sellCob=" + sellCob +
+                ", buyTiming=" + buyTiming +
+                ", sellTiming=" + sellTiming +
+                ", marketPerf=" + marketPerf +
                 '}';
     }
 }

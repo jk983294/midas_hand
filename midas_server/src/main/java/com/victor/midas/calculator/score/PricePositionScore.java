@@ -15,7 +15,6 @@ import com.victor.midas.util.MidasException;
 import com.victor.utilities.math.function.SectionalFunction;
 import com.victor.utilities.math.stats.ma.MaBase;
 import com.victor.utilities.math.stats.ma.SMA;
-import com.victor.utilities.model.KeyValue;
 import com.victor.utilities.utils.MathHelper;
 
 import java.util.ArrayList;
@@ -78,7 +77,7 @@ public class PricePositionScore extends IndexCalcBase {
         double[] vMa = maMethod.calculate(total, 5);
 
         for(int i = 5; i < len; i++) {
-//            if(dates[i] == 20150910){
+//            if(dates[i] == 20140605){
 //                System.out.println("wow");
 //            }
 
@@ -94,13 +93,13 @@ public class PricePositionScore extends IndexCalcBase {
                 if(topsFiltered.size() > 1 ){
                     for (int j = 0; j < topsFiltered.size(); j++) {
                         // when it touch previous top, it tends to decline
-                        toTopScore += MathHelper.log(27, 27 + topsFiltered.get(j).averageTimeElapse) * function.calculate(MathStockUtil.calculateChangePct(topsFiltered.get(j).price, maxMinUtils[0].getMaxPrice(i)));
+                        toTopScore += MathHelper.log(11, 11 + topsFiltered.get(j).averageTimeElapse) * function.calculate(MathStockUtil.calculateChangePct(topsFiltered.get(j).price, maxMinUtils[0].getMaxPrice(i)));
                     }
                 }
                 if(bottomsFiltered.size() > 1){
                     for (int j = 0; j < bottomsFiltered.size(); j++) {
                         // don't use today's min, should use end price, it may have just touch the bottom, then bounce too high to get into trade
-                        toBottomScore += MathHelper.log(27, 27 + bottomsFiltered.get(j).averageTimeElapse) * function.calculate(MathStockUtil.calculateChangePct(bottomsFiltered.get(j).price, end[i]));
+                        toBottomScore += MathHelper.log(11, 11 + bottomsFiltered.get(j).averageTimeElapse) * function.calculate(MathStockUtil.calculateChangePct(bottomsFiltered.get(j).price, end[i]));
                     }
                 }
 //                if(MathStockUtil.calculateChangePct(bottoms.get(0).price, end[i]) > 0.2){
@@ -274,12 +273,12 @@ public class PricePositionScore extends IndexCalcBase {
             cnt = 0;
             averageDays = averageChangePct = 0d;
             if(i + 1 < all.size()){
-                averageDays += (all.get(i + 1).cobIndex - all.get(i).cobIndex);
+                averageDays += Math.abs(all.get(i + 1).cobIndex - all.get(i).cobIndex);
                 averageChangePct += Math.abs(MathStockUtil.calculateChangePct(all.get(i + 1).price, all.get(i).price));
                 cnt++;
             }
             if(i - 1 >= 0){
-                averageDays += (all.get(i).cobIndex - all.get(i - 1).cobIndex);
+                averageDays += Math.abs(all.get(i).cobIndex - all.get(i - 1).cobIndex);
                 averageChangePct += Math.abs(MathStockUtil.calculateChangePct(all.get(i).price, all.get(i - 1).price));
                 cnt++;
             }
