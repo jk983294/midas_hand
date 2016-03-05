@@ -13,6 +13,7 @@ public class StockScore implements Comparable<StockScore> {
     private double score, perf;
 
     private int cob;        // prediction day cob
+    public int holdingPeriod = -1;      // if negative means no override, let PerfCollector decide when to sell
 
     public int buyCob, sellCob;
     public int buyTiming, sellTiming;
@@ -115,6 +116,14 @@ public class StockScore implements Comparable<StockScore> {
         this.marketPerf = marketPerf;
     }
 
+    public int getHoldingPeriod() {
+        return holdingPeriod;
+    }
+
+    public void setHoldingPeriod(int holdingPeriod) {
+        this.holdingPeriod = holdingPeriod;
+    }
+
     @Override
     public int compareTo(StockScore o) {
         return (Double.valueOf(score)).compareTo(o.getScore());
@@ -128,6 +137,7 @@ public class StockScore implements Comparable<StockScore> {
                 ", score=" + score +
                 ", perf=" + perf +
                 ", cob=" + cob +
+                ", holdingPeriod=" + holdingPeriod +
                 ", buyCob=" + buyCob +
                 ", sellCob=" + sellCob +
                 ", buyTiming=" + buyTiming +

@@ -7,6 +7,8 @@ import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.model.vo.score.StockSeverity;
+import com.victor.midas.train.common.MidasTrainOptions;
+import com.victor.midas.train.common.TrainOptionApply;
 import com.victor.midas.train.common.Trainee;
 import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasException;
@@ -23,7 +25,7 @@ import java.util.*;
 /**
  * used for calculate score, and record score
  */
-public class GeneralScoreManager implements ScoreManager, Trainee {
+public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionApply {
 
     private static final Logger logger = Logger.getLogger(GeneralScoreManager.class);
 
@@ -38,7 +40,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
 
     private List<StockScoreRecord> scoreRecords;
     private PerfCollector perfCollector;
-    private boolean isBigDataSet, isInTrain = false;
+    public boolean isBigDataSet, isInTrain = false, useQuitSignal = false;
 
     public GeneralScoreManager(List<StockVo> stocks, String indexName) throws Exception {
         this.stocks = stocks;
@@ -62,7 +64,13 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
                 if(stock.isSameDayWithIndex(cob)){
                     scores = (double[])stock.queryCmpIndex(indexName);
                     if(!Double.isNaN(scores[index])){
-                        stockScores.add(new StockScore(stock.getStockName(), scores[index], cob));
+                        if(useQuitSignal){
+                            if(scores[index] > 1d){ // buy signal
+
+                            }
+                        } else {    // no signal, every stock will take account
+                            stockScores.add(new StockScore(stock.getStockName(), scores[index], cob));
+                        }
                     } else {
                         throw new MidasException("NaN score found for "+ stock.getStockName() + " cob " + stock.getDatesInt()[index]);
                     }
@@ -146,5 +154,10 @@ public class GeneralScoreManager implements ScoreManager, Trainee {
     public void setIsInTrain(boolean isInTrain) {
         this.isInTrain = isInTrain;
         perfCollector.setIsInTrain(isInTrain);
+    }
+
+    @Override
+    public void applyOptions(MidasTrainOptions options) {
+        this.useQuitSignal = options.useSignal;
     }
 }
