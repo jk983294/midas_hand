@@ -34,18 +34,11 @@ public class IndexLongGoodTrend extends IndexCalcBase {
     private int[] lgt;      // long good trend
     private int[] k_state;
 
-    private double[] end;
-    private double[] start;
-    private double[] max;
-    private double[] min;
-    private double[] total;
-    private double[] changePct;
     private double[] upShadowPct;
     private double[] downShadowPct;
     private double[] middleShadowPct;
     private double[] vMa;
 
-    private int len;
     private int totalCnt;
     private int smallEntityCnt, bigEntityCnt;
     private int upEntityCnt, downEntityCnt;
@@ -123,18 +116,11 @@ public class IndexLongGoodTrend extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
         upShadowPct = (double[])stock.queryCmpIndex("k_u");
         downShadowPct = (double[])stock.queryCmpIndex("k_d");
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
-        changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
         vMa = (double[])stock.queryCmpIndex("vMaMedium");
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
         k_state = (int[])stock.queryCmpIndex("k_state");
-        len = end.length;
 
         lgt = new int[len];
         cmpIndexName2Index = new HashMap<>();

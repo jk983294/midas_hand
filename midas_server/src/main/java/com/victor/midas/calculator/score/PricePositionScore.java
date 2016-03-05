@@ -32,7 +32,7 @@ public class PricePositionScore extends IndexCalcBase {
 
     private double[] pricePositionScore;
 
-    private double[] end, start, max, min, total, badDepth;
+    private double[] badDepth;
     private DirectionType direction = DirectionType.Chaos;
     private final static int[] timeFrames = new int[]{5, 10, 20, 30, 60};
     private final static int timeFrameCnt = timeFrames.length;
@@ -43,8 +43,6 @@ public class PricePositionScore extends IndexCalcBase {
     private List<TippingPoint> bottomsFiltered = new ArrayList<>();
 
     private MaxMinUtil[] maxMinUtils;
-
-    private int len;
 
     public PricePositionScore(CalcParameter parameter) {
         super(parameter);
@@ -291,20 +289,14 @@ public class PricePositionScore extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
         badDepth = (double[])stock.queryCmpIndex(IndexBadDepth.INDEX_NAME);
         maxMinUtils = new MaxMinUtil[timeFrameCnt];
         for (int i = 0; i < timeFrameCnt; i++) {
             maxMinUtils[i] = new MaxMinUtil(stock, false);
             maxMinUtils[i].calcMaxMinIndex(timeFrames[i]);
         }
-        len = end.length;
 
         pricePositionScore = new double[len];
-        cmpIndexName2Index = new HashMap<>();
+
     }
 }

@@ -31,13 +31,6 @@ public class IndexKLineMa extends IndexCalcBase {
     private double[] downShadowPct;
     private double[] middleShadowPct;
 
-    private double[] end;
-    private double[] start;
-    private double[] max;
-    private double[] min;
-
-    private int len;
-
     public IndexKLineMa(CalcParameter parameter) {
         super(parameter);
     }
@@ -63,17 +56,11 @@ public class IndexKLineMa extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
         upShadowPct = (double[])stock.queryCmpIndex("k_u");
         downShadowPct = (double[])stock.queryCmpIndex("k_d");
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
-        len = end.length;
 
         middleShadowPctAvg = new double[len];
         middleShadowPctStd = new double[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 }

@@ -47,9 +47,6 @@ public class ChartTimeFrame extends IndexCalcBase {
 
     @Override
     public void calculate() throws MidasException {
-        double[] end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        double[] changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
-        int len = end.length;
         int[] ctf = new int[len];
 
         ArrayList<Integer> ips = calculateInitialTP(end, changePct, len);
@@ -67,7 +64,6 @@ public class ChartTimeFrame extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        cmpIndexName2Index = new HashMap<>();
     }
 
     /**

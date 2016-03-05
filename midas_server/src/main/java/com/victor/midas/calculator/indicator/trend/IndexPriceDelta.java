@@ -22,8 +22,6 @@ public class IndexPriceDelta extends IndexCalcBase {
 
     private int timeFramePriceDelta = 6;
 
-    private double[] end;
-
 
     private double[] pMa5;
     private double[] pMa5D1;
@@ -37,8 +35,6 @@ public class IndexPriceDelta extends IndexCalcBase {
     private double[] pMa60;
     private double[] pMa60D1;
     private double[] pD1;           // using end
-
-    private int len;
 
     private MathDeltaUtil deltaUtil;
 
@@ -78,14 +74,11 @@ public class IndexPriceDelta extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
         pMa5 = (double[])stock.queryCmpIndex("pMa5");
         pMa10 = (double[])stock.queryCmpIndex("pMa10");
         pMa20 = (double[])stock.queryCmpIndex("pMa20");
         pMa30 = (double[])stock.queryCmpIndex("pMa30");
         pMa60 = (double[])stock.queryCmpIndex("pMa60");
-        len = end.length;
-        cmpIndexName2Index = new HashMap<>();
     }
 
 }

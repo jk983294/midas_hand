@@ -18,12 +18,6 @@ public class IndexChangePct extends IndexCalcBase {
 
     public final static String INDEX_NAME = MidasConstants.INDEX_NAME_CHANGEPCT;
 
-    private double[] changePct;
-
-    private double[] end;
-
-    private int len;
-
     public IndexChangePct(CalcParameter parameter) {
         super(parameter);
     }
@@ -48,10 +42,7 @@ public class IndexChangePct extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        len = end.length;
         changePct = new double[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 
 

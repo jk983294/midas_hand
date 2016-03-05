@@ -7,6 +7,7 @@ import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.model.vo.score.StockSeverity;
+import com.victor.midas.train.common.MidasTrainHelper;
 import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.train.common.TrainOptionApply;
 import com.victor.midas.train.common.Trainee;
@@ -41,6 +42,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
     private List<StockScoreRecord> scoreRecords;
     private PerfCollector perfCollector;
     public boolean isBigDataSet, isInTrain = false, useQuitSignal = false;
+    public MidasTrainOptions options;
 
     public GeneralScoreManager(List<StockVo> stocks, String indexName) throws Exception {
         this.stocks = stocks;
@@ -66,7 +68,9 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
                     if(!Double.isNaN(scores[index])){
                         if(useQuitSignal){
                             if(scores[index] > 1d){ // buy signal
-
+                                StockScore score = new StockScore(stock.getStockName(), scores[index], cob);
+                                score.applyOptions(options);
+                                score.holdingPeriod = MidasTrainHelper.getHoldingTime(scores, index, options.buyTiming, options.sellTiming);
                             }
                         } else {    // no signal, every stock will take account
                             stockScores.add(new StockScore(stock.getStockName(), scores[index], cob));

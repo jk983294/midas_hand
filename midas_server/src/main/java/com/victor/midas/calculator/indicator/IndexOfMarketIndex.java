@@ -18,9 +18,6 @@ public class IndexOfMarketIndex extends IndexCalcBase {
 
     private int[] index2MarketIndex;
     private int[] marketIndex2Index;
-    private double[] end;
-
-    private int len;
 
     public IndexOfMarketIndex(CalcParameter parameter) {
         super(parameter);
@@ -57,10 +54,7 @@ public class IndexOfMarketIndex extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        len = end.length;
         index2MarketIndex = new int[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 
 

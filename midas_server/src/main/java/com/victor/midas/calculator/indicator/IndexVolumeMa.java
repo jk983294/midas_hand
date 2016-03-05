@@ -27,8 +27,6 @@ public class IndexVolumeMa extends IndexCalcBase {
     private int volumeMaLong;
     private int volumeMaYear;
 
-    private double[] total;
-
     private double[] vMaShort;
     private double[] vMaMedium;
     private double[] vMaLong;
@@ -37,8 +35,6 @@ public class IndexVolumeMa extends IndexCalcBase {
     private double[] vMaDiffPct;
 
     private double[] volRatio;
-
-    private int len;
 
     public IndexVolumeMa(CalcParameter parameter, MaBase maMethod) {
         super(parameter);
@@ -90,9 +86,6 @@ public class IndexVolumeMa extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
-        len = total.length;
-        cmpIndexName2Index = new HashMap<>();
     }
 
     @Override

@@ -21,12 +21,6 @@ public class IndexBadState extends IndexCalcBase {
     private double[] acp;
     private int[] isBad;
 
-    private double[] end;
-    private double[] start;
-    private double[] max;
-    private double[] min;
-    private double[] total;
-    private double[] changePct;
     private double[] upShadowPct;
     private double[] downShadowPct;
     private double[] middleShadowPct;
@@ -35,8 +29,6 @@ public class IndexBadState extends IndexCalcBase {
     private static final int INTERVAL = 5;
     private static final double BAD_THRESHOLD = -0.03;
     private static final double RECOVER_THRESHOLD = BAD_THRESHOLD / ( INTERVAL - 1);
-
-    private int len;
 
     public IndexBadState(CalcParameter parameter) {
         super(parameter);
@@ -87,20 +79,12 @@ public class IndexBadState extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
         upShadowPct = (double[])stock.queryCmpIndex("k_u");
         downShadowPct = (double[])stock.queryCmpIndex("k_d");
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
-        changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
         pMaLong = (double[])stock.queryCmpIndex("pMaLong");
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
-        len = end.length;
 
         acp = new double[len];
         isBad = new int[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 }

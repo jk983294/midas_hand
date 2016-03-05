@@ -26,14 +26,12 @@ public class IndexBadDepth extends IndexCalcBase {
 
     private double[] badDepth;
 
-    private double[] end, start, max, min, total, changePct, middleShadowPct;
+    private double[] middleShadowPct;
     private double[] vMa5;
     private double[] dif, dea, macdBar; // white line, yellow line, bar
     private int[] index2MarketIndex;
 
     private MaxMinUtil mmPriceUtil60, mmPriceUtil5;
-
-    private int len;
 
     public IndexBadDepth(CalcParameter parameter) {
         super(parameter);
@@ -104,12 +102,6 @@ public class IndexBadDepth extends IndexCalcBase {
     @Override
     protected void initIndex() throws MidasException {
         MaBase maMethod = new SMA();
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
-        changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
 //        dif = (double[])stock.queryCmpIndex("dif");
 //        dea = (double[])stock.queryCmpIndex("dea");
@@ -119,13 +111,11 @@ public class IndexBadDepth extends IndexCalcBase {
         mmPriceUtil5 = new MaxMinUtil(stock, false);
         mmPriceUtil5.calcMaxMinIndex( 15);
         vMa5 = maMethod.calculate(total, 5);
-        len = end.length;
 
         if(stock.getStockType() != StockType.Index){
             index2MarketIndex = (int[])stock.queryCmpIndex(IndexOfMarketIndex.INDEX_NAME);
         }
 
         badDepth = new double[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 }

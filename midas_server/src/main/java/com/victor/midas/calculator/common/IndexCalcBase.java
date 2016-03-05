@@ -7,6 +7,7 @@ import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
 import org.apache.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,9 @@ public abstract class IndexCalcBase implements ICalculator {
     protected double singleDouble = 1d;
     protected int singleInt = 1;
 
+    protected double[] end, start, max, min, volume, total, changePct;
+    protected int len;
+
     protected IndexCalcBase(CalcParameter parameter) {
         this.parameter = parameter;
         setRequiredCalculators();
@@ -41,9 +45,23 @@ public abstract class IndexCalcBase implements ICalculator {
      */
     public void calculate(StockVo stock) throws MidasException {
         this.stock = stock;
-        initIndex();
+        _initIndex();
         calculate();
         stock.addIndex(getIndexName(), cmpIndexName2Index);
+    }
+
+    private void _initIndex() throws MidasException{
+        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
+        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
+        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
+        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
+        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
+        volume = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_VOLUME);
+        changePct = stock.queryCmpIndexDoubleWithNull(MidasConstants.INDEX_NAME_CHANGEPCT);
+        len = end.length;
+        cmpIndexName2Index = new HashMap<>();
+
+        initIndex();
     }
 
     /**

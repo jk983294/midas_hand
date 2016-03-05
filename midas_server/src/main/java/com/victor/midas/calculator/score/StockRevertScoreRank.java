@@ -19,9 +19,8 @@ public class StockRevertScoreRank extends IndexCalcBase {
 
     public final static String INDEX_NAME = "score_revert";
 
-    private double[] end, start, max, min, volume, total, changePct, upShadowPct, downShadowPct, middleShadowPct, badDepth;
+    private double[] upShadowPct, downShadowPct, middleShadowPct, badDepth;
     private double[] scores;
-    private int len;
 
     private MaxMinUtil mmPriceUtil90, mmPriceUtil5;
 
@@ -261,27 +260,17 @@ public class StockRevertScoreRank extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
-        volume = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_VOLUME);
-        changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
         upShadowPct = (double[])stock.queryCmpIndex("k_u");
         downShadowPct = (double[])stock.queryCmpIndex("k_d");
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
         badDepth = (double[])stock.queryCmpIndex("badDepth");
-
 
         mmPriceUtil90 = new MaxMinUtil(stock, true);
         mmPriceUtil90.calcMaxMinIndex(90);
         mmPriceUtil5 = new MaxMinUtil(stock, false);
         mmPriceUtil5.calcMaxMinIndex(5);
 
-        len = end.length;
         scores = new double[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 
 }

@@ -31,8 +31,6 @@ public class PriceMaTangle extends IndexCalcBase {
     private int[] tanglePeriod;
     private int[] decision;
 
-    private int len;
-
     public PriceMaTangle(CalcParameter parameter) {
         super(parameter);
     }
@@ -82,12 +80,11 @@ public class PriceMaTangle extends IndexCalcBase {
     @Override
     protected void initIndex() throws MidasException {
         pMaDiffPct = (double[])stock.queryCmpIndex("pMaDiffPct");
-        len = pMaDiffPct.length;
+
         bullPeriod = new int[len];
         bearPeriod = new int[len];
         tanglePeriod = new int[len];
         decision = new int[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 
     @Override

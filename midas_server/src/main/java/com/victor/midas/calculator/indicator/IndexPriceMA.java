@@ -22,8 +22,6 @@ public class IndexPriceMA extends IndexCalcBase {
 
     private MaBase maMethod = new SMA();
 
-    private double[] end;
-
     private double[] pMa5;
     private double[] pMa10;
     private double[] pMa20;
@@ -31,8 +29,6 @@ public class IndexPriceMA extends IndexCalcBase {
     private double[] pMa60;
     private double[] pMaDiff;
     private double[] pMaDiffPct;
-
-    private int len;
 
     public IndexPriceMA(CalcParameter parameter, MaBase maMethod) {
         super(parameter);
@@ -75,8 +71,5 @@ public class IndexPriceMA extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        len = end.length;
-        cmpIndexName2Index = new HashMap<>();
     }
 }

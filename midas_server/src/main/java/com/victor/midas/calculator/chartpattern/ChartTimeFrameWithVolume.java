@@ -30,19 +30,10 @@ public class ChartTimeFrameWithVolume extends IndexCalcBase {
     private static final int TIE = -2;
     private static final int DOWN = -3;
 
-    private double[] end;
-    private double[] start;
-    private double[] max;
-    private double[] min;
-    private double[] total;
-    private double[] changePct;
-
     private double[] trendAvgVol;
     private double[] trendPreVolRatio;
     private double[] trendPrePreVolRatio;
     private int[] ctf;
-
-    int len;
 
     private CalcUtil calcUtil;
 
@@ -69,20 +60,11 @@ public class ChartTimeFrameWithVolume extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
-        changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
-        len = end.length;
-
         trendAvgVol = new double[len];
         trendPreVolRatio = new double[len];
         trendPrePreVolRatio = new double[len];
         ctf = new int[len];
 
-        cmpIndexName2Index = new HashMap<>();
         calcUtil.init(stock);
     }
 

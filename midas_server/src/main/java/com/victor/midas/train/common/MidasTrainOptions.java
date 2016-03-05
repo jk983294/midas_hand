@@ -11,4 +11,9 @@ public class MidasTrainOptions {
     public boolean useSignal = true;
 
     public boolean selectTops = true;
+
+    /**
+     * default is buy open at next day of buy signal day, sell at close of sell signal day
+     */
+    public int buyTiming = 0, sellTiming = 1;
 }

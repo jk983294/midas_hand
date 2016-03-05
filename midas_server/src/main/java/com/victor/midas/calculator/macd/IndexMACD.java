@@ -19,12 +19,9 @@ public class IndexMACD extends IndexCalcBase {
 
     private MaBase maMethod = new EMA();
 
-    private double[] end;
-
     private double[] pMaFast;
     private double[] pMaSlow;
     private double[] dif, dea, macdBar; // white line, yellow line, bar
-    private int len;
 
     public IndexMACD(CalcParameter parameter, MaBase maMethod) {
         super(parameter);
@@ -59,8 +56,5 @@ public class IndexMACD extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        len = end.length;
-        cmpIndexName2Index = new HashMap<>();
     }
 }

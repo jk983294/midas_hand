@@ -1,10 +1,13 @@
 package com.victor.midas.model.vo.score;
 
 
+import com.victor.midas.train.common.MidasTrainOptions;
+import com.victor.midas.train.common.TrainOptionApply;
+
 /**
  * represent a score
  */
-public class StockScore implements Comparable<StockScore> {
+public class StockScore implements Comparable<StockScore>, TrainOptionApply {
 
     private String stockCode;
 
@@ -144,5 +147,10 @@ public class StockScore implements Comparable<StockScore> {
                 ", sellTiming=" + sellTiming +
                 ", marketPerf=" + marketPerf +
                 '}';
+    }
+
+    @Override
+    public void applyOptions(MidasTrainOptions options) {
+
     }
 }

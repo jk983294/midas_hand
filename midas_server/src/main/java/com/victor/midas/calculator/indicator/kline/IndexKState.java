@@ -27,7 +27,6 @@ public class IndexKState extends IndexCalcBase {
 
     private CalcUtil calcUtil;
 
-    private double[] changePct;
     private double[] upShadowPct;
     private double[] downShadowPct;
     private double[] middleShadowPct;
@@ -35,13 +34,6 @@ public class IndexKState extends IndexCalcBase {
     private double[] pD1;
 
     private int[] signals;
-
-    private double[] end;
-    private double[] start;
-    private double[] max;
-    private double[] min;
-
-    private int len;
 
     public IndexKState(CalcParameter parameter) {
         super(parameter);
@@ -114,19 +106,12 @@ public class IndexKState extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
-        changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
         pMaShortD1 = (double[])stock.queryCmpIndex("pMa5D1");
         pD1 = (double[])stock.queryCmpIndex("pD1");
         upShadowPct = (double[])stock.queryCmpIndex("k_u");
         downShadowPct = (double[])stock.queryCmpIndex("k_d");
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
-        len = end.length;
         signals = new int[len];
-        cmpIndexName2Index = new HashMap<>();
         calcUtil.init(stock);
     }
 }

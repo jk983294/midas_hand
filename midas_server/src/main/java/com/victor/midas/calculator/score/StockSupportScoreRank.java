@@ -18,9 +18,8 @@ public class StockSupportScoreRank extends IndexCalcBase {
 
     public final static String INDEX_NAME = "score_support";
 
-    private double[] end, start, max, min, volume, total, changePct, badDepth, pricePositionScore;
+    private double[] badDepth, pricePositionScore;
     private double[] scores;
-    private int len;
 
     public StockSupportScoreRank(CalcParameter parameter) {
         super(parameter);
@@ -57,19 +56,10 @@ public class StockSupportScoreRank extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
-        volume = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_VOLUME);
-        changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
         badDepth = (double[])stock.queryCmpIndex("badDepth");
         pricePositionScore = (double[])stock.queryCmpIndex("pricePositionScore");
 
-        len = end.length;
         scores = new double[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 
 }

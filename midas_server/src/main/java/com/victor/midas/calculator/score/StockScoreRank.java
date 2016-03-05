@@ -37,15 +37,13 @@ public class StockScoreRank extends IndexCalcBase {
 
     private static final ChanMorphology chanMorphology = new ChanMorphology(new CalcParameter());
 
-    private double[] end, start, max, min, avgVolume, total, changePct;
+    private double[] avgVolume;
     private double[] pMa5, pMa10, pMa20, pMa30, pMa60, pMa120, pMa250;
     private double[] pMa5D1, pMa10D1, pMa20D1, pMa30D1, pMa60D1, pMa120D1, pMa250D1;
     private double[] avgAmplitude;
     private double[] cme;
 
     private double[] scores;
-
-    private int len;
 
     public StockScoreRank(CalcParameter parameter) {
         super(parameter);
@@ -257,18 +255,8 @@ public class StockScoreRank extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
-        changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
-
         initData();
-
-        len = end.length;
         scores = new double[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 
     private void initData() throws MidasException {

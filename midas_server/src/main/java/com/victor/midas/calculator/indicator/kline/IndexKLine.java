@@ -19,14 +19,6 @@ public class IndexKLine extends IndexCalcBase {
     private double[] downShadowPct;
     private double[] middleShadowPct;
 
-
-    private double[] end;
-    private double[] start;
-    private double[] max;
-    private double[] min;
-
-    private int len;
-
     public IndexKLine(CalcParameter parameter) {
         super(parameter);
     }
@@ -51,14 +43,8 @@ public class IndexKLine extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
-        len = end.length;
         upShadowPct = new double[len];
         downShadowPct = new double[len];
         middleShadowPct = new double[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 }

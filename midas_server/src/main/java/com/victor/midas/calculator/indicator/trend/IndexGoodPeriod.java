@@ -31,12 +31,6 @@ public class IndexGoodPeriod extends IndexCalcBase {
     private double[] gpShort;
     private double[] gpLong;
 
-    private double[] end;
-    private double[] start;
-    private double[] max;
-    private double[] min;
-    private double[] total;
-    private double[] changePct;
     private double[] upShadowPct;
     private double[] downShadowPct;
     private double[] middleShadowPct;
@@ -44,7 +38,6 @@ public class IndexGoodPeriod extends IndexCalcBase {
     private double[] middleShadowPctStd;
     //private int[] volPriceCorr;
 
-    private int len;
     private int totalCnt;
     private int smallEntityCnt, bigEntityCnt;
     private int upEntityCnt, downEntityCnt;
@@ -145,25 +138,17 @@ public class IndexGoodPeriod extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
         upShadowPct = (double[])stock.queryCmpIndex("k_u");
         downShadowPct = (double[])stock.queryCmpIndex("k_d");
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
         middleShadowPctAvg = (double[])stock.queryCmpIndex("k_m_avg");
         middleShadowPctStd = (double[])stock.queryCmpIndex("k_m_std");
-        changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
         //volPriceCorr = (int[])stock.queryCmpIndex("vp_corr");
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
         k_state = (int[])stock.queryCmpIndex("k_state");
-        len = end.length;
 
         gp_sig = new int[len];
         gpShort = new double[len];
         gpLong = new double[len];
-        cmpIndexName2Index = new HashMap<>();
         calcUtil.init(stock);
     }
 }

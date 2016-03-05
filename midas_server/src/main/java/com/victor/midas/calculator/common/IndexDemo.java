@@ -16,10 +16,6 @@ public class IndexDemo extends IndexCalcBase {
 
     private double[] demo;
 
-    private double[] end;
-
-    private int len;
-
     public IndexDemo(CalcParameter parameter) {
         super(parameter);
     }
@@ -39,9 +35,6 @@ public class IndexDemo extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        len = end.length;
         demo = new double[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 }

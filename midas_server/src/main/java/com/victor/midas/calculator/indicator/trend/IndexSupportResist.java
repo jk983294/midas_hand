@@ -43,12 +43,6 @@ public class IndexSupportResist extends IndexCalcBase {
     private int[] k_state;
     private int[] sr_sig;
 
-    private double[] end;
-    private double[] start;
-    private double[] max;
-    private double[] min;
-    private double[] total;
-    private double[] changePct;
     private double[] upShadowPct;
     private double[] downShadowPct;
     private double[] middleShadowPct;
@@ -67,8 +61,6 @@ public class IndexSupportResist extends IndexCalcBase {
 
     private static final int longTimeFrame = 60;
     private static final int shortTimeFrame = 10;
-
-    private int len;
 
     private MaxMinUtil maxMinUtil;
 
@@ -303,24 +295,16 @@ public class IndexSupportResist extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
         upShadowPct = (double[])stock.queryCmpIndex("k_u");
         downShadowPct = (double[])stock.queryCmpIndex("k_d");
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
-        changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
         pMaLong = (double[])stock.queryCmpIndex("pMaLong");
         //volPriceCorr = (int[])stock.queryCmpIndex("vp_corr");
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
         k_state = (int[])stock.queryCmpIndex("k_state");
         if(filterUtil != null)
         isBad = (int[])filterUtil.getMarketIndex().queryCmpIndex("isBad");
-        len = end.length;
 
         sr_sig = new int[len];
-        cmpIndexName2Index = new HashMap<>();
         calcUtil.init(stock);
         maxMinUtil.init(stock);
     }

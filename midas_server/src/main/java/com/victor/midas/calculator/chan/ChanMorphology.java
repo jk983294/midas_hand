@@ -27,11 +27,9 @@ public class ChanMorphology extends IndexCalcBase {
 
     private int[] cob;
 
-    private double[] end, start, max, min, avgVolume, total, changePct;
+    private double[] avgVolume;
 
     private double[] scores;
-
-    private int len;
 
     private List<MergedKLine> mergedKLines;
 
@@ -115,17 +113,8 @@ public class ChanMorphology extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);
-        start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
-        max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
-        min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
-        total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
-        changePct = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_CHANGEPCT);
         cob = stock.getDatesInt();
-
-        len = end.length;
         scores = new double[len];
-        cmpIndexName2Index = new HashMap<>();
     }
 
     public List<MergedKLine> getMergedKLines() {
