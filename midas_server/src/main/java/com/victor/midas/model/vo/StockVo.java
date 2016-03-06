@@ -1,8 +1,12 @@
 package com.victor.midas.model.vo;
 
 
+import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.model.common.StockType;
+import com.victor.midas.model.vo.score.StockScore;
+import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
+import com.victor.utilities.algorithm.search.BinarySearch;
 import com.victor.utilities.utils.ArrayHelper;
 import com.victor.utilities.utils.TimeHelper;
 import org.springframework.data.annotation.Id;
@@ -205,6 +209,48 @@ public class StockVo {
 
     public int advanceIndex(int marketCob, int dateIndex){
         if(isSameDayWithIndex(marketCob, dateIndex)) return ++dateIndex; else return 0;
+    }
+
+    public double getPriceByTiming(int idx, int timing){
+        return timing == 0 ? indexDoubles.get(MidasConstants.INDEX_NAME_START)[idx] : indexDoubles.get(MidasConstants.INDEX_NAME_END)[idx];
+    }
+
+    public double getPerformanceByIndex(int idx1, int idx2, int timing1, int timing2){
+        return MathStockUtil.calculateChangePct(getPriceByTiming(idx1, timing1), getPriceByTiming(idx2, timing2));
+    }
+
+    public void calculatePerformance(StockScore stockScore) throws MidasException {
+        int idx1 = getCobIndex(stockScore.buyCob);
+        int idx2 = getCobIndex(stockScore.sellCob);
+        if(idx1 >= 0 && idx1 < datesInt.length && idx2 >= 0 && idx2 < datesInt.length){
+            stockScore.marketPerf = getPerformanceByIndex(idx1, idx2, stockScore.buyTiming, stockScore.sellTiming);
+            stockScore.holdingPeriod = idx2 - idx1 + 1;
+            if(idx2 > idx1){
+                stockScore.dailyExcessReturn = stockScore.marketPerf / (idx2 - idx1 + 1);
+            }
+            return;
+        }
+        throw new MidasException("cannot calculate performance " + stockScore.toString());
+    }
+
+    public int getCobIndex(int targetCob){
+        int searchIndex = cobIndex;
+        if(searchIndex < datesInt.length && datesInt[searchIndex] <= targetCob){
+            if(datesInt[searchIndex] == targetCob) return searchIndex;
+            int idx1 = searchIndex, len = datesInt.length, step = 1;
+
+            while (searchIndex + step < len){
+                if(datesInt[searchIndex + step] == targetCob) return searchIndex + step;
+                else if(datesInt[searchIndex + step] < targetCob){
+                    idx1 = searchIndex + step;
+                    step *= 2;
+                } else {
+                    return BinarySearch.find(datesInt, targetCob, idx1, searchIndex + step);
+                }
+            }
+            return BinarySearch.find(datesInt, targetCob, idx1, len - 1);
+        }
+        return -1;
     }
 
     public String getStockName() {

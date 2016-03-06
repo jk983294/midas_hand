@@ -93,4 +93,8 @@ public class ModelConvertor {
         }
     }
 
+    public static String getTimingString(int timing){
+        return timing == 0 ? "open" : "close";
+    }
+
 }

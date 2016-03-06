@@ -37,10 +37,6 @@ public class IndexMACD extends IndexCalcBase {
         return INDEX_NAME;
     }
 
-    public String getIndexCmpName(int interval) {
-        return INDEX_NAME + interval;
-    }
-
     @Override
     public void calculate() throws MidasException {
         pMaFast = maMethod.calculate(end, 12);

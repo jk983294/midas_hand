@@ -8,7 +8,7 @@ public class MidasTrainOptions {
      * quit signal means when score is < -1d, then it will sell stock
      * if useSignal is false, means the sell decision will be controlled by PerfCollector
      */
-    public boolean useSignal = true;
+    public boolean useSignal = false;
 
     public boolean selectTops = true;
 

@@ -23,4 +23,21 @@ public class BinarySearch {
         }
         return ( minIndex > len) ? -len : -minIndex;
     }
+
+    public static final int find(int[] array, int searchElement, int left, int right) {
+        int minIndex = left, maxIndex = right, currentIndex = left;
+        while (minIndex <= maxIndex) {
+            currentIndex = (minIndex + maxIndex) / 2 ;
+            if (array[currentIndex] < searchElement) {
+                minIndex = currentIndex + 1;
+            }
+            else if (array[currentIndex] > searchElement) {
+                maxIndex = currentIndex - 1;
+            }
+            else {
+                return currentIndex;
+            }
+        }
+        throw new RuntimeException("not found target element " + searchElement);
+    }
 }

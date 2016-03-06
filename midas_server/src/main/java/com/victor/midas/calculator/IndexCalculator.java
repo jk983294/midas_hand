@@ -7,6 +7,7 @@ import com.victor.midas.calculator.common.ICalculator;
 import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
+import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
@@ -17,6 +18,8 @@ public class IndexCalculator {
     private static final Logger logger = Logger.getLogger(IndexCalculator.class);
 
     private List<ICalculator> calculators;
+    private ICalculator targetCalculator;
+    public MidasTrainOptions options;
 
     private boolean isBigDataSet;
     private List<StockVo> stocks;
@@ -44,6 +47,10 @@ public class IndexCalculator {
         this.stocks = stocks;
         this.parameter = IndexFactory.parameter;
         calculators = IndexFactory.getAllNeededCalculators(calcName);
+        if(CollectionUtils.isNotEmpty(calculators) ){
+            targetCalculator = calculators.get(calculators.size() - 1);
+            options = targetCalculator.getTrainOptions();
+        }
         isBigDataSet = stocks.size() > 100;
         filterUtil = new StockFilterUtil(this.stocks);
         filterUtil.filter();

@@ -85,7 +85,9 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
                 stock.advanceIndex(cob);
             }
             /*** find best stock with top score */
-            stockScores = ArrayHelper.array2list(TopKElements.getFirstK(stockScores, 5));
+            if(options.selectTops){
+                stockScores = ArrayHelper.array2list(TopKElements.getFirstK(stockScores, 5));
+            }
             if(shBadDepth[i] > -1d){
                 severity = StockSeverity.Normal;
             } else {
@@ -105,6 +107,8 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
      */
     private void initStocks() throws MidasException, IOException {
         calculator = new IndexCalculator(stocks, indexName);
+        applyOptions(calculator.options);
+        options = calculator.options;
         calculator.calculate();
         isBigDataSet = calculator.isBigDataSet();
         StockFilterUtil filterUtil = calculator.getFilterUtil();
@@ -162,6 +166,8 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
 
     @Override
     public void applyOptions(MidasTrainOptions options) {
-        this.useQuitSignal = options.useSignal;
+        if(options != null){
+            this.useQuitSignal = options.useSignal;
+        }
     }
 }

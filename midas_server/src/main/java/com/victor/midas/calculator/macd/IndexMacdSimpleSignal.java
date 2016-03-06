@@ -3,7 +3,9 @@ package com.victor.midas.calculator.macd;
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.divergence.IndexBadDepth;
 import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.model.common.StockState;
 import com.victor.midas.model.vo.CalcParameter;
+import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.math.stats.ma.EMA;
@@ -17,11 +19,12 @@ import java.util.HashMap;
  */
 public class IndexMacdSimpleSignal extends IndexCalcBase {
 
-    public static final String INDEX_NAME = "macd";
+    public static final String INDEX_NAME = "macd_simple_signal";
 
     private MaBase maMethod = new EMA();
 
     private double[] dif, dea, macdBar; // white line, yellow line, bar
+    private double[] score;
 
     public IndexMacdSimpleSignal(CalcParameter parameter, MaBase maMethod) {
         super(parameter);
@@ -44,16 +47,34 @@ public class IndexMacdSimpleSignal extends IndexCalcBase {
         return INDEX_NAME;
     }
 
-    public String getIndexCmpName(int interval) {
-        return INDEX_NAME + interval;
-    }
-
     @Override
     public void calculate() throws MidasException {
-
+        StockState state = StockState.HoldMoney;
+        for (int i = 5; i < len; i++) {
+            if(state == StockState.HoldMoney && macdBar[i] < 0d && macdBar[i - 1] < macdBar[i]){
+                score[i] = 5d;
+                state = StockState.HoldStock;
+            } else if(state == StockState.HoldStock && macdBar[i - 1] > macdBar[i]){
+                score[i] = -5d;
+                state = StockState.HoldMoney;
+            }
+        }
+        addIndexData(INDEX_NAME, score);
     }
 
     @Override
     protected void initIndex() throws MidasException {
+        dif = (double[])stock.queryCmpIndex("dif");
+        dea = (double[])stock.queryCmpIndex("dea");
+        macdBar = (double[])stock.queryCmpIndex("macdBar");
+        score = new double[len];
+    }
+
+    @Override
+    public MidasTrainOptions getTrainOptions() {
+        MidasTrainOptions options = new MidasTrainOptions();
+        options.selectTops = false;
+        options.useSignal = true;
+        return options;
     }
 }

@@ -7,6 +7,7 @@ import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
+import com.victor.utilities.algorithm.search.BinarySearch;
 import com.victor.utilities.utils.ArrayHelper;
 import com.victor.utilities.utils.StringHelper;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -19,7 +20,7 @@ import java.util.*;
 public class PerfCollector {
 
     private Map<String, StockVo> name2stock;    // stock name map to date index
-    private String stockCode;
+    private StockVo marketIndex;
     private int index;                          // benchmark stock's date index
     private boolean isInTrain = false;
     /**
@@ -35,17 +36,20 @@ public class PerfCollector {
 
     private int cobRangeFrom, cobRangeTo, dateCnt;
     private double[] changePct, end, start, max, min;
+    private int[] stockDates;
 
     private List<StockScore> allScoreRecords = new ArrayList<>();
     private DescriptiveStatistics kellyGood = new DescriptiveStatistics();
     private DescriptiveStatistics kellyBad = new DescriptiveStatistics();
 
     private DescriptiveStatistics perfStats = new DescriptiveStatistics();
+    private DescriptiveStatistics sharpeStats = new DescriptiveStatistics();
     private DayStatistics buyDayStatistics, sellDayStatistics;
 
     public PerfCollector(Map<String, StockVo> name2stock) throws MidasException {
         this.name2stock = name2stock;
-        cobRangeTo = name2stock.get(MidasConstants.MARKET_INDEX_NAME).getEnd();
+        marketIndex = name2stock.get(MidasConstants.MARKET_INDEX_NAME);
+        cobRangeTo = marketIndex.getEnd();
         holdDays = (holdHalfDays + buyTiming) / 2 + 1;
         if(holdDays < 2) throw new MidasException("T + 1, so holding day should big than 1");
         isSellAtOpen = (holdHalfDays + buyTiming) % 2 == 0;
@@ -55,10 +59,13 @@ public class PerfCollector {
         clear();
     }
 
+    public PerfCollector() {
+    }
+
     public void clear(){
         cobRangeFrom = 20140601;
         allScoreRecords.clear();
-        ArrayHelper.clear(kellyGood, kellyBad, perfStats);
+        ArrayHelper.clear(kellyGood, kellyBad, perfStats, sharpeStats);
         buyDayStatistics.clear();
         sellDayStatistics.clear();
     }
@@ -70,25 +77,43 @@ public class PerfCollector {
                 if(stockScore.getScore() <= 0.5) continue;
                 initState(stockScore.getStockCode());
                 recordBuySellDayStatistics();
-                if(index < dateCnt){
-                    buyPrice = isBuyAtOpen ? start[index] : end[index];
-                    if(index + holdDays - 1 < dateCnt){
-                        sellPrice = isSellAtOpen ? start[index + holdDays - 1] : end[index + holdDays - 1];
-                    } else {    // last day's close liquidate out
-                        sellPrice = end[dateCnt - 1];
+                if(stockScore.holdingPeriod == -1){     // controlled by PerfCollector
+                    if(index < dateCnt){
+                        recordCollectorControlledScore(stockScore);
                     }
-                    totalChangePct = MathStockUtil.calculateChangePct(buyPrice, sellPrice);
-                    stockScore.setPerf(totalChangePct);
-                    perfStats.addValue(totalChangePct);
-                    if(!isInTrain) allScoreRecords.add(stockScore);
+                } else {                                // controlled by quit signal
 
-                    if(totalChangePct < 0){
-                        kellyBad.addValue(totalChangePct);
-                    } else {
-                        kellyGood.addValue(totalChangePct);
-                    }
                 }
             }
+        }
+    }
+
+    private void recordCollectorControlledScore(StockScore stockScore) throws MidasException {
+        double totalChangePct, buyPrice, sellPrice;
+        buyPrice = isBuyAtOpen ? start[index] : end[index];
+        stockScore.buyCob = stockDates[index];
+        stockScore.buyTiming = buyTiming;
+        if(index + holdDays - 1 < dateCnt){
+            sellPrice = isSellAtOpen ? start[index + holdDays - 1] : end[index + holdDays - 1];
+            stockScore.sellCob = stockDates[index + holdDays - 1];
+            stockScore.sellTiming = isSellAtOpen ? 0 : 1;
+        } else {    // last day's close liquidate out
+            sellPrice = end[dateCnt - 1];
+            stockScore.sellCob = stockDates[dateCnt - 1];
+            stockScore.sellTiming = 1;
+        }
+        marketIndex.calculatePerformance(stockScore);
+        totalChangePct = MathStockUtil.calculateChangePct(buyPrice, sellPrice);
+        stockScore.setPerf(totalChangePct);
+        stockScore.calculateDailyExcessReturn();
+        sharpeStats.addValue(stockScore.dailyExcessReturn);
+        perfStats.addValue(totalChangePct);
+        if(!isInTrain) allScoreRecords.add(stockScore);
+
+        if(totalChangePct < 0){
+            kellyBad.addValue(totalChangePct);
+        } else {
+            kellyGood.addValue(totalChangePct);
         }
     }
 
@@ -109,6 +134,7 @@ public class PerfCollector {
         start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
         max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
         min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
+        stockDates = stock.getDatesInt();
         dateCnt = stock.getDatesInt().length;
     }
 
@@ -136,6 +162,7 @@ public class PerfCollector {
         result.setSellDayStatistics(sellDayStatistics);
         result.kellyFraction = kellyFormula();
         result.kellyAnnualizedPerformance = kellyAnnualizedPerformance(result.kellyFraction, result.dayPerformance);
+        result.sharpeRatio = Math.sqrt(250) * sharpeStats.getMean() / sharpeStats.getStandardDeviation();
         return result;
     }
 

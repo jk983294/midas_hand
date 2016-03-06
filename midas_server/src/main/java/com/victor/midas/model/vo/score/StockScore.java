@@ -3,6 +3,7 @@ package com.victor.midas.model.vo.score;
 
 import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.train.common.TrainOptionApply;
+import com.victor.midas.util.ModelConvertor;
 
 /**
  * represent a score
@@ -21,6 +22,7 @@ public class StockScore implements Comparable<StockScore>, TrainOptionApply {
     public int buyCob, sellCob;
     public int buyTiming, sellTiming;
     public double marketPerf;
+    public double dailyExcessReturn;
 
     public StockScore() {
     }
@@ -36,6 +38,12 @@ public class StockScore implements Comparable<StockScore>, TrainOptionApply {
         this.conceptName = conceptName;
         this.score = score;
         this.cob = cob;
+    }
+
+    public void calculateDailyExcessReturn(){
+        if(holdingPeriod > 0){
+            dailyExcessReturn = (perf - marketPerf) / holdingPeriod;
+        }
     }
 
     public String getConceptName() {
@@ -136,16 +144,16 @@ public class StockScore implements Comparable<StockScore>, TrainOptionApply {
     public String toString() {
         return "StockScore{" +
                 "stockCode='" + stockCode + '\'' +
-                ", conceptName='" + conceptName + '\'' +
                 ", score=" + score +
                 ", perf=" + perf +
                 ", cob=" + cob +
                 ", holdingPeriod=" + holdingPeriod +
                 ", buyCob=" + buyCob +
+                ", buyTiming=" + ModelConvertor.getTimingString(buyTiming) +
                 ", sellCob=" + sellCob +
-                ", buyTiming=" + buyTiming +
-                ", sellTiming=" + sellTiming +
+                ", sellTiming=" + ModelConvertor.getTimingString(sellTiming) +
                 ", marketPerf=" + marketPerf +
+                ", conceptName='" + conceptName + '\'' +
                 '}';
     }
 

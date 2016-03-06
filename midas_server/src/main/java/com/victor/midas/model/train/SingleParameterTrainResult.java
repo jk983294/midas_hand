@@ -11,6 +11,7 @@ public class SingleParameterTrainResult {
     public double d2Open, d2Close, d2High, d2Low;
     public double d2OpenStdDev, d2CloseStdDev, d2HighStdDev, d2LowStdDev;
     public long cnt;
+    public double sharpeRatio;
 
     public void setBuyDayStatistics(DayStatistics buyDayStatistics){
         d1Open = buyDayStatistics.openStats.getMean();
@@ -211,10 +212,18 @@ public class SingleParameterTrainResult {
         this.cnt = cnt;
     }
 
+    public double getSharpeRatio() {
+        return sharpeRatio;
+    }
+
+    public void setSharpeRatio(double sharpeRatio) {
+        this.sharpeRatio = sharpeRatio;
+    }
+
     @Override
     public String toString() {
         return "SingleParameterTrainResult{" +
-                "parameter=" + parameter +
+                "sharpeRatio=" + sharpeRatio +
                 ", dayPerformance=" + dayPerformance +
                 ", kellyAnnualizedPerformance=" + kellyAnnualizedPerformance +
                 ", stdDev=" + stdDev +
@@ -236,6 +245,7 @@ public class SingleParameterTrainResult {
                 ", d2HighStdDev=" + d2HighStdDev +
                 ", d2LowStdDev=" + d2LowStdDev +
                 ", cnt=" + cnt +
+                ", parameter=" + parameter +
                 '}';
     }
 }

@@ -2,6 +2,7 @@ package com.victor.midas.calculator.common;
 
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
+import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
@@ -81,5 +82,10 @@ public abstract class AggregationCalcBase implements ICalculator {
     @Override
     public void setRequiredCalculators() {
         // do nothing
+    }
+
+    @Override
+    public MidasTrainOptions getTrainOptions() {
+        return null;
     }
 }
