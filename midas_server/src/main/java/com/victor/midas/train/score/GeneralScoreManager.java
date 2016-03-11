@@ -16,6 +16,7 @@ import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
 import com.victor.utilities.algorithm.search.TopKElements;
 import com.victor.utilities.utils.ArrayHelper;
+import com.victor.utilities.utils.JsonHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -70,7 +71,10 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
                             if(scores[index] > 1d){ // buy signal
                                 StockScore score = new StockScore(stock.getStockName(), scores[index], cob);
                                 score.applyOptions(options);
-                                score.holdingPeriod = MidasTrainHelper.getHoldingTime(scores, index, options.buyTiming, options.sellTiming);
+                                MidasTrainHelper.getHoldingTime(scores, score, index, stock);
+                                if(score.sellIndex > 0){
+                                    stockScores.add(score);
+                                }
                             }
                         } else {    // no signal, every stock will take account
                             stockScores.add(new StockScore(stock.getStockName(), scores[index], cob));
@@ -93,12 +97,15 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
             } else {
                 severity = StockSeverity.Warning;
             }
-            ScoreHelper.perfCollect(stockScores, cob, perfCollector, scoreRecords, severity);
+            if(stockScores.size() > 0){
+                ScoreHelper.perfCollect(stockScores, cob, perfCollector, scoreRecords, severity);
+            }
         }
 
         if(!isInTrain){
             logger.info("result : " + perfCollector.toString());
             FileUtils.write(new File("E:\\stock_performance.txt"), perfCollector.toPerfString());
+            FileUtils.write(new File("E:\\stock_performance_by_name.txt"), new JsonHelper().toJson(perfCollector.getName2scores()));
         }
     }
 

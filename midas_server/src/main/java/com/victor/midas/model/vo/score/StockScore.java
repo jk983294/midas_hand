@@ -18,8 +18,10 @@ public class StockScore implements Comparable<StockScore>, TrainOptionApply {
 
     private int cob;        // prediction day cob
     public int holdingPeriod = -1;      // if negative means no override, let PerfCollector decide when to sell
+    public int holdHalfPeriod = -1;
 
     public int buyCob, sellCob;
+    public int buyIndex, sellIndex;
     public int buyTiming, sellTiming;
     public double marketPerf;
     public double dailyExcessReturn;
@@ -79,7 +81,6 @@ public class StockScore implements Comparable<StockScore>, TrainOptionApply {
     }
 
     public int getCob() {
-
         return cob;
     }
 
@@ -153,12 +154,14 @@ public class StockScore implements Comparable<StockScore>, TrainOptionApply {
                 ", sellCob=" + sellCob +
                 ", sellTiming=" + ModelConvertor.getTimingString(sellTiming) +
                 ", marketPerf=" + marketPerf +
+                ", dailyExcessReturn=" + dailyExcessReturn +
                 ", conceptName='" + conceptName + '\'' +
                 '}';
     }
 
     @Override
     public void applyOptions(MidasTrainOptions options) {
-
+        buyTiming = options.buyTiming;
+        sellTiming = options.sellTiming;
     }
 }

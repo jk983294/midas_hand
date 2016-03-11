@@ -1,5 +1,6 @@
 package com.victor.midas.services.worker.task;
 
+import com.victor.midas.calculator.macd.IndexMacdAdvancedSignal;
 import com.victor.midas.calculator.score.StockRevertScoreRank;
 import com.victor.midas.calculator.score.StockScoreRank;
 import com.victor.midas.calculator.score.StockSupportScoreRank;
@@ -56,20 +57,15 @@ public class ScoreTask extends TaskBase {
 
         logger.info( "start score ...");
         manager.process();
-        saveResults(manager, cmdParameter);
+        saveResults(manager);
 
         PerformanceUtil.manuallyGC(manager.getStocks());
 
 		logger.info( description + " complete...");
 	}
 
-    private void saveResults(ScoreManager manager, CmdParameter cmdParameter) throws MidasException {
+    private void saveResults(ScoreManager manager) throws MidasException {
         scoreDao.save(manager.getScoreRecords());
-        switch(cmdParameter){
-            case score_ma:  scoreDao.save(manager.getScoreRecords()); break;
-            case score_concept: conceptScoreDao.save(manager.getScoreRecords()); break;
-            default : logger.error("no such parameter in score task.");
-        }
         if(isFromFileSystem || !manager.isBigDataSet()){
             logger.info("start save stocks ...");
             stocksService.saveStocks(manager.getStocks());               // maybe train strategy has generate new data
@@ -82,6 +78,7 @@ public class ScoreTask extends TaskBase {
         switch(cmdParameter){
             case score_ma:
             case score_support:
+            case score_macd:
             case score_revert: return new GeneralScoreManager(stocks, indexName);
             case score_concept: {
                 List<StockCrawlData> crawlData = stocksService.queryAllStockCrawlData();
@@ -98,6 +95,7 @@ public class ScoreTask extends TaskBase {
             case score_revert: return StockRevertScoreRank.INDEX_NAME;
             case score_concept: return StockScoreRank.INDEX_NAME;
             case score_support: return StockSupportScoreRank.INDEX_NAME;
+            case score_macd: return IndexMacdAdvancedSignal.INDEX_NAME;
             default : logger.error("no such IndexName in score task.");
         }
         return StockScoreRank.INDEX_NAME;

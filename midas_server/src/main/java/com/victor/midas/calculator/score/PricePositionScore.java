@@ -66,7 +66,6 @@ public class PricePositionScore extends IndexCalcBase {
     }
 
     private void calculateIndex() throws MidasException {
-        int[] dates = stock.getDatesInt();
         double toBottomScore, toTopScore, firstBottomScore;
 
         SectionalFunction resistFunction = new SectionalFunction(-0.06d, 0d, 0, -1d, +0.06d, 0d);

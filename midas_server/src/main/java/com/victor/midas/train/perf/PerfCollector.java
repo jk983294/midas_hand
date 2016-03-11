@@ -10,6 +10,7 @@ import com.victor.midas.util.MidasException;
 import com.victor.utilities.algorithm.search.BinarySearch;
 import com.victor.utilities.utils.ArrayHelper;
 import com.victor.utilities.utils.StringHelper;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.*;
@@ -39,6 +40,7 @@ public class PerfCollector {
     private int[] stockDates;
 
     private List<StockScore> allScoreRecords = new ArrayList<>();
+    private Map<String, List<StockScore>> name2scores = new HashMap<>();
     private DescriptiveStatistics kellyGood = new DescriptiveStatistics();
     private DescriptiveStatistics kellyBad = new DescriptiveStatistics();
 
@@ -71,20 +73,39 @@ public class PerfCollector {
     }
 
     public void addRecord(StockScoreRecord record) throws MidasException {
-        double totalChangePct, buyPrice, sellPrice;
+        recordByName(record);
         if(record.getCob() >= cobRangeFrom && record.getCob() <= cobRangeTo){
             for(StockScore stockScore : record.getRecords()){
                 if(stockScore.getScore() <= 0.5) continue;
                 initState(stockScore.getStockCode());
                 recordBuySellDayStatistics();
-                if(stockScore.holdingPeriod == -1){     // controlled by PerfCollector
-                    if(index < dateCnt){
+                if(index < dateCnt){
+                    if(stockScore.holdingPeriod == -1){     // controlled by PerfCollector
                         recordCollectorControlledScore(stockScore);
+                    } else {                                // controlled by quit signal
+                        recordStrategyControlledScore(stockScore);
                     }
-                } else {                                // controlled by quit signal
-
                 }
             }
+        }
+    }
+
+    private void recordStrategyControlledScore(StockScore stockScore) throws MidasException {
+        double totalChangePct, buyPrice, sellPrice;
+        buyPrice = stockScore.buyTiming == 0 ? start[stockScore.buyIndex] : end[stockScore.buyIndex];
+        sellPrice = stockScore.sellTiming == 0 ? start[stockScore.sellIndex] : end[stockScore.sellIndex];
+        marketIndex.calculatePerformance(stockScore);
+        totalChangePct = MathStockUtil.calculateChangePct(buyPrice, sellPrice);
+        stockScore.setPerf(totalChangePct);
+        stockScore.calculateDailyExcessReturn();
+        sharpeStats.addValue(stockScore.dailyExcessReturn);
+        perfStats.addValue(totalChangePct);
+        if(!isInTrain) allScoreRecords.add(stockScore);
+
+        if(totalChangePct < 0){
+            kellyBad.addValue(totalChangePct);
+        } else {
+            kellyGood.addValue(totalChangePct);
         }
     }
 
@@ -184,5 +205,27 @@ public class PerfCollector {
 
     public void setIsInTrain(boolean isInTrain) {
         this.isInTrain = isInTrain;
+    }
+
+    private void recordByName(StockScore score){
+        if(name2scores.containsKey(score.getStockCode())){
+            name2scores.get(score.getStockCode()).add(score);
+        } else {
+            List<StockScore> tmpScores = new ArrayList<>();
+            tmpScores.add(score);
+            name2scores.put(score.getStockCode(), tmpScores);
+        }
+    }
+
+    private void recordByName(StockScoreRecord record){
+        if(record != null && CollectionUtils.isNotEmpty(record.getRecords())){
+            for(StockScore stockScore : record.getRecords()){
+                recordByName(stockScore);
+            }
+        }
+    }
+
+    public Map<String, List<StockScore>> getName2scores() {
+        return name2scores;
     }
 }

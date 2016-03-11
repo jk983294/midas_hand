@@ -253,6 +253,10 @@ public class StockVo {
         return -1;
     }
 
+    public int getCobByIndex(int idx){
+        return datesInt[idx];
+    }
+
     public String getStockName() {
         return stockName;
     }

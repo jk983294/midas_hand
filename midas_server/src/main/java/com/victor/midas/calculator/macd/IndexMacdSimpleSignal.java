@@ -21,15 +21,8 @@ public class IndexMacdSimpleSignal extends IndexCalcBase {
 
     public static final String INDEX_NAME = "macd_simple_signal";
 
-    private MaBase maMethod = new EMA();
-
     private double[] dif, dea, macdBar; // white line, yellow line, bar
     private double[] score;
-
-    public IndexMacdSimpleSignal(CalcParameter parameter, MaBase maMethod) {
-        super(parameter);
-        this.maMethod = maMethod;
-    }
 
     public IndexMacdSimpleSignal(CalcParameter parameter) {
         super(parameter);
@@ -51,6 +44,9 @@ public class IndexMacdSimpleSignal extends IndexCalcBase {
     public void calculate() throws MidasException {
         StockState state = StockState.HoldMoney;
         for (int i = 5; i < len; i++) {
+//            if(dates[i] == 20150818){
+//                System.out.println("test");
+//            }
             if(state == StockState.HoldMoney && macdBar[i] < 0d && macdBar[i - 1] < macdBar[i]){
                 score[i] = 5d;
                 state = StockState.HoldStock;

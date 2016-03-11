@@ -33,6 +33,7 @@ public abstract class IndexCalcBase implements ICalculator {
     protected double singleDouble = 1d;
     protected int singleInt = 1;
 
+    protected int[] dates;
     protected double[] end, start, max, min, volume, total, changePct;
     protected int len;
 
@@ -59,6 +60,7 @@ public abstract class IndexCalcBase implements ICalculator {
         total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
         volume = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_VOLUME);
         changePct = stock.queryCmpIndexDoubleWithNull(MidasConstants.INDEX_NAME_CHANGEPCT);
+        dates = stock.getDatesInt();
         len = end.length;
         cmpIndexName2Index = new HashMap<>();
 
