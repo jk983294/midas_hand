@@ -1,6 +1,11 @@
 package com.victor.midas.calculator.macd.model;
 
+import com.victor.midas.calculator.common.model.FractalType;
 import com.victor.midas.calculator.common.model.SignalType;
+import com.victor.utilities.utils.MathHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * section means red and green section
@@ -12,22 +17,83 @@ import com.victor.midas.calculator.common.model.SignalType;
  */
 public class MacdSection {
 
-    public int fromIndex, toIndex, overrideCnt;
+    public int fromIndex, toIndex, overrideCnt, overrideDirectCnt;
     public int limitIndex1 = -1, limitIndex2 = -1, limitIndex3 = -1, limitIndex4 = -1;
     public double limit1, limit2, limit3, limit4;
+    public double pricelimit;
     public MacdSectionType type;
     public SignalType signalType = SignalType.unknow;
     public MacdSectionStatus status = MacdSectionStatus.grow1;
+    public MacdSectionStatus status1 = MacdSectionStatus.grow1;
+    public List<TippingPoint> points = new ArrayList<>();           // all points
+    public List<TippingPoint> filteredPoints = new ArrayList<>();   // all points
+    public TippingPoint latestPoint;
 
-    public static MacdSection create(int index, double bar){
+    public static MacdSection create(int index, double bar, double price){
         MacdSection section = new MacdSection();
         section.fromIndex = section.toIndex = section.limitIndex1 = index;
         section.limit1 = bar;
         section.type = MacdSectionType.getType(bar);
+        section.latestPoint = new TippingPoint(index, bar, FractalType.Top);
+        section.points.add(section.latestPoint);
+        section.pricelimit = price;
         return section;
     }
 
+    public void updateAllTippingPoints(int index, double bar){
+        double newValueAbs = Math.abs(bar), oldValueAbs = Math.abs(latestPoint.value);
+        if(status1 == MacdSectionStatus.grow1){
+            if(newValueAbs > oldValueAbs){
+                latestPoint.index = index;
+                latestPoint.value = bar;
+            } else {
+                status1 = MacdSectionStatus.decay1;
+                latestPoint = new TippingPoint(index, bar, FractalType.Bottom);
+                points.add(latestPoint);
+                updateFilteredTippingPoints();
+            }
+        } else if(status1 == MacdSectionStatus.decay1){
+            if(newValueAbs > oldValueAbs){
+                status1 = MacdSectionStatus.grow1;
+                latestPoint = new TippingPoint(index, bar, FractalType.Top);
+                points.add(latestPoint);
+                updateFilteredTippingPoints();
+            } else {
+                latestPoint.index = index;
+                latestPoint.value = bar;
+            }
+        }
+    }
+
+    public void updateFilteredTippingPoints(){
+        if(points.size() > 1){
+            TippingPoint point = points.get(points.size() - 2);
+            if(filteredPoints.size() == 0){
+                filteredPoints.add(point);
+            } else {
+                int lastIndexOfFilteredPoints = filteredPoints.size() - 1;
+                TippingPoint lastFilteredPoints = filteredPoints.get(lastIndexOfFilteredPoints);
+                if(point.type == lastFilteredPoints.type){
+                    if(point.type == FractalType.Top && MathHelper.isMoreAbs(point.value, lastFilteredPoints.value)){
+                        lastFilteredPoints.copy(point);
+                    } else if(point.type == FractalType.Bottom && MathHelper.isLessAbs(point.value, lastFilteredPoints.value)){
+                        lastFilteredPoints.copy(point);
+                    }
+                } else if(lastFilteredPoints.type == FractalType.Top){
+                    if(Math.abs(point.value) < Math.abs(lastFilteredPoints.value) * 0.4){
+                        filteredPoints.add(point);
+                    }
+                } else if(lastFilteredPoints.type == FractalType.Bottom){
+                    if(point.index - lastFilteredPoints.index > 2){
+                        filteredPoints.add(point);
+                    }
+                }
+            }
+        }
+    }
+
     public boolean shouldSellByStatus(){
+        if(signalType == SignalType.sell) return true;
         if(type == MacdSectionType.red){
             if(status == MacdSectionStatus.decay1 || status == MacdSectionStatus.decay2)
                 return true;
@@ -38,19 +104,24 @@ public class MacdSection {
         return false;
     }
 
-    public boolean update(int index, double bar){
+    public boolean update(int index, double bar, double minPrice, double maxPrice){
         signalType = SignalType.unknow;
         if(type == MacdSectionType.getType(bar)){
             toIndex = index;
+            updateAllTippingPoints(index, bar);
             if(type == MacdSectionType.red){
+                pricelimit = Math.max(pricelimit, maxPrice);
                 updateRed(index, bar);
             } else if(type == MacdSectionType.green){
+                pricelimit = Math.min(pricelimit, minPrice);
                 updateGreen(index, bar);
             }
             return true;
         }
         return false;
     }
+
+
 
     public void updateRed(int index, double bar){
         if(status == MacdSectionStatus.grow1){
@@ -72,9 +143,12 @@ public class MacdSection {
                 limit2 = bar;
                 limitIndex2 = index;
             } else {
-                status = MacdSectionStatus.grow2;
-                limit3 = bar;
-                limitIndex3 = index;
+                signalType = SignalType.buy;
+                if(Math.abs(limit2) < Math.abs(limit1) * 0.4){
+                    status = MacdSectionStatus.grow2;
+                    limit3 = bar;
+                    limitIndex3 = index;
+                }
             }
         } else if(status == MacdSectionStatus.grow2){
             if(bar > limit1){
@@ -105,6 +179,7 @@ public class MacdSection {
                 limitIndex4 = index;
             } else {
                 // trigger buy signal
+                signalType = SignalType.buy;
             }
         }
     }
@@ -131,10 +206,12 @@ public class MacdSection {
                 limit2 = bar;
                 limitIndex2 = index;
             } else {
-                status = MacdSectionStatus.grow2;
                 signalType = SignalType.sell;
-                limit3 = bar;
-                limitIndex3 = index;
+                if(Math.abs(limit2) < Math.abs(limit1) * 0.4){
+                    status = MacdSectionStatus.grow2;
+                    limit3 = bar;
+                    limitIndex3 = index;
+                }
             }
         } else if(status == MacdSectionStatus.grow2){
             if(bar < limit1){
@@ -169,6 +246,7 @@ public class MacdSection {
                 limitIndex4 = index;
             } else {
                 // trigger sell signal
+                signalType = SignalType.sell;
             }
         }
     }

@@ -10,7 +10,7 @@
     <div id="trainResultTable">
         <table ng-table="tableParams" template-pagination="custom/pager" class="table table-bordered table-hover">
             <tr ng-repeat="result in $data" ng-dblclick="rowDoubleClick(stockinfo)">
-                <td data-title="'Parameter'" filter="{ 'parameter': 'text' }" sortable="'parameter'">{{result.parameter | number: 2}}</td>
+                <td data-title="'Parameter'" filter="{ 'parameter': 'text' }" sortable="'parameter'">{{result.parameter | number: 4}}</td>
                 <td data-title="'DayPerformance'" filter="{ 'dayPerformance': 'text' }" sortable="'dayPerformance'">{{result.dayPerformance | number: 6}}</td>
                 <td data-title="'StdDev'" filter="{ 'stdDev': 'text' }" sortable="'stdDev'">{{result.stdDev | number: 6}}</td>
                 <td data-title="'Kelly Performance'" filter="{ 'kellyAnnualizedPerformance': 'text' }" sortable="'kellyAnnualizedPerformance'">{{result.kellyAnnualizedPerformance | number: 6}}</td>

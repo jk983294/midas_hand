@@ -5,9 +5,10 @@ package com.victor.midas.calculator.common.model;
  */
 public enum FractalType {
 
+    Unknown,
     Bottom,
-    Top,
-    Unknown;
+    Top
+    ;
 
     @Override
     public String toString() {

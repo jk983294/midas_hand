@@ -15,10 +15,12 @@ import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.midas.train.score.ConceptScoreManager;
 import com.victor.midas.train.score.GeneralScoreManager;
 import com.victor.midas.train.score.ScoreManager;
+import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.utils.PerformanceUtil;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ScoreTask extends TaskBase {
@@ -45,6 +47,14 @@ public class ScoreTask extends TaskBase {
         if(isFromFileSystem){
             return MktDataTask.getStockFromFileSystem("F:\\Data\\MktData\\ALL");
         } else {
+            if(params != null && params.size() > 1) {
+                StockVo stock = stocksService.queryStock(params.get(1));
+                StockVo shStock = stocksService.queryStock(MidasConstants.MARKET_INDEX_NAME);
+                List<StockVo> stockVos = new ArrayList<>();
+                stockVos.add(stock);
+                stockVos.add(shStock);
+                return stockVos;
+            }
             return stocksService.queryAllStock();
         }
     }

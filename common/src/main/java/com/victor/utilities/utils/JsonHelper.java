@@ -1,9 +1,6 @@
 package com.victor.utilities.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,15 +11,15 @@ import java.util.Map;
  */
 public class JsonHelper {
 
-    private final static String delimeter_base = "    ";
+    private final static String delimiter_base = "    ";
 
-    private List<String> delimeters = new ArrayList<>();
+    private List<String> delimiters = new ArrayList<>();
 
     public JsonHelper() {
     }
 
     public String toJson(Object o){
-        Gson g = new Gson();
+        Gson g = (new GsonBuilder().serializeSpecialFloatingPointValues().create());
         JsonElement element = g.toJsonTree(o);
         StringBuilder sb = new StringBuilder();
         toJsonFile(sb, null, element, 0);
@@ -72,14 +69,14 @@ public class JsonHelper {
     }
 
     private String getDelimeter(int level){
-        if(level < delimeters.size()){
-            return delimeters.get(level);
+        if(level < delimiters.size()){
+            return delimiters.get(level);
         } else {
             String delimeter = "";
             for (int i = 0; i < level; i++) {
-                delimeter += delimeter_base;
+                delimeter += delimiter_base;
             }
-            delimeters.add(delimeter);
+            delimiters.add(delimeter);
             return delimeter;
         }
     }

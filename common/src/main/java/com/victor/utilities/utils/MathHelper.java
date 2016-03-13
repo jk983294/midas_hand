@@ -203,4 +203,20 @@ public class MathHelper {
         return Math.log(b) / Math.log(a);
     }
 
+    public static boolean isMoreAbs(double a, double b){
+        return Math.abs(a) > Math.abs(b);
+    }
+
+    public static boolean isLessAbs(double a, double b){
+        return Math.abs(a) < Math.abs(b);
+    }
+
+    public static boolean isMoreAbs(double a, double b, double factor){
+        return Math.abs(a) > Math.abs(b) * factor;
+    }
+
+    public static boolean isLessAbs(double a, double b, double factor){
+        return Math.abs(a) < Math.abs(b) * factor;
+    }
+
 }

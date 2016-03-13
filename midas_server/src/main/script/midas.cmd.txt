@@ -10,3 +10,6 @@ calculate IDX999999 score_revert
 calculate IDX999999 badDepth
 calculate score_revert
 calculate
+
+score score_macd
+score score_macd SH603567

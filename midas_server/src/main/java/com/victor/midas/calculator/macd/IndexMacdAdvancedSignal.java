@@ -11,6 +11,7 @@ import com.victor.midas.model.common.StockState;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.util.MidasException;
+import com.victor.utilities.utils.MathHelper;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -26,6 +27,7 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
     private double[] dif, dea, macdBar; // white line, yellow line, bar
     private double[] score;
 
+    private List<Integer> idxes = new ArrayList<>();
     private List<MacdSection> sections = new ArrayList<>();
     private List<MacdSection> greenSections = new ArrayList<>();
     private List<MacdSection> redSections = new ArrayList<>();
@@ -57,36 +59,93 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
         overrideGreenSections.clear();
         StockState state = StockState.HoldMoney;
         for (int i = 5; i < len; i++) {
-//            if(dates[i] == 20150818){
+//            if(dates[i] == 20141224){
 //                System.out.println("wow");
 //            }
             if(sections.size() == 0){
-                lastSection = MacdSection.create(i, macdBar[i]);
+                lastSection = MacdSection.create(i, macdBar[i], end[i]);
                 addSection();
-            } else if(lastSection.update(i, macdBar[i])){
+            } else if(lastSection.update(i, macdBar[i], min[i], max[i])){
                 updateOverride();
             } else {
                 updateOverride();
-                overrideGreenSections.add(lastSection);
-                lastSection = MacdSection.create(i, macdBar[i]);
+                if(lastSection.type == MacdSectionType.green){
+                    overrideGreenSections.add(lastSection);
+                }
+                lastSection = MacdSection.create(i, macdBar[i], end[i]);
                 addSection();
             }
 
-            if(state == StockState.HoldMoney && lastSection.signalType == SignalType.buy
-                   && overrideGreenSections.size() > 4 ){  // || lastSection.overrideCnt > 0
-                score[i] = 5d;
-                state = StockState.HoldStock;
+            if(state == StockState.HoldMoney){  // || lastSection.overrideCnt > 0 && overrideGreenSections.size() > 4
+                // single section strategy, fast drop, index blunted
+                if(lastSection.type == MacdSectionType.green){
+                    if(lastSection.status == MacdSectionStatus.decay2 && lastSection.signalType == SignalType.buy
+                            && end[i] < end[lastSection.limitIndex1] && Math.abs(macdBar[i]) < Math.abs(macdBar[lastSection.limitIndex1]) * 0.105){
+                        score[i] = 7d;
+                        state = StockState.HoldStock;
+                    }
+                    if(lastSection.signalType == SignalType.buy && changePct[i] < -0.075d){  // the first time when price still big fall, but bar arise
+                        score[i] = 10d;
+                        state = StockState.HoldStock;
+                    }
+                    if(lastSection.signalType == SignalType.buy && greenSections.size() > 1){
+                        updateGreenSectionDivergence();
+                        MacdSection preGreenSection = greenSections.get(greenSections.size() - 2);
+                        if(idxes.size() >= 3 && lastSection.status == MacdSectionStatus.decay2 && MathHelper.isMoreAbs(preGreenSection.limit1, lastSection.limit1, 0.65)){
+                            score[i] = 5d;
+                            state = StockState.HoldStock;
+                        }
+                    }
+                } else if(lastSection.type == MacdSectionType.red && greenSections.size() > 0){
+                    MacdSection lastGreen = greenSections.get(greenSections.size() - 1);
+                    if(lastSection.signalType == SignalType.buy && lastSection.status == MacdSectionStatus.grow2
+                            && MathHelper.isLessAbs(lastSection.limit1, lastGreen.limit1, 0.45d)
+                            && min[lastSection.limitIndex2] < lastGreen.pricelimit
+                            //&& end[lastSection.limitIndex2] < (lastGreen.limitIndex3 == -1 ? end[lastGreen.limitIndex1] : Math.min(end[lastGreen.limitIndex1], end[lastGreen.limitIndex3]))
+                            && changePct[lastSection.limitIndex2] < -0.06d){  // the first time when price still big fall, but bar arise
+                        score[i] = 9d;
+                        state = StockState.HoldStock;
+                    }
+                }
             } else if(state == StockState.HoldStock && lastSection.shouldSellByStatus()){
                 score[i] = -5d;
                 state = StockState.HoldMoney;
             }
-//            score[i] = lastSection.status.ordinal();
+//            score[i] = lastSection.status1.ordinal();
         }
         addIndexData(INDEX_NAME, score);
     }
 
-    private boolean isFirstBuyChanceForDangerSection(){ // || lastSection.overrideCnt > 0
-        return (overrideGreenSections.size() == 0 ) && lastSection.status == MacdSectionStatus.decay1;
+    private void updateGreenSectionDivergence(){
+        idxes.clear();
+        double price = 0d;
+        if(lastSection.limitIndex3 != -1){
+            idxes.add(lastSection.limitIndex3);
+            price = min[lastSection.limitIndex3];
+            if(price < min[lastSection.limitIndex1]){
+                idxes.add(lastSection.limitIndex1);
+                price = min[lastSection.limitIndex1];
+            } else {
+                return;
+            }
+        } else if(lastSection.limitIndex1 != -1){
+            idxes.add(lastSection.limitIndex1);
+            price = min[lastSection.limitIndex1];
+        }
+        for (int i = greenSections.size() - 2; i >= 0; i--) {
+            MacdSection thisSection = greenSections.get(i);
+            if(thisSection.limitIndex3 != -1){
+                if(price < min[thisSection.limitIndex3]){
+                    idxes.add(thisSection.limitIndex3);
+                    price = min[thisSection.limitIndex3];
+                } else return;
+
+            }
+            if(thisSection.limitIndex1 != -1 && price < min[thisSection.limitIndex1]){
+                idxes.add(thisSection.limitIndex1);
+                price = min[thisSection.limitIndex1];
+            } else return;
+        }
     }
 
     private void addSection(){
@@ -102,16 +161,18 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
 
     private void updateOverride(){
         if(lastSection != null && lastSection.type == MacdSectionType.green && overrideGreenSections.size() > 0){
-            int cnt = 0;
+            int cnt = 0, overrideDirectCnt = 0;
             MacdSection toRemove = overrideGreenSections.peekLast();
             while (toRemove != null){
                 if(Math.abs(lastSection.limit1) > Math.abs(toRemove.limit1)){
-                    cnt++;
+                    cnt += (toRemove.overrideCnt + 1);
+                    overrideDirectCnt++;
                     overrideGreenSections.removeLast();
                     toRemove = overrideGreenSections.peekLast();
                 } else break;
             }
-            lastSection.overrideCnt = cnt;
+            lastSection.overrideCnt += cnt;
+            lastSection.overrideDirectCnt += overrideDirectCnt;
         }
     }
 

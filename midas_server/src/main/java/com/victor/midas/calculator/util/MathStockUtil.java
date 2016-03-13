@@ -18,6 +18,13 @@ public class MathStockUtil {
     }
 
     /**
+     * calculate percentage
+     */
+    public static double calculateChangePctAbs(double yesterday, double today){
+        return Math.abs((today - yesterday) / yesterday);
+    }
+
+    /**
      * usage :
      * offset = 0, x = min[], y = max[], result = amplitudeRatio
      * offset = 1, x = end[], y = end[], result = changePct

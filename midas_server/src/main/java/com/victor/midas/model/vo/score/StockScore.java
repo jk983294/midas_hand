@@ -148,10 +148,10 @@ public class StockScore implements Comparable<StockScore>, TrainOptionApply {
                 ", score=" + score +
                 ", perf=" + perf +
                 ", cob=" + cob +
-                ", holdingPeriod=" + holdingPeriod +
                 ", buyCob=" + buyCob +
-                ", buyTiming=" + ModelConvertor.getTimingString(buyTiming) +
                 ", sellCob=" + sellCob +
+                ", holdingPeriod=" + holdingPeriod +
+                ", buyTiming=" + ModelConvertor.getTimingString(buyTiming) +
                 ", sellTiming=" + ModelConvertor.getTimingString(sellTiming) +
                 ", marketPerf=" + marketPerf +
                 ", dailyExcessReturn=" + dailyExcessReturn +
