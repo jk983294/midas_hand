@@ -97,9 +97,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
             } else {
                 severity = StockSeverity.Warning;
             }
-            if(stockScores.size() > 0){
-                ScoreHelper.perfCollect(stockScores, cob, perfCollector, scoreRecords, severity);
-            }
+            ScoreHelper.perfCollect(stockScores, cob, perfCollector, scoreRecords, severity);
         }
 
         if(!isInTrain){

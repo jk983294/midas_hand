@@ -46,6 +46,7 @@ public class PerfCollector {
 
     private DescriptiveStatistics perfStats = new DescriptiveStatistics();
     private DescriptiveStatistics sharpeStats = new DescriptiveStatistics();
+    private DescriptiveStatistics holdingDaysStats = new DescriptiveStatistics();
     private DayStatistics buyDayStatistics, sellDayStatistics;
 
     public PerfCollector(Map<String, StockVo> name2stock) throws MidasException {
@@ -67,7 +68,7 @@ public class PerfCollector {
     public void clear(){
         cobRangeFrom = 20140601;
         allScoreRecords.clear();
-        ArrayHelper.clear(kellyGood, kellyBad, perfStats, sharpeStats);
+        ArrayHelper.clear(kellyGood, kellyBad, perfStats, sharpeStats, holdingDaysStats);
         buyDayStatistics.clear();
         sellDayStatistics.clear();
     }
@@ -90,6 +91,11 @@ public class PerfCollector {
         }
     }
 
+    /**
+     * controlled by quit signal
+     * @param stockScore
+     * @throws MidasException
+     */
     private void recordStrategyControlledScore(StockScore stockScore) throws MidasException {
         double totalChangePct, buyPrice, sellPrice;
         buyPrice = stockScore.buyTiming == 0 ? start[stockScore.buyIndex] : end[stockScore.buyIndex];
@@ -100,6 +106,7 @@ public class PerfCollector {
         stockScore.calculateDailyExcessReturn();
         sharpeStats.addValue(stockScore.dailyExcessReturn);
         perfStats.addValue(totalChangePct);
+        if(stockScore.holdingPeriod > 0) holdingDaysStats.addValue(stockScore.holdingPeriod);
         if(!isInTrain) allScoreRecords.add(stockScore);
 
         if(totalChangePct < 0){
@@ -109,6 +116,11 @@ public class PerfCollector {
         }
     }
 
+    /**
+     * controlled by PerfCollector
+     * @param stockScore
+     * @throws MidasException
+     */
     private void recordCollectorControlledScore(StockScore stockScore) throws MidasException {
         double totalChangePct, buyPrice, sellPrice;
         buyPrice = isBuyAtOpen ? start[index] : end[index];
@@ -129,6 +141,7 @@ public class PerfCollector {
         stockScore.calculateDailyExcessReturn();
         sharpeStats.addValue(stockScore.dailyExcessReturn);
         perfStats.addValue(totalChangePct);
+        if(stockScore.holdingPeriod > 0) holdingDaysStats.addValue(stockScore.holdingPeriod);
         if(!isInTrain) allScoreRecords.add(stockScore);
 
         if(totalChangePct < 0){
@@ -181,6 +194,7 @@ public class PerfCollector {
         result.stdDev = perfStats.getStandardDeviation();
         result.setBuyDayStatistics(buyDayStatistics);
         result.setSellDayStatistics(sellDayStatistics);
+        result.holdingDays = holdingDaysStats.getMean();
         result.kellyFraction = kellyFormula();
         result.kellyAnnualizedPerformance = kellyAnnualizedPerformance(result.kellyFraction, result.dayPerformance);
         result.sharpeRatio = Math.sqrt(250) * sharpeStats.getMean() / sharpeStats.getStandardDeviation();

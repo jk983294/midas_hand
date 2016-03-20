@@ -11,7 +11,10 @@ import com.victor.midas.model.common.StockState;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.util.MidasException;
+import com.victor.utilities.math.stats.ma.MaBase;
+import com.victor.utilities.math.stats.ma.SMA;
 import com.victor.utilities.utils.MathHelper;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -23,9 +26,11 @@ import java.util.List;
 public class IndexMacdAdvancedSignal extends IndexCalcBase {
 
     public static final String INDEX_NAME = "macd_advanced";
+    private MaBase maMethod = new SMA();
 
     private double[] dif, dea, macdBar; // white line, yellow line, bar
     private double[] score;
+    private double[] vMa5, pMa60;
 
     private List<Integer> idxes = new ArrayList<>();
     private List<MacdSection> sections = new ArrayList<>();
@@ -52,6 +57,8 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
 
     @Override
     public void calculate() throws MidasException {
+        vMa5 = maMethod.calculate(total, 5);
+        pMa60 = maMethod.calculate(end, 60);
         lastSection = null;
         sections.clear();
         greenSections.clear();
@@ -59,7 +66,7 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
         overrideGreenSections.clear();
         StockState state = StockState.HoldMoney;
         for (int i = 5; i < len; i++) {
-//            if(dates[i] == 20141224){
+//            if(dates[i] == 20160122){
 //                System.out.println("wow");
 //            }
             if(sections.size() == 0){
@@ -79,6 +86,14 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
             if(state == StockState.HoldMoney){  // || lastSection.overrideCnt > 0 && overrideGreenSections.size() > 4
                 // single section strategy, fast drop, index blunted
                 if(lastSection.type == MacdSectionType.green){
+                    if(lastSection.signalType == SignalType.buy && greenSections.size() > 1){
+                        updateGreenSectionDivergence(greenSections);
+                        MacdSection preGreenSection = greenSections.get(greenSections.size() - 2);
+                        if(idxes.size() >= 4 && lastSection.status == MacdSectionStatus.decay2 && MathHelper.isMoreAbs(preGreenSection.limit1, lastSection.limit1, 0.65)){
+                            score[i] = 6d;
+                            state = StockState.HoldStock;
+                        }
+                    }
                     if(lastSection.status == MacdSectionStatus.decay2 && lastSection.signalType == SignalType.buy
                             && end[i] < end[lastSection.limitIndex1] && Math.abs(macdBar[i]) < Math.abs(macdBar[lastSection.limitIndex1]) * 0.105){
                         score[i] = 7d;
@@ -88,20 +103,17 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
                         score[i] = 10d;
                         state = StockState.HoldStock;
                     }
-                    if(lastSection.signalType == SignalType.buy && greenSections.size() > 1){
-                        updateGreenSectionDivergence();
-                        MacdSection preGreenSection = greenSections.get(greenSections.size() - 2);
-                        if(idxes.size() >= 3 && lastSection.status == MacdSectionStatus.decay2 && MathHelper.isMoreAbs(preGreenSection.limit1, lastSection.limit1, 0.65)){
-                            score[i] = 5d;
-                            state = StockState.HoldStock;
-                        }
-                    }
-                } else if(lastSection.type == MacdSectionType.red && greenSections.size() > 0){
+//                    if(dif[i] > 0 && end[i] > pMa60[i] && pMa60[i] > pMa60[i - 1] && lastSection.signalType == SignalType.buy
+//                            && lastSection.getTotalDays() < singleInt){
+//                        score[i] = 5d;
+//                        state = StockState.HoldStock;
+//                    }
+                } else if(lastSection.type == MacdSectionType.red && greenSections.size() > 0 && redSections.size() > 1){
                     MacdSection lastGreen = greenSections.get(greenSections.size() - 1);
+                    MacdSection lastRed = redSections.get(redSections.size() - 2);
                     if(lastSection.signalType == SignalType.buy && lastSection.status == MacdSectionStatus.grow2
                             && MathHelper.isLessAbs(lastSection.limit1, lastGreen.limit1, 0.45d)
                             && min[lastSection.limitIndex2] < lastGreen.pricelimit
-                            //&& end[lastSection.limitIndex2] < (lastGreen.limitIndex3 == -1 ? end[lastGreen.limitIndex1] : Math.min(end[lastGreen.limitIndex1], end[lastGreen.limitIndex3]))
                             && changePct[lastSection.limitIndex2] < -0.06d){  // the first time when price still big fall, but bar arise
                         score[i] = 9d;
                         state = StockState.HoldStock;
@@ -116,35 +128,50 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
         addIndexData(INDEX_NAME, score);
     }
 
-    private void updateGreenSectionDivergence(){
+    /**
+     * collect green section index
+     */
+    private void updateGreenSectionDivergence(List<MacdSection> greens){
         idxes.clear();
-        double price = 0d;
-        if(lastSection.limitIndex3 != -1){
-            idxes.add(lastSection.limitIndex3);
-            price = min[lastSection.limitIndex3];
-            if(price < min[lastSection.limitIndex1]){
-                idxes.add(lastSection.limitIndex1);
-                price = min[lastSection.limitIndex1];
-            } else {
-                return;
-            }
-        } else if(lastSection.limitIndex1 != -1){
-            idxes.add(lastSection.limitIndex1);
-            price = min[lastSection.limitIndex1];
-        }
-        for (int i = greenSections.size() - 2; i >= 0; i--) {
-            MacdSection thisSection = greenSections.get(i);
+        if(CollectionUtils.isNotEmpty(greens) && greens.size() > 0){
+            double price = 0d;
+            MacdSection thisSection = greens.get(greens.size() - 1);
             if(thisSection.limitIndex3 != -1){
-                if(price < min[thisSection.limitIndex3]){
-                    idxes.add(thisSection.limitIndex3);
-                    price = min[thisSection.limitIndex3];
-                } else return;
-
-            }
-            if(thisSection.limitIndex1 != -1 && price < min[thisSection.limitIndex1]){
+                idxes.add(thisSection.limitIndex3);
+                price = min[thisSection.limitIndex3];
+                if(price < min[thisSection.limitIndex1]){
+                    idxes.add(thisSection.limitIndex1);
+                    price = min[thisSection.limitIndex1];
+                } else {
+                    return;
+                }
+            } else if(thisSection.limitIndex1 != -1){
                 idxes.add(thisSection.limitIndex1);
                 price = min[thisSection.limitIndex1];
-            } else return;
+            }
+            int skipCnt = 0;
+            for (int i = greens.size() - 2; i >= 0; i--) {
+                thisSection = greens.get(i);
+                if(thisSection.limitIndex3 != -1){
+                    if(price < min[thisSection.limitIndex3]){
+                        idxes.add(thisSection.limitIndex3);
+                        price = min[thisSection.limitIndex3];
+                        skipCnt = 0;
+                    } else {
+                        skipCnt++;
+                    }
+                }
+                if(thisSection.limitIndex1 != -1){
+                    if(price < min[thisSection.limitIndex1]){
+                        idxes.add(thisSection.limitIndex1);
+                        price = min[thisSection.limitIndex1];
+                        skipCnt = 0;
+                    } else {
+                        skipCnt++;
+                    }
+                }
+                if(skipCnt >= 2) return;
+            }
         }
     }
 

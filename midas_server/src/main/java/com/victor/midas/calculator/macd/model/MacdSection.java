@@ -251,6 +251,10 @@ public class MacdSection {
         }
     }
 
+    public int getTotalDays(){
+        return toIndex - fromIndex + 1;
+    }
+
     public int getFromIndex() {
         return fromIndex;
     }

@@ -15,22 +15,18 @@ import java.util.List;
 public class ScoreHelper {
 
     public static void perfCollect(List<StockScore> stockScores, int cob, PerfCollector perfCollector, List<StockScoreRecord> scoreRecords) throws MidasException {
-        if(CollectionUtils.isNotEmpty(stockScores)){
-            StockScoreRecord stockScoreRecord = new StockScoreRecord(cob, stockScores);
-            scoreRecords.add(stockScoreRecord);
-            perfCollector.addRecord(stockScoreRecord);
-        }
+        StockScoreRecord stockScoreRecord = new StockScoreRecord(cob, stockScores);
+        scoreRecords.add(stockScoreRecord);
+        perfCollector.addRecord(stockScoreRecord);
     }
 
     public static void perfCollect(List<StockScore> stockScores, int cob, PerfCollector perfCollector,
                                    List<StockScoreRecord> scoreRecords, StockSeverity severity) throws MidasException {
-        if(CollectionUtils.isNotEmpty(stockScores)){
-            StockScoreRecord stockScoreRecord = new StockScoreRecord(cob, stockScores);
-            scoreRecords.add(stockScoreRecord);
-            stockScoreRecord.setSeverity(severity);
-            if(severity.ordinal() <= StockSeverity.Normal.ordinal()){
-                perfCollector.addRecord(stockScoreRecord);
-            }
+        StockScoreRecord stockScoreRecord = new StockScoreRecord(cob, stockScores);
+        scoreRecords.add(stockScoreRecord);
+        stockScoreRecord.setSeverity(severity);
+        if(severity.ordinal() <= StockSeverity.Normal.ordinal()){
+            perfCollector.addRecord(stockScoreRecord);
         }
     }
 }

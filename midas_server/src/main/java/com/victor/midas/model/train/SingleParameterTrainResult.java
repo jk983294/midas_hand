@@ -11,7 +11,7 @@ public class SingleParameterTrainResult {
     public double d2Open, d2Close, d2High, d2Low;
     public double d2OpenStdDev, d2CloseStdDev, d2HighStdDev, d2LowStdDev;
     public long cnt;
-    public double sharpeRatio;
+    public double sharpeRatio, holdingDays;
 
     public void setBuyDayStatistics(DayStatistics buyDayStatistics){
         d1Open = buyDayStatistics.openStats.getMean();
@@ -225,9 +225,11 @@ public class SingleParameterTrainResult {
         return "SingleParameterTrainResult{" +
                 "sharpeRatio=" + sharpeRatio +
                 ", dayPerformance=" + dayPerformance +
-                ", kellyAnnualizedPerformance=" + kellyAnnualizedPerformance +
                 ", stdDev=" + stdDev +
                 ", kellyFraction=" + kellyFraction +
+                ", kellyAnnualizedPerformance=" + kellyAnnualizedPerformance +
+                ", cnt=" + cnt +
+                ", holdingDays=" + holdingDays +
                 ", d1Open=" + d1Open +
                 ", d1Close=" + d1Close +
                 ", d1High=" + d1High +
@@ -244,7 +246,6 @@ public class SingleParameterTrainResult {
                 ", d2CloseStdDev=" + d2CloseStdDev +
                 ", d2HighStdDev=" + d2HighStdDev +
                 ", d2LowStdDev=" + d2LowStdDev +
-                ", cnt=" + cnt +
                 ", parameter=" + parameter +
                 '}';
     }

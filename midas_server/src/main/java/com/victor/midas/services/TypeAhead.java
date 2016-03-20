@@ -52,15 +52,15 @@ public class TypeAhead {
 	
 	/**
 	 * deal with raw query string, replace non relevant character to space, split it to sub-query
-	 * @param tofinds
+	 * @param toFinds
 	 * @return
 	 */
-	public List<String> query(String tofinds){
+	public List<String> query(String toFinds){
 		ArrayList<String> results = new ArrayList<String>();		
-		tofinds.replaceAll(StringPatternAware.NOT_UNDER_CONCERN, " ");
-		String[] subquerys = tofinds.split(" ");
-		for (String subquery : subquerys) {
-            results.addAll(querySingle(subquery));
+		toFinds.replaceAll(StringPatternAware.NOT_UNDER_CONCERN, " ");
+		String[] subQueries = toFinds.split(" ");
+		for (String subQuery : subQueries) {
+            results.addAll(querySingle(subQuery));
 		}
 		return results;
 	}
