@@ -64,12 +64,18 @@ public class TypeAheadEndpoint {
         try {
             if(query != null){
                 String[] stringlets = query.split(" ");
-                for (int i = 0; i < stringlets.length; i++) {
-                    List<String> subtips = typeAhead.query(stringlets[i]);
-                    if(subtips.size() > 0) {
-                        tip.append(subtips.get(0)).append(" ");
+                if(stringlets.length > 0){
+                    if("trainSingle".equalsIgnoreCase(stringlets[0])){
+                        tip.append(query);
                     } else {
-                        tip.append(stringlets[i]).append(" ");
+                        for (int i = 0; i < stringlets.length; i++) {
+                            List<String> subtips = typeAhead.query(stringlets[i]);
+                            if(subtips.size() > 0) {
+                                tip.append(subtips.get(0)).append(" ");
+                            } else {
+                                tip.append(stringlets[i]).append(" ");
+                            }
+                        }
                     }
                 }
 
