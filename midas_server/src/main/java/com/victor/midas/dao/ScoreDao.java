@@ -2,6 +2,7 @@ package com.victor.midas.dao;
 
 import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.util.MidasConstants;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -9,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,11 +41,11 @@ public class ScoreDao {
      * get latest N StockScoreRecord
      */
     public List<StockScoreRecord> queryLastStockScoreRecord(int n){
-        return scoreTemplateDao.queryLastStockScoreRecord(COLLECTION_NAME, n);
+        return filter(scoreTemplateDao.queryLastStockScoreRecord(COLLECTION_NAME, n));
     }
 
     public List<StockScoreRecord> queryStockScoreRecordByRange(int cobFrom, int cobTo){
-        return scoreTemplateDao.queryStockScoreRecordByRange(COLLECTION_NAME, cobFrom, cobTo);
+        return filter(scoreTemplateDao.queryStockScoreRecordByRange(COLLECTION_NAME, cobFrom, cobTo));
     }
 
     /**
@@ -54,7 +56,7 @@ public class ScoreDao {
     }
 
     public List<StockScoreRecord> queryAll(){
-        return mongoTemplate.findAll(StockScoreRecord.class, COLLECTION_NAME);
+        return filter(mongoTemplate.findAll(StockScoreRecord.class, COLLECTION_NAME));
     }
 
 
@@ -62,6 +64,18 @@ public class ScoreDao {
         return (int) mongoTemplate.count( new Query(), COLLECTION_NAME);
     }
 
+
+    public List<StockScoreRecord> filter(List<StockScoreRecord> records){
+        List<StockScoreRecord> filtered = new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(records)){
+            for(StockScoreRecord record : records){
+                if(record.getRecords().size() > 0){
+                    filtered.add(record);
+                }
+            }
+        }
+        return filtered;
+    }
 
     /**
      * create collection
