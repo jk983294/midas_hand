@@ -83,8 +83,7 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
                 addSection();
             }
 
-            if(state == StockState.HoldMoney){  // || lastSection.overrideCnt > 0 && overrideGreenSections.size() > 4
-                // single section strategy, fast drop, index blunted
+            if(state == StockState.HoldMoney){
                 if(lastSection.type == MacdSectionType.green){
                     if(lastSection.signalType == SignalType.buy && greenSections.size() > 1){
                         updateGreenSectionDivergence(greenSections);

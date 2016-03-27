@@ -2,6 +2,7 @@ package com.victor.midas.dao;
 
 import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.util.MidasConstants;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -10,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,14 +43,16 @@ public class ScoreTemplateDao {
      */
     public List<StockScoreRecord> queryLastStockScoreRecord(String collectionName, int n){
         int docCnt = getCount(collectionName);
+        List<StockScoreRecord> records;
         if(docCnt > n){
             Query query =new Query().withHint("_id_").limit(n).skip(docCnt - n);
-            List<StockScoreRecord> records = mongoTemplate.find(query, StockScoreRecord.class, collectionName);
-            Collections.reverse(records);
-            return records;
+            records = mongoTemplate.find(query, StockScoreRecord.class, collectionName);
+            records = filter(records);
+            Collections.sort(records);
         } else {
-            return queryAll(collectionName);
+            records = queryAll(collectionName);
         }
+        return records;
     }
 
     public List<StockScoreRecord> queryStockScoreRecordByRange(String collectionName, int cobFrom, int cobTo){
@@ -56,6 +60,8 @@ public class ScoreTemplateDao {
         query.addCriteria(Criteria.where("cob").gte(cobFrom).andOperator(Criteria.where("cob").lte(cobTo)));
         query.with(new Sort(Sort.Direction.DESC, "cob"));
         List<StockScoreRecord> records = mongoTemplate.find(query, StockScoreRecord.class, collectionName);
+        records = filter(records);
+        Collections.sort(records);
         return records;
     }
 
@@ -67,14 +73,27 @@ public class ScoreTemplateDao {
     }
 
     public List<StockScoreRecord> queryAll(String collectionName){
-        return mongoTemplate.findAll(StockScoreRecord.class, collectionName);
+        List<StockScoreRecord> records = mongoTemplate.findAll(StockScoreRecord.class, collectionName);
+        records = filter(records);
+        Collections.sort(records);
+        return records;
     }
-
 
     public int getCount(String collectionName) {
         return (int) mongoTemplate.count( new Query(), collectionName);
     }
 
+    public List<StockScoreRecord> filter(List<StockScoreRecord> records){
+        List<StockScoreRecord> filtered = new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(records)){
+            for(StockScoreRecord record : records){
+                if(record.getRecords().size() > 0){
+                    filtered.add(record);
+                }
+            }
+        }
+        return filtered;
+    }
 
     /**
      * create collection

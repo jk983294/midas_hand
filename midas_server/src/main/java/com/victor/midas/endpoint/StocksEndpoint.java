@@ -92,7 +92,7 @@ public class StocksEndpoint {
     @RequestMapping("/score")
     @Produces(MediaType.APPLICATION_JSON)
     public List<StockScoreRecord> getStockScoreRecord() {
-        int n = 10;
+        int n = 510;
         logger.info("fetch "+ n + " score result ...");
         return stocksService.getScoreDao().queryLastStockScoreRecord(n);
     }

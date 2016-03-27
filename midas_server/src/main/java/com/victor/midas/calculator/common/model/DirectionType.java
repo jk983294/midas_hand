@@ -4,10 +4,10 @@ package com.victor.midas.calculator.common.model;
  * type for trend
  */
 public enum DirectionType {
-
+    Chaos,
     Down,
     Up,
-    Chaos;
+    ;
 
     @Override
     public String toString() {

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * represent selected StockScore for one cob date
  */
-public class StockScoreRecord {
+public class StockScoreRecord implements Comparable<StockScoreRecord> {
 
     @Id
     private int cob;
@@ -43,5 +43,26 @@ public class StockScoreRecord {
 
     public void setSeverity(StockSeverity severity) {
         this.severity = severity;
+    }
+
+    @Override
+    public int compareTo(StockScoreRecord o) {
+        return Integer.valueOf(o.cob).compareTo(cob);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StockScoreRecord record = (StockScoreRecord) o;
+
+        return cob == record.cob;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return cob;
     }
 }

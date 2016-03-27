@@ -41,40 +41,27 @@ public class ScoreDao {
      * get latest N StockScoreRecord
      */
     public List<StockScoreRecord> queryLastStockScoreRecord(int n){
-        return filter(scoreTemplateDao.queryLastStockScoreRecord(COLLECTION_NAME, n));
+        return scoreTemplateDao.queryLastStockScoreRecord(COLLECTION_NAME, n);
     }
 
     public List<StockScoreRecord> queryStockScoreRecordByRange(int cobFrom, int cobTo){
-        return filter(scoreTemplateDao.queryStockScoreRecordByRange(COLLECTION_NAME, cobFrom, cobTo));
+        return scoreTemplateDao.queryStockScoreRecordByRange(COLLECTION_NAME, cobFrom, cobTo);
     }
 
     /**
      * query one day focus by its date
      */
     public StockScoreRecord queryByName(Integer date){
-        return mongoTemplate.findOne(new Query(Criteria.where("_id").is(date)), StockScoreRecord.class, COLLECTION_NAME);
+        return scoreTemplateDao.queryByName(COLLECTION_NAME, date);
     }
 
     public List<StockScoreRecord> queryAll(){
-        return filter(mongoTemplate.findAll(StockScoreRecord.class, COLLECTION_NAME));
+        return scoreTemplateDao.queryAll(COLLECTION_NAME);
     }
 
 
     public int getCount() {
         return (int) mongoTemplate.count( new Query(), COLLECTION_NAME);
-    }
-
-
-    public List<StockScoreRecord> filter(List<StockScoreRecord> records){
-        List<StockScoreRecord> filtered = new ArrayList<>();
-        if(CollectionUtils.isNotEmpty(records)){
-            for(StockScoreRecord record : records){
-                if(record.getRecords().size() > 0){
-                    filtered.add(record);
-                }
-            }
-        }
-        return filtered;
     }
 
     /**

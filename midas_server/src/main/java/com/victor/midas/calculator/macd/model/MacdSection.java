@@ -22,7 +22,7 @@ public class MacdSection {
     public double limit1, limit2, limit3, limit4;
     public double pricelimit;
     public MacdSectionType type;
-    public SignalType signalType = SignalType.unknow;
+    public SignalType signalType = SignalType.unknown;
     public MacdSectionStatus status = MacdSectionStatus.grow1;
     public MacdSectionStatus status1 = MacdSectionStatus.grow1;
     public List<TippingPoint> points = new ArrayList<>();           // all points
@@ -105,7 +105,7 @@ public class MacdSection {
     }
 
     public boolean update(int index, double bar, double minPrice, double maxPrice){
-        signalType = SignalType.unknow;
+        signalType = SignalType.unknown;
         if(type == MacdSectionType.getType(bar)){
             toIndex = index;
             updateAllTippingPoints(index, bar);
