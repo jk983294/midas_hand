@@ -23,4 +23,10 @@ public enum DirectionType {
         }
     }
 
+    public static DirectionType getDirectionType(double value1, double value2){
+        if(value1 == value2) return Chaos;
+        if(value1 < value2) return Up;
+        else return Down;
+    }
+
 }

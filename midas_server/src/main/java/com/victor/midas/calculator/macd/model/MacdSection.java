@@ -104,6 +104,17 @@ public class MacdSection {
         return false;
     }
 
+    public boolean shouldHoldByStatus(){
+        if(type == MacdSectionType.red){
+            if(status == MacdSectionStatus.grow1 || status == MacdSectionStatus.grow2)
+                return true;
+        } else {
+            if(status == MacdSectionStatus.decay1 || status == MacdSectionStatus.decay2)
+                return true;
+        }
+        return false;
+    }
+
     public boolean update(int index, double bar, double minPrice, double maxPrice){
         signalType = SignalType.unknown;
         if(type == MacdSectionType.getType(bar)){

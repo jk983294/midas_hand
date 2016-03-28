@@ -151,4 +151,16 @@ public class MathStockUtil {
     public static boolean isPriceStop(double changePct){
         return Math.abs(Math.abs(changePct) - 0.1) < 0.005;
     }
+
+    public static boolean isCrossZero(double v1, double v2){
+        return v1 * v2 < 0;
+    }
+
+    public static boolean isCrossZeroUp(double v1, double v2){
+        return isCrossZero(v1, v2) && v2 > v1;
+    }
+
+    public static boolean isCrossZeroDown(double v1, double v2){
+        return isCrossZero(v1, v2) && v2 < v1;
+    }
 }

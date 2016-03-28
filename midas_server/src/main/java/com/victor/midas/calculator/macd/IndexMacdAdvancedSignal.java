@@ -1,6 +1,8 @@
 package com.victor.midas.calculator.macd;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.common.model.IndexLine;
+import com.victor.midas.calculator.common.model.IndexLines;
 import com.victor.midas.calculator.common.model.SignalType;
 import com.victor.midas.calculator.divergence.IndexBadDepth;
 import com.victor.midas.calculator.indicator.IndexChangePct;
@@ -38,6 +40,8 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
     private List<MacdSection> redSections = new ArrayList<>();
     private LinkedList<MacdSection> overrideGreenSections = new LinkedList<>();
     private MacdSection lastSection;
+    private IndexLines lines;
+    private IndexLine lastLine1, lastLine2, lastLine3;
 
     public IndexMacdAdvancedSignal(CalcParameter parameter) {
         super(parameter);
@@ -60,6 +64,7 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
         vMa5 = maMethod.calculate(total, 5);
         pMa60 = maMethod.calculate(end, 60);
         lastSection = null;
+        lines = new IndexLines();
         sections.clear();
         greenSections.clear();
         redSections.clear();
@@ -69,21 +74,17 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
 //            if(dates[i] == 20160122){
 //                System.out.println("wow");
 //            }
-            if(sections.size() == 0){
-                lastSection = MacdSection.create(i, macdBar[i], end[i]);
-                addSection();
-            } else if(lastSection.update(i, macdBar[i], min[i], max[i])){
-                updateOverride();
-            } else {
-                updateOverride();
-                if(lastSection.type == MacdSectionType.green){
-                    overrideGreenSections.add(lastSection);
-                }
-                lastSection = MacdSection.create(i, macdBar[i], end[i]);
-                addSection();
-            }
+            updateStats(i);
 
             if(state == StockState.HoldMoney){
+//                if(lastLine1 != null && lastLine2 != null && lastLine3 != null
+//                        && lastSection.shouldHoldByStatus()
+//                        && lastLine1.cnt == 2 && lastLine2.cnt < 7
+//                        && MathHelper.isLessAbs(lastLine2.point2.value, lastLine2.point1.value, singleDouble)
+//                        && lastLine1.point1.value > 0 && lastLine3.isLineCrossZeroUp()){
+//                    score[i] = 1d;
+//                    state = StockState.HoldStock;
+//                }
                 if(lastSection.type == MacdSectionType.green){
                     if(lastSection.signalType == SignalType.buy && greenSections.size() > 1){
                         updateGreenSectionDivergence(greenSections);
@@ -102,11 +103,6 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
                         score[i] = 10d;
                         state = StockState.HoldStock;
                     }
-//                    if(dif[i] > 0 && end[i] > pMa60[i] && pMa60[i] > pMa60[i - 1] && lastSection.signalType == SignalType.buy
-//                            && lastSection.getTotalDays() < singleInt){
-//                        score[i] = 5d;
-//                        state = StockState.HoldStock;
-//                    }
                 } else if(lastSection.type == MacdSectionType.red && greenSections.size() > 0 && redSections.size() > 1){
                     MacdSection lastGreen = greenSections.get(greenSections.size() - 1);
                     MacdSection lastRed = redSections.get(redSections.size() - 2);
@@ -125,6 +121,26 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
 //            score[i] = lastSection.status1.ordinal();
         }
         addIndexData(INDEX_NAME, score);
+    }
+
+    private void updateStats(int i){
+        lines.update(i, dif[i]);
+        lastLine1 = lines.getLastLine(1);
+        lastLine2 = lines.getLastLine(2);
+        lastLine3 = lines.getLastLine(3);
+        if(sections.size() == 0){
+            lastSection = MacdSection.create(i, macdBar[i], end[i]);
+            addSection();
+        } else if(lastSection.update(i, macdBar[i], min[i], max[i])){
+            updateOverride();
+        } else {
+            updateOverride();
+            if(lastSection.type == MacdSectionType.green){
+                overrideGreenSections.add(lastSection);
+            }
+            lastSection = MacdSection.create(i, macdBar[i], end[i]);
+            addSection();
+        }
     }
 
     /**
