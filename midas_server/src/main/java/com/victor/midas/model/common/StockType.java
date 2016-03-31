@@ -7,6 +7,8 @@ public enum StockType {
     Index,
     SZ,
     SH,
+    FundA,
+    FundB,
     UNKNOWN;
 
 

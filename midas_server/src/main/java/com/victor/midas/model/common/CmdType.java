@@ -4,6 +4,7 @@ package com.victor.midas.model.common;
  * cmd constant
  */
 public enum CmdType {
+    /** action */
     delete,
     load,
     create,
@@ -18,6 +19,10 @@ public enum CmdType {
     load_score,
     chan,
     perf,
+
+    /** parameter */
+    stock,
+    fund,
 
     bad_cmd
 }

@@ -53,6 +53,8 @@ public class MidasConstants {
     public static final String INDEX_NAME_VOLUME = "volume";
     public static final String INDEX_NAME_TOTAL = "total";
     public static final String INDEX_NAME_CHANGEPCT = "changePct";
+    public static final String INDEX_NAME_NAV = "nav";
+    public static final String INDEX_NAME_CUMULATIVE_NAV = "cumulativeNavs";
 
     public static String getIndexId(String stockName, String indexName){
         StringBuilder sb = new StringBuilder(stockName);

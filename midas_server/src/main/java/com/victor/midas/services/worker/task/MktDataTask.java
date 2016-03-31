@@ -19,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.victor.midas.dao.TaskDao;
+import org.springframework.core.env.Environment;
 
 public class MktDataTask extends TaskBase {
 	
@@ -26,15 +27,24 @@ public class MktDataTask extends TaskBase {
 	private static final String description = "Market Data Load Task";
 
 	private StocksService stocksService;
+    private Environment environment;
+    private boolean loadStock = true;   // false means load fund
+    private String loadPath;
 
-	public MktDataTask(TaskDao taskdao, StocksService stocksService, List<String> params) {
+	public MktDataTask(TaskDao taskdao, StocksService stocksService, Environment environment, List<String> params) {
 		super(description, taskdao, params);
 		this.stocksService = stocksService;
+        this.environment = environment;
+        loadPath = environment.getProperty("MktDataLoader.Stock.Path");
+        if(params != null && params.size() > 0 && params.get(0).equalsIgnoreCase("fund")){
+            loadStock = false;
+            loadPath = environment.getProperty("MktDataLoader.Fund.Path");
+        }
 	}
 
 	@Override
 	public void doTask() throws Exception {
-        List<StockVo> stocks = getStockFromFileSystem("F:\\Data\\MktData\\ALL");
+        List<StockVo> stocks = getStockFromFileSystem(loadPath);
         stocksService.saveStocks(stocks);
 		logger.info( description + " complete...");
 	}

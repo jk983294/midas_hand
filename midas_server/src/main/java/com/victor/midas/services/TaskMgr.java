@@ -9,6 +9,8 @@ import com.victor.midas.services.worker.task.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
+import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 
 import com.victor.midas.dao.TaskDao;
@@ -39,6 +41,9 @@ public class TaskMgr {
     @Autowired
     private StocksService stocksService;
 
+    @Autowired
+    private Environment environment;
+
     @Resource(name="filepath2prefix")
     private Map<String, String> filepath2prefix;
 
@@ -56,7 +61,7 @@ public class TaskMgr {
     	switch(cmdType){
             case delete :  addTask( new DeleteStockCollTask( taskDao , stockInfoDao, stockDao, miscDao, params ) );  break;
             case create : addTask( new CreateCollectionTask( taskDao , stockInfoDao, stockDao, miscDao, params ) ); break;
-            case load : addTask(new MktDataTask(taskDao, stocksService, params)); break;
+            case load : addTask(new MktDataTask(taskDao, stocksService, environment, params)); break;
             case calculate : addTask(new CalculateTask(taskDao, stocksService, params)); break;
             case trainSingle :
             case trainStrategy : addTask(new TrainTask(taskDao, stocksService, params, cmdType)); break;

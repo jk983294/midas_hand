@@ -36,9 +36,8 @@
 	</bean>
 
     <util:map id="filepath2prefix" map-class="java.util.HashMap" >
-        <entry key="${MktDataLoader.StockSZDirPath}" value="SZ"/>
-        <entry key="${MktDataLoader.StockSHDirPath}" value="SH"/>
-        <entry key="${MktDataLoader.StockIndexDirPath}" value="IDX"/>
+        <entry key="${MktDataLoader.Stock.Path}" value="Stock"/>
+        <entry key="${MktDataLoader.Fund.Path}" value="Fund"/>
     </util:map>
 
 <!-- Loads MongoDB configuraton -->
