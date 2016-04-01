@@ -27,6 +27,9 @@ public abstract class TaskBase implements Runnable{
         this.params = params;
 	}
 
+	public TaskBase() {
+	}
+
 	/**
 	 * framework to run a task, handle status change, and responsible for DB serialization
 	 */

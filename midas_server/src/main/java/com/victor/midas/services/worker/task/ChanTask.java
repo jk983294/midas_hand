@@ -46,7 +46,7 @@ public class ChanTask extends TaskBase {
 
     private List<StockVo> getAllStock() throws Exception {
         if(isFromFileSystem){
-            return MktDataTask.getStockFromFileSystem("F:\\Data\\MktData\\ALL");
+            return new MktDataTask().getStockFromFileSystem("F:\\Data\\MktData\\ALL");
         } else {
             return stocksService.queryAllStock();
         }

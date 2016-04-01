@@ -6,7 +6,8 @@ package com.victor.midas.model.common;
 public enum CmdType {
     /** action */
     delete,
-    load,
+    loadStock,
+    loadFund,
     create,
     calculate,
     trainSingle,
@@ -20,9 +21,6 @@ public enum CmdType {
     chan,
     perf,
 
-    /** parameter */
-    stock,
-    fund,
 
     bad_cmd
 }

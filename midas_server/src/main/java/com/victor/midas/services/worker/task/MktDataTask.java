@@ -31,25 +31,28 @@ public class MktDataTask extends TaskBase {
     private boolean loadStock = true;   // false means load fund
     private String loadPath;
 
-	public MktDataTask(TaskDao taskdao, StocksService stocksService, Environment environment, List<String> params) {
+	public MktDataTask(TaskDao taskdao, StocksService stocksService, Environment environment, List<String> params, boolean loadStock) {
 		super(description, taskdao, params);
 		this.stocksService = stocksService;
         this.environment = environment;
         loadPath = environment.getProperty("MktDataLoader.Stock.Path");
-        if(params != null && params.size() > 0 && params.get(0).equalsIgnoreCase("fund")){
-            loadStock = false;
+        this.loadStock = loadStock;
+        if(!loadStock){
             loadPath = environment.getProperty("MktDataLoader.Fund.Path");
         }
 	}
 
-	@Override
+    public MktDataTask() {
+    }
+
+    @Override
 	public void doTask() throws Exception {
         List<StockVo> stocks = getStockFromFileSystem(loadPath);
         stocksService.saveStocks(stocks);
 		logger.info( description + " complete...");
 	}
 
-    public static List<StockVo> getStockFromFileSystem(String path) throws Exception {
+    public List<StockVo> getStockFromFileSystem(String path) throws Exception {
         logger.info("load data from dir : " + path);
         List<StockVo> stocks = new ArrayList<>();
         fromDirectory(stocks, path);
@@ -57,7 +60,7 @@ public class MktDataTask extends TaskBase {
         return stocks;
     }
 
-    public static void fromDirectory(List<StockVo> stocks, String dir) throws Exception {
+    public void fromDirectory(List<StockVo> stocks, String dir) throws Exception {
         File root = new File(dir);
         File[] files = root.listFiles();
         for(File file:files){
@@ -87,7 +90,7 @@ public class MktDataTask extends TaskBase {
 	 * @return
 	 * @throws IOException 
 	 */
-	public static StockVo fromFile(String path) throws Exception {
+	public StockVo fromFile(String path) throws Exception {
         File file = new File(path);
         List<String> contents = FileUtils.readLines(file, "GBK");
 
@@ -98,9 +101,11 @@ public class MktDataTask extends TaskBase {
         for (int i = 1; i < arrs.length-2; i++) {
             sb.append(arrs[i]);
         }
-        String stockCode = getStockCode(sb.toString(), arrs[0], path);
+        String stockName = sb.toString();
+        String stockCode = getStockCode(stockName, arrs[0], path);
+        StockType type = getStockType(stockName, stockCode);
 
-        if(contents.size() < 4){
+        if(type == StockType.UNKNOWN || contents.size() < 4){
             logger.error("no data in stock " + stockCode + ", skip it...");
             return null;
         }
@@ -124,7 +129,7 @@ public class MktDataTask extends TaskBase {
             total[i] = Double.valueOf(arr[6]);
         }
 
-        StockVo stock = new StockVo(stockCode, sb.toString(), getStockType(stockCode));
+        StockVo stock = new StockVo(stockCode, stockName, type);
         stock.addTimeSeries(date);
         stock.addIndex(MidasConstants.INDEX_NAME_START, start);
         stock.addIndex(MidasConstants.INDEX_NAME_MAX, max);
@@ -135,24 +140,37 @@ public class MktDataTask extends TaskBase {
 		return stock;
 	}
 
-    private static String getStockCode(String stockName, String stockCode, String filePath){
-        if(stockName.endsWith("指") || stockName.endsWith("指数")){
-            return "IDX" + stockCode;
+    private String getStockCode(String stockName, String stockCode, String filePath){
+        if(loadStock){
+            if(stockName.endsWith("指") || stockName.endsWith("指数")){
+                return "IDX" + stockCode;
+            } else {
+                return filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
+            }
         } else {
-            return filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
+            return stockCode;
         }
+
     }
 
-    private static StockType getStockType(String stockCode) throws Exception {
-       if(stockCode.startsWith("SH")){
-           return StockType.SH;
-       } else if(stockCode.startsWith("SZ")){
-           return StockType.SZ;
-       } else if(stockCode.startsWith("IDX")){
-            return StockType.Index;
-       } else {
-           throw new Exception("UNKNOWN StockType for " + stockCode);
-       }
+    private StockType getStockType(String stockName, String stockCode) throws Exception {
+        if(loadStock){
+            if(stockCode.startsWith("SH")){
+                return StockType.SH;
+            } else if(stockCode.startsWith("SZ")){
+                return StockType.SZ;
+            } else if(stockCode.startsWith("IDX")){
+                return StockType.Index;
+            }
+        } else {
+            if(stockName.contains("A")){
+                return StockType.FundA;
+            } else if(stockName.contains("B")){
+                return StockType.FundB;
+            }
+        }
+        logger.error("unknown type for " + stockCode + " " + stockName);
+        return StockType.UNKNOWN;
     }
 
     /**
