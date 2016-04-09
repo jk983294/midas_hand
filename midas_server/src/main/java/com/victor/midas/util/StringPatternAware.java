@@ -2,12 +2,10 @@ package com.victor.midas.util;
 
 import java.util.regex.Pattern;
 
-/**
- * Created by Administrator on 2014/10/23.
- */
+
 public class StringPatternAware {
 
-    public static final String NOT_UNDER_CONCERN = "[^0-9a-zA-Z]";
+    public static final String NOT_UNDER_CONCERN = "[^0-9a-zA-Z|_]";
     public static final String ONLY_NUMBER = "[0-9]{1,6}";
     public static final Pattern onlyNumberPattern = Pattern.compile(ONLY_NUMBER);
 

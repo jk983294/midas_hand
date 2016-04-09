@@ -8,6 +8,7 @@ import com.victor.midas.services.TaskMgr;
 import com.victor.midas.services.TypeAhead;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.StringPatternAware;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,30 +61,42 @@ public class TypeAheadEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public TypeAheadResponse getAction(@PathVariable("query") String query) {
         TypeAheadResponse response = new TypeAheadResponse();
-        StringBuilder tip = new StringBuilder("");
+
         try {
-            if(query != null){
-                String[] stringlets = query.split(" ");
-                if(stringlets.length > 0){
-                    if("trainSingle".equalsIgnoreCase(stringlets[0])){
-                        tip.append(query);
-                    } else {
-                        for (int i = 0; i < stringlets.length; i++) {
-                            List<String> subtips = typeAhead.query(stringlets[i]);
-                            if(subtips.size() > 0) {
-                                tip.append(subtips.get(0)).append(" ");
-                            } else {
-                                tip.append(stringlets[i]).append(" ");
+            if(StringUtils.isNotEmpty(query)){
+                String[] queries = query.split("\\|");
+                List<String> actions = new ArrayList<>();
+                for(int j = 0; j < queries.length; j++){
+                    String actionStr = queries[j].trim();
+                    StringBuilder tip = new StringBuilder("");
+                    String[] stringLets = actionStr.split(" ");
+                    if(stringLets.length > 0){
+                        if("trainSingle".equalsIgnoreCase(stringLets[0])){
+                            tip.append(query);
+                        } else {
+                            for (int i = 0; i < stringLets.length; i++) {
+                                List<String> subTips = typeAhead.query(stringLets[i]);
+                                if(subTips.size() > 0) {
+                                    if(subTips.contains(stringLets[i])){    // use exact match first
+                                        tip.append(stringLets[i]).append(" ");
+                                    } else {
+                                        tip.append(subTips.get(0)).append(" ");
+                                    }
+                                } else {
+                                    tip.append(stringLets[i]).append(" ");
+                                }
                             }
                         }
                     }
+                    actions.add(tip.toString().trim());
                 }
-
-                String tipStr = tip.toString().trim();
-                //logger.info(query + " " + tipStr);
-                response.setAction(tipStr);
-                dealWithAction(tipStr, response);
-
+                if(actions.size() == 1){
+                    response.setAction(actions.get(0));
+                    dealWithAction(actions.get(0), response);
+                } else {
+                    response.setAction("Piped Task submitted.");
+                    taskMgr.submitPipedTasks(actions);
+                }
             } else {
                 response.setStatus(MidasConstants.RESPONSE_FAIL);
                 response.setDescription("No query string");
@@ -132,19 +145,24 @@ public class TypeAheadEndpoint {
     private List<String> getTipList(String query){
         List<String> totalTips = new ArrayList<>();
         if(query != null){
-            String[] stringlets = query.split(" ");
-            int currentMaxtipEntryCnt = MAX_TIPS_ENTRY;
-            for (int i = 0; i < stringlets.length; i++) {
-                List<String> subtips = typeAhead.query(stringlets[i]);
-                // if current subtips is more than currentMaxtipEntryCnt, cut it to current max
-                if( currentMaxtipEntryCnt < subtips.size()){
-                    subtips = subtips.subList(0, currentMaxtipEntryCnt);
+            String[] stringLets = query.split(" ");
+            int currentMaxTipEntryCnt = MAX_TIPS_ENTRY;
+            for (int i = 0; i < stringLets.length; i++) {
+                List<String> subTips = typeAhead.query(stringLets[i]);
+                if(i < stringLets.length - 1 && subTips.contains(stringLets[i])){  // not last one, when exact match, then use that exact one
+                    subTips.clear();
+                    subTips.add(stringLets[i]);
                 }
-                if(subtips.size() > 0) {
-                    currentMaxtipEntryCnt = Math.max( 1, (int) Math.ceil(currentMaxtipEntryCnt / subtips.size()));
+                // if current subTips is more than currentMaxTipEntryCnt, cut it to current max
+                if( currentMaxTipEntryCnt < subTips.size()){
+                    subTips = subTips.subList(0, currentMaxTipEntryCnt);
                 }
 
-                totalTips = mergeTips(totalTips, subtips);
+                if(subTips.size() > 0) {
+                    currentMaxTipEntryCnt = Math.max(1, (int) Math.ceil(currentMaxTipEntryCnt / subTips.size()));
+                }
+
+                totalTips = mergeTips(totalTips, subTips);
             }
         }
         return totalTips;

@@ -13,3 +13,5 @@ calculate
 
 score score_macd
 score score_macd SH603567
+
+loadStock | score score_macd

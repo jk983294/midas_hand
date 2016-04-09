@@ -2,6 +2,7 @@ package com.victor.midas.services.worker.common;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import com.victor.midas.util.MidasException;
 import org.apache.log4j.Logger;
@@ -9,7 +10,7 @@ import org.apache.log4j.Logger;
 import com.victor.midas.dao.TaskDao;
 import com.victor.midas.model.db.TaskDb;
 
-public abstract class TaskBase implements Runnable{
+public abstract class TaskBase implements Callable<Integer> {
 	
 	private TaskDb taskDb;
 	/**
@@ -33,7 +34,8 @@ public abstract class TaskBase implements Runnable{
 	/**
 	 * framework to run a task, handle status change, and responsible for DB serialization
 	 */
-	public void run() {
+	@Override
+	public Integer call() {
 		taskDb.setStatus(TaskStatus.Execute);
 		taskDao.saveTask(taskDb);		// save task to DB
 		try {
@@ -43,11 +45,12 @@ public abstract class TaskBase implements Runnable{
             taskDb.setFailInfo(e.toString());
 			taskDb.setStatus(TaskStatus.Error);
             throw new RuntimeException(e);
-		}finally{
+		} finally{
 			taskDb.setFinish(new Timestamp(System.currentTimeMillis()));
 			if(taskDb.getStatus() != TaskStatus.Error) taskDb.setStatus(TaskStatus.Finished);
 			taskDao.saveTask(taskDb);
-		}		
+		}
+		return 0;
 	}
 	
 	/**
