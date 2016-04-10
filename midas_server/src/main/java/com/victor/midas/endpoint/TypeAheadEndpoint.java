@@ -94,7 +94,8 @@ public class TypeAheadEndpoint {
                     response.setAction(actions.get(0));
                     dealWithAction(actions.get(0), response);
                 } else {
-                    response.setAction("Piped Task submitted.");
+                    response.setDescription("Piped Task submitted.");
+                    response.setStatus(MidasConstants.RESPONSE_SUCCESS);
                     taskMgr.submitPipedTasks(actions);
                 }
             } else {

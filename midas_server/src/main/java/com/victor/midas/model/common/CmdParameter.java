@@ -12,6 +12,7 @@ public enum CmdParameter {
     score_revert,
     score_support,
     score_macd,
+    score_pcrs,
     score_concept;
 
     public static CmdParameter getParameter(CmdParameter defaultPara, List<String> params, int index){

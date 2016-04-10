@@ -19,7 +19,7 @@ midasApp.controller('singleTrainController', function ($scope, $filter, MidasDat
             page: 1,                // show first page
             count: 10,              // count per page
             sorting: {
-                kellyAnnualizedPerformance : 'desc'     // initial sorting
+                sharpeRatio : 'desc'     // initial sorting
             }
         },{
             total : $scope.results.length,

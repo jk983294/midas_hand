@@ -79,7 +79,10 @@ public class TypeAhead {
 				results.addAll(finds);
 			}
 		}
-        Collections.reverse(results);
+        int idx = results.indexOf(toFind);
+        if(idx > 0){
+            Collections.swap(results, idx, 0);
+        }
 		return results;
 	}
 	
