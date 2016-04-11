@@ -50,6 +50,10 @@ midasApp.config(['$routeProvider',
                 controller: 'singleTrainController',
                 templateUrl: urlBase + 'singleTrainContent.html'
             })
+            .when('/Commands', {
+                controller: 'TypeaheadCtrl',
+                templateUrl: urlBase + 'commandContent.html'
+            })
             .otherwise({
                 redirectTo: '/Overview'
             });

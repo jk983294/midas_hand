@@ -15,3 +15,9 @@ score score_macd
 score score_macd SH603567
 
 loadStock | score score_macd
+
+
+
+-- useful cmds
+score score_pcrs
+score score_macd
