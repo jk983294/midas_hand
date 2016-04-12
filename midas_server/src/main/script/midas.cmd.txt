@@ -19,5 +19,6 @@ loadStock | score score_macd
 
 
 -- useful cmds
+load_score score_macd
 score score_pcrs
 score score_macd
