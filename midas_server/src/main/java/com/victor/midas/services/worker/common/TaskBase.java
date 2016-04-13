@@ -41,7 +41,7 @@ public abstract class TaskBase implements Callable<Integer> {
 		try {
 			doTask();							
 		} catch (Exception e) {
-			logger.error(e);
+			e.printStackTrace();
             taskDb.setFailInfo(e.toString());
 			taskDb.setStatus(TaskStatus.Error);
             throw new RuntimeException(e);

@@ -53,9 +53,9 @@ public class PriceCrashRevertSignal extends IndexCalcBase {
         int sellIndex = -1;
         StockState state = StockState.HoldMoney;
         for (int i = 5; i < len; i++) {
-//            if(dates[i] == 20150630){
-//                System.out.println("wow");
-//            }
+            if(dates[i] == 20160411){
+                System.out.println("wow");
+            }
 
             if(state == StockState.HoldMoney) {
                 if (changePct[i] < 0 && changePct[i - 1] < 0 && changePct[i - 2] > 0

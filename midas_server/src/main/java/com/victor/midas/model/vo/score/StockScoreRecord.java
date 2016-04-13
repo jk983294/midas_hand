@@ -65,4 +65,13 @@ public class StockScoreRecord implements Comparable<StockScoreRecord> {
     public int hashCode() {
         return cob;
     }
+
+    @Override
+    public String toString() {
+        return "StockScoreRecord{" +
+                "cob=" + cob +
+                ", severity=" + severity +
+                ", records=" + records +
+                '}';
+    }
 }
