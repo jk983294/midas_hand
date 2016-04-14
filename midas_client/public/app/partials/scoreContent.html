@@ -32,8 +32,8 @@
 
     <table ng-table="tableParams" template-pagination="custom/pager" class="table table-bordered table-hover">
         <tr ng-repeat="score in $data" class="{{score.severity | stockSeverityLevel}}">
-            <td data-title="'Date'">{{score.cob}}</td>
-            <td data-title="'Severity'">{{score.severity}}</td>
+            <td data-title="'Date'" sortable="'cob'">{{score.cob}}</td>
+            <td data-title="'Severity'" sortable="'severity'">{{score.severity}}</td>
             <td data-title="'Stocks'">{{score.records | scoreList}}</td>
         </tr>
     </table>

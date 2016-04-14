@@ -74,7 +74,7 @@ midasApp.controller('scoreController', function ($scope, $filter, $routeParams, 
             page: 1,                // show first page
             count: 10,               // count per page
             sorting: {
-                date : 'desc'     // initial sorting
+                cob : 'desc'     // initial sorting
             },
             filter: {
                 desc : ''            // initial filter

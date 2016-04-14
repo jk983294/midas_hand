@@ -64,13 +64,14 @@ angular.module('formatFilters', []).filter('addPct', function() {
     };
     function toHtml(score){
         return score.stockCode + ' '+ format_number(score.score, 2)
-            + ' ' + (score.conceptName === null ? '' : (score.conceptName + ' '));
+            + (score.conceptName === null ? '' : (' ' + score.conceptName ));
     };
     return function(scores) {
-        scores = scores.sort(sortScoreRecord);
-        var result = toHtml(scores[0]);
-        for(var i = 1, len = scores.length; i < len; ++i ){
-            result += (', ' + toHtml(scores[i]));
+        var newScores = scores.slice(); // copy a new array to avoid touch original array for infinite digest loop
+        newScores.sort(sortScoreRecord);
+        var result = toHtml(newScores[0]);
+        for(var i = 1, len = newScores.length; i < len; ++i ){
+            result += (', ' + toHtml(newScores[i]));
         }
         return result;
     };
