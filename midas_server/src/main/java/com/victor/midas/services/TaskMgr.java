@@ -69,9 +69,9 @@ public class TaskMgr {
             case trainSingle :
             case trainStrategy : callable = new TrainTask(taskDao, stocksService, params, cmdType); break;
             case plan : callable = new PlanTask(taskDao, stocksService, params); break;
-            case score : callable = new ScoreTask(taskDao, stocksService, false, params); break;
+            case score : callable = new ScoreTask(taskDao, stocksService, environment, false, params, true); break;
             case crawl : callable = new CrawlTask(taskDao, stocksService, params); break;
-            case load_score : callable = new ScoreTask(taskDao, stocksService, true, params); break;
+            case load_score : callable = new ScoreTask(taskDao, stocksService, environment, true, params, true); break;
             case chan : callable = new ChanTask(taskDao, stocksService, params); break;
             case perf : callable = new PerfTask(taskDao, stocksService, params); break;
             default : logger.error("no such cmd in task manager.");
