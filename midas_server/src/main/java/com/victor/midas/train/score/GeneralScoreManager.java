@@ -74,6 +74,8 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
                                 MidasTrainHelper.getHoldingTime(scores, score, index, stock);
                                 if(score.sellIndex > 0){
                                     stockScores.add(score);
+                                } else if(index == scores.length - 1){  // record last day's predict even it cannot contribute to performance calculation
+                                    stockScores.add(score);
                                 }
                             }
                         } else {    // no signal, every stock will take account

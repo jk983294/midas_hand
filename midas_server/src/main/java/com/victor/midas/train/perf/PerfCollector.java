@@ -77,7 +77,7 @@ public class PerfCollector {
         recordByName(record);
         if(record.getCob() >= cobRangeFrom && record.getCob() <= cobRangeTo){
             for(StockScore stockScore : record.getRecords()){
-                if(stockScore.getScore() <= 0.5) continue;
+                if(stockScore.getScore() <= 0.5 || stockScore.sellIndex <= 0) continue;
                 initState(stockScore.getStockCode());
                 recordBuySellDayStatistics();
                 if(index < dateCnt){
