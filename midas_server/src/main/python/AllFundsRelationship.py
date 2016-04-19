@@ -5,19 +5,16 @@ import urllib2
 import json
 import pandas as pd
 import PropertiesReader
-
-
-def json_data_get():
-    url = 'https://www.jisilu.cn/data/sfnew/fundb_list/'
-    response = urllib2.urlopen(url)
-    resp = response.read()
-    return json.loads(resp)
+import MidasUtil as util
 
 
 def parse_data(data):
     fundb_base_fund_id = []
     funda_id = []
+    funda_name = []
     fundb_id = []
+    fundb_name = []
+    maturity_dt = []
     coupon_descr_s = []             # 利率规则
     fundb_nav_dt = []
     fundb_discount_rt = []          # 溢价率
@@ -34,27 +31,33 @@ def parse_data(data):
     rows = data['rows']
     for row in rows:
         row_data = row['cell']
-        fundb_base_fund_id.append(row_data['fundb_base_fund_id'].encode("utf-8"))
-        funda_id.append(row_data['funda_id'].encode("utf-8"))
-        fundb_id.append(row_data['fundb_id'].encode("utf-8"))
-        coupon_descr_s.append(row_data['coupon_descr_s'].encode("utf-8"))
-        fundb_nav_dt.append(row_data['fundb_nav_dt'].encode("utf-8"))
-        fundb_discount_rt.append(row_data['fundb_discount_rt'].encode("utf-8"))
-        fundb_price_leverage_rt.append(row_data['fundb_price_leverage_rt'].encode("utf-8"))
-        fundb_capital_rasising_rt.append(row_data['fundb_capital_rasising_rt'].encode("utf-8"))
-        fundb_lower_recalc_rt.append(row_data['fundb_lower_recalc_rt'].encode("utf-8"))
-        fundb_base_est_dis_rt.append(row_data['fundb_base_est_dis_rt'].encode("utf-8"))
-        abrate.append(row_data['abrate'].encode("utf-8"))
-        fundb_base_price.append(row_data['fundb_base_price'].encode("utf-8"))
-        fundb_upper_recalc_rt.append(row_data['fundb_upper_recalc_rt'].encode("utf-8"))
-        funda_current_price.append(row_data['funda_current_price'].encode("utf-8"))
-        fundb_current_price.append(row_data['fundb_current_price'].encode("utf-8"))
-        fundb_value.append(row_data['fundb_value'].encode("utf-8"))
+        fundb_base_fund_id.append(util.json_object_to_convert(row_data['fundb_base_fund_id']))
+        funda_id.append(util.json_object_to_convert(row_data['funda_id']))
+        funda_name.append(util.json_object_to_convert(row_data['funda_name']))
+        fundb_id.append(util.json_object_to_convert(row_data['fundb_id']))
+        fundb_name.append(util.json_object_to_convert(row_data['fundb_name']))
+        maturity_dt.append(util.json_object_to_convert(row_data['maturity_dt']))
+        coupon_descr_s.append(util.json_object_to_convert(row_data['coupon_descr_s']))
+        fundb_nav_dt.append(util.json_object_to_convert(row_data['fundb_nav_dt']))
+        fundb_discount_rt.append(util.json_object_to_convert(row_data['fundb_discount_rt']))
+        fundb_price_leverage_rt.append(util.json_object_to_convert(row_data['fundb_price_leverage_rt']))
+        fundb_capital_rasising_rt.append(util.json_object_to_convert(row_data['fundb_capital_rasising_rt']))
+        fundb_lower_recalc_rt.append(util.json_object_to_convert(row_data['fundb_lower_recalc_rt']))
+        fundb_base_est_dis_rt.append(util.json_object_to_convert(row_data['fundb_base_est_dis_rt']))
+        abrate.append(util.json_object_to_convert(row_data['abrate']))
+        fundb_base_price.append(util.json_object_to_convert(row_data['fundb_base_price']))
+        fundb_upper_recalc_rt.append(util.json_object_to_convert(row_data['fundb_upper_recalc_rt']))
+        funda_current_price.append(util.json_object_to_convert(row_data['funda_current_price']))
+        fundb_current_price.append(util.json_object_to_convert(row_data['fundb_current_price']))
+        fundb_value.append(util.json_object_to_convert(row_data['fundb_value']))
 
     d = {
         'fundb_base_fund_id': fundb_base_fund_id,
         'funda_id': funda_id,
         'fundb_id': fundb_id,
+        'funda_name': funda_name,
+        'fundb_name': fundb_name,
+        'maturity_dt': maturity_dt,
         'coupon_descr_s': coupon_descr_s,
         'fundb_nav_dt': fundb_nav_dt,
         'fundb_discount_rt': fundb_discount_rt,
@@ -72,6 +75,7 @@ def parse_data(data):
 
 
 if __name__ == '__main__':
+    url = 'https://www.jisilu.cn/data/sfnew/fundb_list/'
     my_props = PropertiesReader.get_properties()
-    df = parse_data(json_data_get())
+    df = parse_data(util.json_data_get(url))
     df.to_csv(my_props['MktDataLoader.Fund.AllFundsRelationship.Path'])
