@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # crawl all fund A, fund B, mother fund info
 # https://www.jisilu.cn/data/sfnew/fundb_list/
-import urllib2
-import json
 import pandas as pd
 import PropertiesReader
 import MidasUtil as util
@@ -71,11 +69,29 @@ def parse_data(data):
         'fundb_current_price': fundb_current_price,
         'fundb_value': fundb_value,
         'fundb_base_price': fundb_base_price}
-    return pd.DataFrame(d)
+    df = pd.DataFrame(d)
+    df = df.set_index('fundb_base_fund_id')
+    return df
+
+
+def load_all_funds_file(file_path):
+    df = util.get_dataframe_from_file(file_path)
+    if df is not None:
+        df = df.set_index('fundb_base_fund_id')
+    return df
 
 
 if __name__ == '__main__':
     url = 'https://www.jisilu.cn/data/sfnew/fundb_list/'
     my_props = PropertiesReader.get_properties()
     df = parse_data(util.json_data_get(url))
-    df.to_csv(my_props['MktDataLoader.Fund.AllFundsRelationship.Path'])
+    old_df = load_all_funds_file(my_props['MktDataLoader.Fund.AllFundsRelationship.Path'])
+    if old_df is not None:
+        # avoid data type not the same, so first save then read
+        df.to_csv(my_props['MktDataLoader.Fund.AllFundsRelationship.Tmp.Path'])
+        df = load_all_funds_file(my_props['MktDataLoader.Fund.AllFundsRelationship.Tmp.Path'])
+
+        result = df.combine_first(old_df)   # accept new data, but in case lose old data, use combine_first
+        result.to_csv(my_props['MktDataLoader.Fund.AllFundsRelationship.Path'])
+    else:
+        df.to_csv(my_props['MktDataLoader.Fund.AllFundsRelationship.Path'])
