@@ -88,8 +88,8 @@ if __name__ == '__main__':
     old_df = load_all_funds_file(my_props['MktDataLoader.Fund.AllFundsRelationship.Path'])
     if old_df is not None:
         # avoid data type not the same, so first save then read
-        df.to_csv(my_props['MktDataLoader.Fund.AllFundsRelationship.Tmp.Path'])
-        df = load_all_funds_file(my_props['MktDataLoader.Fund.AllFundsRelationship.Tmp.Path'])
+        df.to_csv(my_props['MktDataLoader.Fund.Tmp.Path'])
+        df = load_all_funds_file(my_props['MktDataLoader.Fund.Tmp.Path'])
 
         result = df.combine_first(old_df)   # accept new data, but in case lose old data, use combine_first
         result.to_csv(my_props['MktDataLoader.Fund.AllFundsRelationship.Path'])

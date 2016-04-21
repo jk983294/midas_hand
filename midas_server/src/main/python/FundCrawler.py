@@ -1,29 +1,31 @@
 # -*- coding: utf-8 -*-
-# crawl fund data using tushare and jisilu
-import urllib2
-import json
+# crawl fund data using jisilu
 import pandas as pd
+import requests
 import PropertiesReader
-import tushare as ts
 import MidasUtil as util
-
-
-def setup_token():
-    ts.set_token('xxx')
-    token = ts.get_token()
-    print token
-
-
-def get_fund_data(fund_code):
-    fd = ts.Fund()
-    return fd.FundNav(ticker=fund_code, beginDate='20150101', field='ticker,endDate,NAV,publishDate,ACCUM_NAV,ADJUST_NAV')
+import AllFundsRelationship as allFunds
+import time
 
 
 def get_fund_data_jisilu(fund_code):
     url = 'https://www.jisilu.cn/jisiludata/StockFenJiDetail.php?qtype=hist&display=table&fund_id=' + fund_code
-    df = parse_jisilu_data(util.json_data_get(url))
-    fd = ts.Fund()
-    return fd.FundNav(ticker=fund_code, beginDate='20150101', field='ticker,endDate,NAV,publishDate,ACCUM_NAV,ADJUST_NAV')
+    r = requests.get(url, timeout=50, headers={
+        'Accept-encoding': 'gzip',
+        'Host': 'www.jisilu.cn',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'max-age=0',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Upgrade-Insecure-Requests': '1',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36',
+        'Accept-Language': 'zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4',
+        'RA-Ver': '3.0.7',
+        'RA-Sid': '7619C09C-20150725-143530-ef5997-6c82a0',
+        'Cookie': ''
+    })
+    data = r.json()
+    df = parse_jisilu_data(data)
+    return df
 
 
 def parse_jisilu_data(data):
@@ -67,39 +69,49 @@ def parse_jisilu_data(data):
         'a_price_increase_rt': a_price_increase_rt,
         'a_profit_rt': a_profit_rt,
         'a_amount': a_amount,
-        'maturity_dt': maturity_dt,
-        'coupon_descr_s': coupon_descr_s,
-        'fundb_nav_dt': fundb_nav_dt,
-        'fundb_discount_rt': fundb_discount_rt,
-        'fundb_price_leverage_rt': fundb_price_leverage_rt,
-        'fundb_capital_rasising_rt': fundb_capital_rasising_rt,
-        'fundb_lower_recalc_rt': fundb_lower_recalc_rt,
-        'fundb_base_est_dis_rt': fundb_base_est_dis_rt,
-        'abrate': abrate,
-        'fundb_upper_recalc_rt': fundb_upper_recalc_rt,
-        'funda_current_price': funda_current_price,
-        'fundb_current_price': fundb_current_price,
-        'fundb_value': fundb_value,
-        'fundb_base_price': fundb_base_price}
+        'a_amount_increase': a_amount_increase,
+        'a_amount_increase_rt': a_amount_increase_rt,
+        'a_discount_rt': a_discount_rt,
+        'b_discount_rt': b_discount_rt,
+        'b_net_leverage_rt': b_net_leverage_rt,
+        'b_price_leverage_rt': b_price_leverage_rt,
+        'base_discount_rt': base_discount_rt,
+        'net_value': net_value,
+        'base_est_val': base_est_val,
+        'est_err': est_err
+    }
     df = pd.DataFrame(d)
-    df = df.set_index('fundb_base_fund_id')
+    df = df.set_index('price_dt')
     return df
 
 
-def test_get_fund_data_jisilu(my_props):
-    fund_code = '150274'
-    df = get_fund_data(fund_code)
-    df.to_csv(my_props['MktDataLoader.Fund.CrawlData.Path'] + fund_code + '.csv')
+def save_fund_data(df, file_path):
+    if df is None:
+        return
+
+    old_df = util.get_dataframe_from_file(file_path)
+    if old_df is not None:
+        old_df = old_df.set_index('price_dt')
+        result = df.combine_first(old_df)  # accept new data, but in case lose old data, use combine_first
+        result.to_csv(file_path)
+    else:
+        df.to_csv(file_path)
 
 
-def test_get_fund_data(my_props):
-    fund_code = '150274'
-    df = get_fund_data(fund_code)
-    df.to_csv(my_props['MktDataLoader.Fund.CrawlData.Path'] + fund_code + '.csv')
+def test_get_fund_data_jisilu(base_path, fund_code):
+    df = get_fund_data_jisilu(fund_code)
+    file_path = base_path + fund_code + '.csv'
+    save_fund_data(df, file_path)
+
 
 if __name__ == '__main__':
-    fund_code = '150274'
+    #fund_code = '160638'
     my_props = PropertiesReader.get_properties()
-    test_get_fund_data(my_props)
+    all_funds = allFunds.load_all_funds_file(my_props['MktDataLoader.Fund.AllFundsRelationship.Path'])
+    base_path = my_props['MktDataLoader.Fund.CrawlData.Path']
+    for index, row in all_funds.iterrows():
+        print index
+        test_get_fund_data_jisilu(base_path, str(index))
+        time.sleep(45)
 
 
