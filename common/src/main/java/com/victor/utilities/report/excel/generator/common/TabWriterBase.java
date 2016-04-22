@@ -406,6 +406,24 @@ public abstract class TabWriterBase {
         Cell cell = row.createCell(column, Cell.CELL_TYPE_STRING);
         cell.setCellStyle(cellStyle);
     }
+    
+    /**
+     * dropdown list
+     */
+    protected void setDropdownCell(int rowIndex, int columnIndex, String[] options){
+        setDropdownCell(rowIndex, rowIndex, columnIndex, columnIndex, options);
+    }
+
+    protected void setDropdownCell(int rowIndexFrom, int rowIndexTo, int columnIndexFrom, int columnIndexTo, String[] options){
+        if(options != null && options.length > 0){
+            XSSFDataValidationHelper validationHelper = new XSSFDataValidationHelper(sheet);
+            CellRangeAddressList addressList = new CellRangeAddressList(rowIndexFrom, rowIndexTo, columnIndexFrom, columnIndexTo);
+            DataValidationConstraint constraint = validationHelper.createExplicitListConstraint(options);
+            DataValidation dataValidation = validationHelper.createValidation(constraint, addressList);
+            dataValidation.setSuppressDropDownArrow(true);
+            sheet.addValidationData(dataValidation);
+        }
+    }
 
     /**
      * calculate number digit length
