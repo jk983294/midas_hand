@@ -4,6 +4,7 @@ import com.victor.utilities.report.excel.model.AppModel;
 import com.victor.utilities.report.excel.model.ColorTag;
 import com.victor.utilities.utils.RegExpHelper;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.Logger;
