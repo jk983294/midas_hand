@@ -1,5 +1,12 @@
 package com.victor.midas.model.common;
 
+import com.victor.midas.calculator.macd.IndexMacdAdvancedSignal;
+import com.victor.midas.calculator.revert.PriceCrashRevertSignal;
+import com.victor.midas.calculator.score.StockRevertScoreRank;
+import com.victor.midas.calculator.score.StockScoreRank;
+import com.victor.midas.calculator.score.StockSupportScoreRank;
+import com.victor.midas.util.MidasException;
+
 import java.util.List;
 
 /**
@@ -20,6 +27,18 @@ public enum CmdParameter {
             return CmdParameter.valueOf(params.get(index));
         } else {
             return defaultPara;
+        }
+    }
+
+    public static String getIndexName(CmdParameter cmdParameter) throws Exception {
+        switch(cmdParameter){
+            case score_ma:  return StockScoreRank.INDEX_NAME;
+            case score_revert: return StockRevertScoreRank.INDEX_NAME;
+            case score_concept: return StockScoreRank.INDEX_NAME;
+            case score_support: return StockSupportScoreRank.INDEX_NAME;
+            case score_macd: return IndexMacdAdvancedSignal.INDEX_NAME;
+            case score_pcrs: return PriceCrashRevertSignal.INDEX_NAME;
+            default : throw new MidasException("no such IndexName in score task.");
         }
     }
 }

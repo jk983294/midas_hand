@@ -1,9 +1,9 @@
 for small dataset test, change com.victor.midas.util.StockFilterUtil.needSmallSetForTest
 
-trainSingle start end step
-trainSingle 1 10 1
-trainSingle 0.8 1.2 0.1.
-trainSingle 0.001 1.5 0.05.
+trainSingle score_pcrs start end step
+trainSingle score_pcrs 1 10 1
+trainSingle score_pcrs 0.8 1.2 0.1.
+trainSingle score_pcrs 0.001 1.5 0.05.
 
 calculate SH600598 score_revert
 calculate IDX999999 score_revert

@@ -5,6 +5,7 @@ import com.victor.midas.calculator.revert.PriceCrashRevertSignal;
 import com.victor.midas.calculator.score.StockRevertScoreRank;
 import com.victor.midas.calculator.score.StockScoreRank;
 import com.victor.midas.calculator.score.StockSupportScoreRank;
+import com.victor.midas.model.common.CmdParameter;
 import com.victor.midas.model.common.CmdType;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.dao.TaskDao;
@@ -55,16 +56,18 @@ public class TrainTask extends TaskBase {
 	}
 
     private void trainSingle() throws Exception {
-        List<StockVo> stocks = stocksService.queryAllStock();
-        if(params != null && params.size() == 3){
+        if(params != null && params.size() == 4){
             SingleParameterTrainer trainer = null;
-            if(RegExpHelper.isInts(params)){
-                trainer = new SingleParameterTrainer(Integer.valueOf(params.get(0)), Integer.valueOf(params.get(1)), Integer.valueOf(params.get(2)));
-            } else if(RegExpHelper.isDoubles(params)){
-                trainer = new SingleParameterTrainer(Double.valueOf(params.get(0)), Double.valueOf(params.get(1)), Double.valueOf(params.get(2)));
+            CmdParameter cmdParameter = CmdParameter.getParameter(CmdParameter.score_ma, params, 0);
+            String indexName = CmdParameter.getIndexName(cmdParameter);
+            if(RegExpHelper.isInts(params.subList(1, 4))){
+                trainer = new SingleParameterTrainer(Integer.valueOf(params.get(1)), Integer.valueOf(params.get(2)), Integer.valueOf(params.get(3)));
+            } else if(RegExpHelper.isDoubles(params.subList(1, 4))){
+                trainer = new SingleParameterTrainer(Double.valueOf(params.get(1)), Double.valueOf(params.get(2)), Double.valueOf(params.get(3)));
             }
+            List<StockVo> stocks = stocksService.queryAllStock();
             if(trainer != null){
-                Trainee trainee = new GeneralScoreManager(stocks, PriceCrashRevertSignal.INDEX_NAME);  // IndexMacdAdvancedSignal
+                Trainee trainee = new GeneralScoreManager(stocks, indexName);
                 trainee.setIsInTrain(true);
                 trainer.setTrainee(trainee);
                 trainer.process();
@@ -72,8 +75,11 @@ public class TrainTask extends TaskBase {
                 stocksService.saveSingleParameterTrainResults(trainer.getResults());
                 //trainDao.saveTrainResult(manager.getTrainResult());
             }
+            PerformanceUtil.manuallyGC(stocks);
+        } else {
+            throw new MidasException("training parameter not correct");
         }
-        PerformanceUtil.manuallyGC(stocks);
+
     }
 
     private void trainStrategy() throws Exception {

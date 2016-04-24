@@ -1,10 +1,5 @@
 package com.victor.midas.services.worker.task;
 
-import com.victor.midas.calculator.macd.IndexMacdAdvancedSignal;
-import com.victor.midas.calculator.revert.PriceCrashRevertSignal;
-import com.victor.midas.calculator.score.StockRevertScoreRank;
-import com.victor.midas.calculator.score.StockScoreRank;
-import com.victor.midas.calculator.score.StockSupportScoreRank;
 import com.victor.midas.dao.ConceptScoreDao;
 import com.victor.midas.dao.ScoreDao;
 import com.victor.midas.dao.TaskDao;
@@ -93,7 +88,7 @@ public class ScoreTask extends TaskBase {
 
     private ScoreManager getScoreManager(CmdParameter cmdParameter) throws Exception {
         List<StockVo> stocks = getAllStock();
-        String indexName = getIndexName(cmdParameter);
+        String indexName = CmdParameter.getIndexName(cmdParameter);
         switch(cmdParameter){
             case score_ma:
             case score_support:
@@ -109,17 +104,6 @@ public class ScoreTask extends TaskBase {
         return new GeneralScoreManager(stocks, indexName);
     }
 
-    private String getIndexName(CmdParameter cmdParameter) throws Exception {
-        switch(cmdParameter){
-            case score_ma:  return StockScoreRank.INDEX_NAME;
-            case score_revert: return StockRevertScoreRank.INDEX_NAME;
-            case score_concept: return StockScoreRank.INDEX_NAME;
-            case score_support: return StockSupportScoreRank.INDEX_NAME;
-            case score_macd: return IndexMacdAdvancedSignal.INDEX_NAME;
-            case score_pcrs: return PriceCrashRevertSignal.INDEX_NAME;
-            default : logger.error("no such IndexName in score task.");
-        }
-        return StockScoreRank.INDEX_NAME;
-    }
+
 
 }

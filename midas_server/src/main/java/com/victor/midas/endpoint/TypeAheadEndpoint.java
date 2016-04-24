@@ -147,10 +147,18 @@ public class TypeAheadEndpoint {
         List<String> totalTips = new ArrayList<>();
         if(StringUtils.isNotEmpty(query)){
             String[] stringLets = query.split(" ");
+
             int currentMaxTipEntryCnt = MAX_TIPS_ENTRY;
             for (int i = 0; i < stringLets.length; i++) {
                 List<String> subTips = typeAhead.query(stringLets[i]);
                 if(i < stringLets.length - 1 && subTips.contains(stringLets[i])){  // not last one, when exact match, then use that exact one
+                    subTips.clear();
+                    subTips.add(stringLets[i]);
+                }
+                if(subTips.size() == 0){                                            // nothing found, use original one
+                    subTips.add(stringLets[i]);
+                }
+                if("trainSingle".equalsIgnoreCase(stringLets[0]) && i > 1){         // don't infer parameter for trainSingle
                     subTips.clear();
                     subTips.add(stringLets[i]);
                 }
