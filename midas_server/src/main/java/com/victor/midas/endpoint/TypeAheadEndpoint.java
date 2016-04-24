@@ -145,7 +145,7 @@ public class TypeAheadEndpoint {
      */
     private List<String> getTipList(String query){
         List<String> totalTips = new ArrayList<>();
-        if(query != null){
+        if(StringUtils.isNotEmpty(query)){
             String[] stringLets = query.split(" ");
             int currentMaxTipEntryCnt = MAX_TIPS_ENTRY;
             for (int i = 0; i < stringLets.length; i++) {
