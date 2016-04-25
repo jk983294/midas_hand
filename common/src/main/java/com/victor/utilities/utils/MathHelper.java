@@ -30,6 +30,10 @@ public class MathHelper {
         return Math.abs(a - b) < 1e-6;
     }
 
+    public static boolean isEqual(double a, double b, double epsilon){
+        return Math.abs(a - b) < epsilon;
+    }
+
     /**
      * generate uniform random variables in given bounds
      */

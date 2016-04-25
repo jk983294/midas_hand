@@ -1,5 +1,6 @@
 package com.victor.midas.model.common;
 
+import com.victor.midas.calculator.follow.TrendFollowSignal;
 import com.victor.midas.calculator.macd.IndexMacdAdvancedSignal;
 import com.victor.midas.calculator.revert.PriceCrashRevertSignal;
 import com.victor.midas.calculator.score.StockRevertScoreRank;
@@ -20,6 +21,7 @@ public enum CmdParameter {
     score_support,
     score_macd,
     score_pcrs,
+    score_tfs,
     score_concept;
 
     public static CmdParameter getParameter(CmdParameter defaultPara, List<String> params, int index){
@@ -38,6 +40,7 @@ public enum CmdParameter {
             case score_support: return StockSupportScoreRank.INDEX_NAME;
             case score_macd: return IndexMacdAdvancedSignal.INDEX_NAME;
             case score_pcrs: return PriceCrashRevertSignal.INDEX_NAME;
+            case score_tfs: return TrendFollowSignal.INDEX_NAME;
             default : throw new MidasException("no such IndexName in score task.");
         }
     }

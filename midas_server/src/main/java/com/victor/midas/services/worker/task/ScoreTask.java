@@ -94,6 +94,7 @@ public class ScoreTask extends TaskBase {
             case score_support:
             case score_macd:
             case score_pcrs:
+            case score_tfs:
             case score_revert: return new GeneralScoreManager(stocks, indexName);
             case score_concept: {
                 List<StockCrawlData> crawlData = stocksService.queryAllStockCrawlData();
