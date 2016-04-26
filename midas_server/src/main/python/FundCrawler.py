@@ -6,22 +6,17 @@ import PropertiesReader
 import MidasUtil as util
 import AllFundsRelationship as allFunds
 import time
+from random import randint
 
 
 def get_fund_data_jisilu(fund_code):
     url = 'https://www.jisilu.cn/jisiludata/StockFenJiDetail.php?qtype=hist&display=table&fund_id=' + fund_code
-    r = requests.get(url, timeout=50, headers={
+    r = requests.get(url, timeout=45, stream=False, headers={
         'Accept-encoding': 'gzip',
         'Host': 'www.jisilu.cn',
-        'Connection': 'keep-alive',
-        'Cache-Control': 'max-age=0',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36',
-        'Accept-Language': 'zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4',
-        'RA-Ver': '3.0.7',
-        'RA-Sid': '7619C09C-20150725-143530-ef5997-6c82a0',
-        'Cookie': ''
+        'Accept-Language': 'zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4'
     })
     data = r.json()
     df = parse_jisilu_data(data)
@@ -112,6 +107,6 @@ if __name__ == '__main__':
     for index, row in all_funds.iterrows():
         print index
         test_get_fund_data_jisilu(base_path, str(index))
-        time.sleep(45)
-
+        time.sleep(randint(5, 25))
+    print 'crawl data finished'
 
