@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-# crawl fund data using jisilu
+# crawl stock index future data using jisilu
+# https://www.jisilu.cn/data/index_future/if_hist_list/IH1605
+# https://www.jisilu.cn/data/index_future/if_list/IF IC IH
 import pandas as pd
 import requests
 from requests import RequestException
 import PropertiesReader
 import MidasUtil as util
-import AllFundsRelationship as allFunds
 import time
 from random import randint
 
 
-def get_fund_data_jisilu(fund_code):
-    url = 'https://www.jisilu.cn/jisiludata/StockFenJiDetail.php?qtype=hist&display=table&fund_id=' + fund_code
+def get_data_from_jisilu(url):
     r = requests.get(url, timeout=45, stream=False, headers={
         'Accept-encoding': 'gzip',
         'Host': 'www.jisilu.cn',
@@ -19,9 +19,7 @@ def get_fund_data_jisilu(fund_code):
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36',
         'Accept-Language': 'zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4'
     })
-    data = r.json()
-    df = parse_jisilu_data(data)
-    return df
+    return r.json()
 
 
 def parse_jisilu_data(data):
@@ -94,23 +92,48 @@ def save_fund_data(df, file_path):
         df.to_csv(file_path)
 
 
-def get_save_fund_data_jisilu(base_path, fund_code):
-    df = get_fund_data_jisilu(fund_code)
-    file_path = base_path + fund_code + '.csv'
-    save_fund_data(df, file_path)
+def get_contract_data_jisilu(contract_id):
+    url = 'https://www.jisilu.cn/data/index_future/if_hist_list/' + contract_id
+    json_data = get_data_from_jisilu(url)
+    contract_ids = []
+    rows = json_data['rows']
+    for row in rows:
+        contract_ids.append(util.json_object_to_convert(row['id']))
+    return contract_ids
+
+
+def get_contract_id_jisilu(prefix):
+    url = 'https://www.jisilu.cn/data/index_future/if_list/' + prefix
+    json_data = get_data_from_jisilu(url)
+    contract_ids = []
+    rows = json_data['rows']
+    for row in rows:
+        contract_ids.append(util.json_object_to_convert(row['id']))
+    return contract_ids
 
 
 if __name__ == '__main__':
+    contract_prefix = ['IF', 'IH', 'IC']
     my_props = PropertiesReader.get_properties()
-    all_funds = allFunds.load_all_funds_file(my_props['MktDataLoader.Fund.AllFundsRelationship.Path'])
-    base_path = my_props['MktDataLoader.Fund.CrawlData.Path']
-    for index, row in all_funds.iterrows():
+    base_path = my_props['MktDataLoader.StockIndexFuture.CrawlData.Path']
+    contract_ids = []
+    for prefix in contract_prefix:
         try:
-            get_save_fund_data_jisilu(base_path, str(index))
-            print 'finish crawl ', index
+            contract_ids.append(get_contract_id_jisilu(prefix))
+            print 'finish get contract_ids: ', prefix
             time.sleep(randint(5, 25))
         except RequestException as inst:
             print inst
-            print 'failed crawl ', index
-    print 'crawl data finished'
+            print 'failed contract_ids ', prefix
+    print 'crawl contract_ids finished'
+
+    for contract_id in contract_ids:
+        try:
+            contract_ids.append(get_contract_id_jisilu(prefix))
+            print 'finish get contract_data: ', contract_id
+            time.sleep(randint(5, 25))
+        except RequestException as inst:
+            print inst
+            print 'failed contract_data ', contract_id
+    print 'crawl contract_data finished'
 
