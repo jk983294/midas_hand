@@ -7,6 +7,7 @@ import com.victor.midas.calculator.indicator.kline.IndexKLine;
 import com.victor.midas.calculator.macd.IndexMACD;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.calculator.util.MaxMinUtil;
+import com.victor.midas.calculator.util.PriceLimitUtil;
 import com.victor.midas.model.common.StockState;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.common.MidasTrainOptions;
@@ -31,8 +32,9 @@ public class TrendFollowSignal extends IndexCalcBase {
     private double[] middleShadowPct, upShadowPct, downShadowPct;
     private int[] maBullCnt;
     private MaxMinUtil mmPriceUtil5;
-    private int sellIndex;
+    private int sellIndex, buyIndex;
     private StockState state;
+    private PriceLimitUtil priceLimitUtil = new PriceLimitUtil(8);
 
     public TrendFollowSignal(CalcParameter parameter) {
         super(parameter);
@@ -53,6 +55,7 @@ public class TrendFollowSignal extends IndexCalcBase {
 
     @Override
     public void calculate() throws MidasException {
+        priceLimitUtil.init(end, start, max, min, changePct);
         pMa5 = maMethod.calculate(end, 5);
         pMa10 = maMethod.calculate(end, 10);
         pMa20 = maMethod.calculate(end, 20);
@@ -65,23 +68,28 @@ public class TrendFollowSignal extends IndexCalcBase {
         sellIndex = -1;
         state = StockState.HoldMoney;
         for (int i = 5; i < len; i++) {
-//            if(dates[i] == 20150703){
+//            if(dates[i] == 20150526){
 //                System.out.println("wow");
 //            }
+            priceLimitUtil.updateStats(i);
             maBullCnt[i] = howManyMaBullForm(i);
-            if(maBullCnt[i] == 6 && maBullCnt[i - 1] < 6){
+            if(maBullCnt[i] - maBullCnt[i - 1] >= 1 && maBullCnt[i] >= 5){
                 points.add(i);
                 isLastPointBullForm = true;
-            } else if(maBullCnt[i - 1] == 6 && maBullCnt[i] < 6){
+            } else if(maBullCnt[i] - maBullCnt[i - 1] <= -1){
                 points.add(i);
                 isLastPointBullForm = false;
             }
 
             if(state == StockState.HoldMoney) {
-                if (isLastPointBullForm && macdBar[i] >= 0 && i - points.get(points.size() - 1) < 6
+                if (isLastPointBullForm && macdBar[i] >= 0 && i - points.get(points.size() - 1) < 15
                         && (changePct[i] < 0d || (changePct[i - 1] < 0d && changePct[i] < 0.01d))
                         && changePct[i] > -0.098
-                        && MathHelper.isLessAbs(macdBar[i - 1], macdBar[i], singleDouble)
+                        && priceLimitUtil.noChangeUpCnt == 0
+                        && priceLimitUtil.tombUpCnt == 0
+                        && priceLimitUtil.jumpUpCnt == 0
+                        && priceLimitUtil.totalDownCnt == 0
+                        //&& MathHelper.isLessAbs(macdBar[i - 1], macdBar[i], singleDouble)
 //                        && total[i] < total[i - 1] * 1.5
 //                        && MathStockUtil.calculateChangePct(min[i], end[i]) < 0.01
                         ) {
@@ -95,10 +103,13 @@ public class TrendFollowSignal extends IndexCalcBase {
                     setBuy(4.6d, i);
                 }
 
-            } else if(state == StockState.HoldStock && i == sellIndex){
-                score[i] = -5d;
-                state = StockState.HoldMoney;
-                sellIndex = -1;
+            } else if(state == StockState.HoldStock){
+                if(i > buyIndex && macdBar[i] < macdBar[i - 1]){
+                    score[i] = -5d;
+                    state = StockState.HoldMoney;
+                    sellIndex = -1;
+                    isLastPointBullForm = false;
+                }
             }
 //            score[i] = lastSection.status1.ordinal();
         }
@@ -109,6 +120,7 @@ public class TrendFollowSignal extends IndexCalcBase {
         if(currentScore > score[idx]){
             score[idx] = currentScore;
             state = StockState.HoldStock;
+            buyIndex = idx + 1;
             sellIndex = idx + 2;
         }
     }

@@ -83,10 +83,10 @@ public class FundNavCrawler {
     }
 
 
-    public static void main(String[] args) {
-        List<String> names = new ArrayList<>();
-        names.add("150216");
-        FundNavCrawler crawler = new FundNavCrawler(names);
-        crawler.crawl();
-    }
+//    public static void main(String[] args) {
+//        List<String> names = new ArrayList<>();
+//        names.add("150216");
+//        FundNavCrawler crawler = new FundNavCrawler(names);
+//        crawler.crawl();
+//    }
 }
