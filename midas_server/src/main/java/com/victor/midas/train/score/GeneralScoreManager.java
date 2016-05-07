@@ -99,6 +99,9 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
             } else {
                 severity = StockSeverity.Warning;
             }
+            if(i == len - 1 && scoreRecords.size() == 0){
+                stockScores.add(new StockScore("fake", -1d, cob));
+            }
             ScoreHelper.perfCollect(stockScores, cob, perfCollector, scoreRecords, severity);
         }
 
