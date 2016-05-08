@@ -224,11 +224,11 @@ public class SingleParameterTrainResult {
     public String toString() {
         return "SingleParameterTrainResult{" +
                 "sharpeRatio=" + sharpeRatio +
+                ", cnt=" + cnt +
                 ", dayPerformance=" + dayPerformance +
                 ", stdDev=" + stdDev +
                 ", kellyFraction=" + kellyFraction +
                 ", kellyAnnualizedPerformance=" + kellyAnnualizedPerformance +
-                ", cnt=" + cnt +
                 ", holdingDays=" + holdingDays +
                 ", d1Open=" + d1Open +
                 ", d1Close=" + d1Close +

@@ -20,7 +20,7 @@ public class MacdSection {
     public int fromIndex, toIndex, overrideCnt, overrideDirectCnt;
     public int limitIndex1 = -1, limitIndex2 = -1, limitIndex3 = -1, limitIndex4 = -1;
     public double limit1, limit2, limit3, limit4;
-    public double pricelimit;
+    public double priceLimit;
     public MacdSectionType type;
     public SignalType signalType = SignalType.unknown;
     public MacdSectionStatus status = MacdSectionStatus.grow1;
@@ -36,7 +36,7 @@ public class MacdSection {
         section.type = MacdSectionType.getType(bar);
         section.latestPoint = new TippingPoint(index, bar, FractalType.Top);
         section.points.add(section.latestPoint);
-        section.pricelimit = price;
+        section.priceLimit = price;
         return section;
     }
 
@@ -121,10 +121,10 @@ public class MacdSection {
             toIndex = index;
             updateAllTippingPoints(index, bar);
             if(type == MacdSectionType.red){
-                pricelimit = Math.max(pricelimit, maxPrice);
+                priceLimit = Math.max(priceLimit, maxPrice);
                 updateRed(index, bar);
             } else if(type == MacdSectionType.green){
-                pricelimit = Math.min(pricelimit, minPrice);
+                priceLimit = Math.min(priceLimit, minPrice);
                 updateGreen(index, bar);
             }
             return true;

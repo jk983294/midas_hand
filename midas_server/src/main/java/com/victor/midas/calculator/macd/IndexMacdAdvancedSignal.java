@@ -108,7 +108,7 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
                     MacdSection lastRed = redSections.get(redSections.size() - 2);
                     if(lastSection.signalType == SignalType.buy && lastSection.status == MacdSectionStatus.grow2
                             && MathHelper.isLessAbs(lastSection.limit1, lastGreen.limit1, 0.45d)
-                            && min[lastSection.limitIndex2] < lastGreen.pricelimit
+                            && min[lastSection.limitIndex2] < lastGreen.priceLimit
                             && changePct[lastSection.limitIndex2] < -0.06d){  // the first time when price still big fall, but bar arise
                         score[i] = 9d;
                         state = StockState.HoldStock;
