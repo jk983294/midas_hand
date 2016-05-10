@@ -102,15 +102,18 @@ public class TrendFollowSignal extends IndexCalcBase {
             if(previousSection == null || currentSection == null) continue;
 
             if(state == StockState.HoldMoney) {
-                if (isBreakout && Math.min(start[i], end[i]) > pMa5[i] && changePct[i] < 0d
+                if (isBreakout
+                        && Math.min(start[i], end[i]) > pMa5[i]
+                        && changePct[i] < 0d
                         && avgChangePctUnderMa5 > -0.028
-                        && total[i] < total[breakoutIndex] && Math.abs(middleShadowPct[breakoutIndex - 1]) < 0.02d
-                        && !((currentSection.type == MacdSectionType.green
-                            && MathHelper.isLessAbs(currentSection.limit, previousSection.limit, 0.57)) ||
-                            (currentSection.type == MacdSectionType.red && currentSection.breakoutIndexes.size() > 1))   //  && currentSection.limit > 0.07
+                        && total[i] < total[breakoutIndex]
+                        && Math.abs(middleShadowPct[breakoutIndex - 1]) < 0.02d
+//                        && !((currentSection.type == MacdSectionType.green
+//                            && MathHelper.isLessAbs(currentSection.limit, previousSection.limit, 0.57)) ||
+//                            (currentSection.type == MacdSectionType.red && currentSection.breakoutIndexes.size() > 1))   //  && currentSection.limit > 0.07
                         ) {
                     minIndex = mmPriceUtil5.getMaxIndex(breakoutIndex);
-                    if(breakoutIndex - minIndex < 2){
+                    if(breakoutIndex - minIndex < 2 && currentSection.type == MacdSectionType.green && underMa5Cnt > 5){
                         maxIndex = mmPriceUtil5.getMaxIndex(minIndex);
                         if(Math.abs(MathStockUtil.calculateChangePct(mmPriceUtil5.getMaxPrice(maxIndex), mmPriceUtil5.getMaxPrice(i))) > 0.02){
                             setBuy(4.6d, i);
@@ -129,6 +132,13 @@ public class TrendFollowSignal extends IndexCalcBase {
 //            score[i] = lastSection.status1.ordinal();
         }
         addIndexData(INDEX_NAME, score);
+    }
+
+    private boolean isDecrease(double[] value, int from, int to){
+        for (int i = from + 1; i <= to; i++) {
+            if(value[i] > value[i - 1]) return false;
+        }
+        return true;
     }
 
     private void setBuy(double currentScore, int idx){

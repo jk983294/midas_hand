@@ -85,6 +85,7 @@ public class TaskMgr {
 
     public void submitPipedTasks(List<String> actions){
         executor.submit(new PipedTask(taskDao, this, actions));
+        logger.error("task submitted." );
         Thread.yield();
     }
 
