@@ -20,6 +20,7 @@ import com.victor.utilities.math.stats.ma.MaBase;
 import com.victor.utilities.math.stats.ma.SMA;
 import com.victor.utilities.utils.MathHelper;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import java.util.ArrayList;
 
@@ -66,18 +67,22 @@ public class TrendFollowSignal extends IndexCalcBase {
         vMa5 = maMethod.calculate(total, 5);
         lineBreakoutUtil.init(pMa5, pMa60);
 
-        ArrayList<Integer> points = new ArrayList<>();
         DescriptiveStatistics underMa5 = new DescriptiveStatistics();
         LineCrossSection currentSection, previousSection;
-        boolean isBreakout = false, isMaBreakout = false;
+        boolean isBreakout = false;
         int breakoutIndex = 0, maxIndex, minIndex;
         long underMa5Cnt = 0;
-        double avgChangePctUnderMa5 = 0d, maxPrice, minPrice;
+        double avgChangePctUnderMa5 = 0d;
+
+        int startIndex = -1;
+        double startPrice = 0d;
+        SimpleRegression regression = new SimpleRegression();
+        DescriptiveStatistics changePctStats = new DescriptiveStatistics();
 
         sellIndex = -1;
         state = StockState.HoldMoney;
         for (int i = 5; i < len; i++) {
-//            if(dates[i] == 20150624){
+//            if(dates[i] == 20150703){
 //                System.out.println("wow");
 //            }
             priceLimitUtil.updateStats(i);
@@ -99,29 +104,44 @@ public class TrendFollowSignal extends IndexCalcBase {
                 underMa5.clear();
             }
 
+            if(startIndex == mmPriceUtil5.getMinIndexRecursive(i)){
+                regression.addData(i - startIndex, end[i] / startPrice);
+                changePctStats.addValue(Math.abs(changePct[i]));
+            } else if(end[i] > 0.1d){
+                startIndex = mmPriceUtil5.getMinIndexRecursive(i);
+                startPrice = end[i];
+                regression.clear();
+                regression.addData(0d, 1d);
+                changePctStats.clear();
+            }
+
             if(previousSection == null || currentSection == null) continue;
 
             if(state == StockState.HoldMoney) {
-                if (isBreakout
-                        && Math.min(start[i], end[i]) > pMa5[i]
-                        && changePct[i] < 0d
-                        && avgChangePctUnderMa5 > -0.028
-                        && total[i] < total[breakoutIndex]
-                        && Math.abs(middleShadowPct[breakoutIndex - 1]) < 0.02d
-//                        && !((currentSection.type == MacdSectionType.green
-//                            && MathHelper.isLessAbs(currentSection.limit, previousSection.limit, 0.57)) ||
-//                            (currentSection.type == MacdSectionType.red && currentSection.breakoutIndexes.size() > 1))   //  && currentSection.limit > 0.07
-                        ) {
-                    minIndex = mmPriceUtil5.getMaxIndex(breakoutIndex);
-                    if(breakoutIndex - minIndex < 2 && currentSection.type == MacdSectionType.green && underMa5Cnt > 5){
-                        maxIndex = mmPriceUtil5.getMaxIndex(minIndex);
-                        if(Math.abs(MathStockUtil.calculateChangePct(mmPriceUtil5.getMaxPrice(maxIndex), mmPriceUtil5.getMaxPrice(i))) > 0.02){
-                            setBuy(4.6d, i);
-                        }
-                    }
-
+                if(startIndex > 0 && regression.getN() > 6 && regression.getN() < 23
+                        && macdBar[startIndex] < 0d
+                        && regression.getSlope() > 0d
+                        && changePct[i] < 0d && changePct[i] > -0.03d
+                        && middleShadowPct[i] < 0d && upShadowPct[i] < 0.02d
+                        && total[i] < total[i - 1] && end[i] > pMa5[i]
+                        && changePctStats.getMean() < 0.02d){
+                    setBuy(4.6d, i);
                 }
-
+//                if (isBreakout
+//                        && Math.min(start[i], end[i]) > pMa5[i]
+//                        && changePct[i] < 0d
+//                        && avgChangePctUnderMa5 > -0.028
+//                        && total[i] < total[breakoutIndex]
+//                        && Math.abs(middleShadowPct[breakoutIndex - 1]) < 0.02d
+//                        ) {
+//                    minIndex = mmPriceUtil5.getMaxIndex(breakoutIndex);
+//                    if(breakoutIndex - minIndex < 2 && currentSection.type == MacdSectionType.green && underMa5Cnt > 5){
+//                        maxIndex = mmPriceUtil5.getMaxIndex(minIndex);
+//                        if(Math.abs(MathStockUtil.calculateChangePct(mmPriceUtil5.getMaxPrice(maxIndex), mmPriceUtil5.getMaxPrice(i))) > 0.02){
+//                            setBuy(4.6d, i);
+//                        }
+//                    }
+//                }
             } else if(state == StockState.HoldStock){
                 if(i > buyIndex && macdBar[i] < macdBar[i - 1]){
                     score[i] = -5d;

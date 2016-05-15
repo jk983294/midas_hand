@@ -122,22 +122,17 @@ public class StatisticsDemo {
 	/**
 	 * y = intercept + slope * x
 	 */
-	public static void simpleregression() {
-		System.out
-				.println("---------------------simpleregression---------------------------");
+	public static void simpleRegression() {
+		System.out.println("---------------------simple regression---------------------------");
 		double[][] data = { { 1, 3 }, { 2, 5 }, { 3, 7 }, { 4, 14 }, { 5, 11 } };
 		SimpleRegression regression = new SimpleRegression();
 		regression.addData(data);
 		regression.addData(3d, 3d);
 		// Now all statistics are defined.
-		System.out.println(regression.getIntercept()); // displays intercept of
-														// regression line
-		System.out.println(regression.getSlope()); // displays slope of
-													// regression line
-		System.out.println(regression.getSlopeStdErr()); // displays slope
-															// standard error
-		System.out.println(regression.predict(1.5d)); // displays predicted y
-														// value for x = 1.5
+		System.out.println(regression.getIntercept()); // displays intercept of regression line
+		System.out.println(regression.getSlope()); // displays slope of regression line
+		System.out.println(regression.getSlopeStdErr()); // displays slope standard error
+		System.out.println(regression.predict(1.5d)); // displays predicted y value for x = 1.5
 	}
 
 	/**
@@ -237,7 +232,7 @@ public class StatisticsDemo {
 	public static void main(String[] args) {
 		descriptive();
 		frequency();
-		simpleregression();
+		simpleRegression();
 		multipleLinearRegression();
 		multipleLinearRegression1();
 		rankTransform();

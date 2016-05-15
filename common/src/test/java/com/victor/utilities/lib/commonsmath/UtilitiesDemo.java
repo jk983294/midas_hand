@@ -1,6 +1,5 @@
 package com.victor.utilities.lib.commonsmath;
 
-import java.util.Comparator;
 import java.util.Iterator;
 
 import org.apache.commons.math3.util.ArithmeticUtils;
@@ -12,7 +11,6 @@ import org.apache.commons.math3.util.MathArrays;
 import org.apache.commons.math3.util.MathUtils;
 import org.apache.commons.math3.util.OpenIntToDoubleHashMap;
 import org.apache.commons.math3.util.ResizableDoubleArray;
-import org.junit.Assert;
 
 import com.victor.utilities.visual.VisualAssist;
 
