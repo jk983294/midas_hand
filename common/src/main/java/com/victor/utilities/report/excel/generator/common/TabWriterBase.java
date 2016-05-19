@@ -425,6 +425,15 @@ public abstract class TabWriterBase {
             sheet.addValidationData(dataValidation);
         }
     }
+    
+    protected void setDropdownCell(int rowIndexFrom, int rowIndexTo, int columnIndexFrom, int columnIndexTo,
+                                   XSSFDataValidationHelper validationHelper, DataValidationConstraint constraint){
+        if(constraint == null) return;
+        CellRangeAddressList addressList = new CellRangeAddressList(rowIndexFrom, rowIndexTo, columnIndexFrom, columnIndexTo);
+        DataValidation dataValidation = validationHelper.createValidation(constraint, addressList);
+        dataValidation.setSuppressDropDownArrow(true);
+        sheet.addValidationData(dataValidation);
+    }
 
     /**
      * calculate number digit length
