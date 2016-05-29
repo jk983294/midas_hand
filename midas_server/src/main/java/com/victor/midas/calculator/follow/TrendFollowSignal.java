@@ -5,7 +5,10 @@ import com.victor.midas.calculator.divergence.IndexBadDepth;
 import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.indicator.kline.IndexKLine;
 import com.victor.midas.calculator.macd.IndexMACD;
+import com.victor.midas.calculator.macd.model.MacdSection;
+import com.victor.midas.calculator.macd.model.MacdSectionStatus;
 import com.victor.midas.calculator.macd.model.MacdSectionType;
+import com.victor.midas.calculator.macd.model.MacdSectionUtil;
 import com.victor.midas.calculator.util.LineBreakoutUtil;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.calculator.util.MaxMinUtil;
@@ -23,6 +26,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * calculate TrendFollowSignal
@@ -41,6 +45,9 @@ public class TrendFollowSignal extends IndexCalcBase {
     private StockState state;
     private PriceLimitUtil priceLimitUtil = new PriceLimitUtil(8);
     private LineBreakoutUtil lineBreakoutUtil = new LineBreakoutUtil();
+    private MacdSectionUtil macdSectionUtil = new MacdSectionUtil();
+    private MacdSection lastSection;
+    private List<MacdSection> greenSections;
 
     public TrendFollowSignal(CalcParameter parameter) {
         super(parameter);
@@ -66,6 +73,9 @@ public class TrendFollowSignal extends IndexCalcBase {
         pMa60 = maMethod.calculate(end, 60);
         vMa5 = maMethod.calculate(total, 5);
         lineBreakoutUtil.init(pMa5, pMa60);
+        macdSectionUtil.init(min, max, end, macdBar);
+        lastSection = macdSectionUtil.lastSection;
+        greenSections = macdSectionUtil.greenSections;
 
         DescriptiveStatistics underMa5 = new DescriptiveStatistics();
         LineCrossSection currentSection, previousSection;
@@ -87,6 +97,8 @@ public class TrendFollowSignal extends IndexCalcBase {
 //            }
             priceLimitUtil.updateStats(i);
             lineBreakoutUtil.update(i);
+            macdSectionUtil.update(i);
+            lastSection = macdSectionUtil.lastSection;
             currentSection = lineBreakoutUtil.currentSection;
             previousSection = lineBreakoutUtil.previousSection;
 
@@ -118,13 +130,15 @@ public class TrendFollowSignal extends IndexCalcBase {
             if(previousSection == null || currentSection == null) continue;
 
             if(state == StockState.HoldMoney) {
-                if(startIndex > 0 && regression.getN() > 6 && regression.getN() < 23
-                        && macdBar[startIndex] < 0d
-                        && regression.getSlope() > 0d
-                        && changePct[i] < 0d && changePct[i] > -0.03d
-                        && middleShadowPct[i] < 0d && upShadowPct[i] < 0.02d
-                        && total[i] < total[i - 1] && end[i] > pMa5[i]
-                        && changePctStats.getMean() < 0.02d){
+                if(startIndex > 0 && regression.getN() > 3 && regression.getN() < 10
+                        && regression.getSlope() > 0.016
+                        && changePct[i - 1] < -0.02d && MathStockUtil.calculateChangePct(pMa5[i - 1], end[i - 1]) < -0.01d
+                        && changePct[i] > 0d && end[i] * 2 > start[i - 1] + end[i - 1]
+                        && MathHelper.isLessAbs(total[i - 1], total[i - 2], 2.1d)
+                        && changePctStats.getMean() < 0.086
+                        && changePct[i] < 0.092
+                        //&& MathStockUtil.calculateChangePct(pMa5[i - 1], pMa5[i]) > singleDouble
+                        ){
                     setBuy(4.6d, i);
                 }
 //                if (isBreakout

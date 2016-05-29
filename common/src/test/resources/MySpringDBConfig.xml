@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd ">
+
+    <!-- Initialization for data source -->
+    <bean id="myDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/TEST"/>
+        <property name="username" value="root"/>
+        <property name="password" value="password"/>
+    </bean>
+
+    <bean id="transactionManager1" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="myDataSource"/>
+    </bean>
+
+
+
+    <!-- programmatic transaction way -->
+    <bean id="transactionTemplate1" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager">
+            <ref local="transactionManager1"/>
+        </property>
+    </bean>
+    <bean id="tradingService1" class="com.victor.utilities.lib.spring.tx.TradingServiceUsingTransactionTemplate">
+        <property name="transactionTemplate">
+            <ref local="transactionTemplate1"/>
+        </property>
+    </bean>
+
+    <!-- declarative transaction way -->
+    <bean id="tradingServiceTarget" class="com.victor.utilities.lib.spring.tx.TradingServiceBean"></bean>
+    <bean id="tradingService2" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager" ref="transactionManager1"/>
+        <property name="target" ref="tradingServiceTarget"/>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="*">PROPAGATION_SUPPORTS</prop>
+                <prop key="update*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="getAllTradersByID">PROPAGATION_SUPPORTS</prop>
+                <prop key="placeTrade">PROPAGATION_MANDATORY,ISOLATION_SERIALIZABLE</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>
