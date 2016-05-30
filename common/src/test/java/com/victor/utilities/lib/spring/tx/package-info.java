@@ -42,3 +42,16 @@ package com.victor.utilities.lib.spring.tx;
  *
  * XAResource interface for all resources need TA support
  */
+
+/**
+ * Transaction Design Pattern
+ *
+ * Client Owner Transaction Design Pattern
+ *
+ *
+ * Domain Service Owner Transaction Design Pattern
+ * one interaction needed between client and server, whole service is dealt in one tx
+ *
+ * Server Delegate Owner Transaction Design Pattern
+ *
+ */

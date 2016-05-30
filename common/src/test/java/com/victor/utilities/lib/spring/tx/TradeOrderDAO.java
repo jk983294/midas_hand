@@ -12,4 +12,12 @@ public class TradeOrderDAO {
     public void updateTradeOrderStep2(TradeOrderData order){
 
     }
+
+    public void update(TradeOrderData order){
+
+    }
+
+    public TradeOrderData get(String key){
+        return null;
+    }
 }
