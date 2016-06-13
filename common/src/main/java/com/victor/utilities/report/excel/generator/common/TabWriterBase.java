@@ -428,10 +428,20 @@ public abstract class TabWriterBase {
     
     protected void setDropdownCell(int rowIndexFrom, int rowIndexTo, int columnIndexFrom, int columnIndexTo,
                                    XSSFDataValidationHelper validationHelper, DataValidationConstraint constraint){
+        setDropdownCell(rowIndexFrom, rowIndexTo, columnIndexFrom, columnIndexTo, validationHelper, constraint, null);
+    }
+
+    protected void setDropdownCell(int rowIndexFrom, int rowIndexTo, int columnIndexFrom, int columnIndexTo,
+                                   XSSFDataValidationHelper validationHelper, DataValidationConstraint constraint, String errorMsg){
         if(constraint == null) return;
         CellRangeAddressList addressList = new CellRangeAddressList(rowIndexFrom, rowIndexTo, columnIndexFrom, columnIndexTo);
         DataValidation dataValidation = validationHelper.createValidation(constraint, addressList);
         dataValidation.setSuppressDropDownArrow(true);
+        if(StringUtils.isNotEmpty(errorMsg)){
+            dataValidation.setErrorStyle(DataValidation.ErrorStyle.STOP);
+            dataValidation.createErrorBox("Validation", errorMsg);
+            dataValidation.setShowErrorBox(true);
+        }
         sheet.addValidationData(dataValidation);
     }
 
