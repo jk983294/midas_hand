@@ -3,6 +3,7 @@ package com.victor.utilities.report.excel.generator.common;
 import com.victor.utilities.report.excel.model.AppModel;
 import com.victor.utilities.report.excel.model.ColorTag;
 import com.victor.utilities.utils.RegExpHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
