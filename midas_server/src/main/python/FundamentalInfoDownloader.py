@@ -147,7 +147,7 @@ def get_report_info(file_path, year_from, quarter_from, year_to, quarter_to):
 
 if __name__ == '__main__':
     my_props = PropertiesReader.get_properties()
-    # get_basic_info(my_props['MktDataLoader.Fundamental.Class.stock_basics'])        # 沪深上市公司基本情况
-    get_report_info(my_props['MktDataLoader.Fundamental.reports'], 2003, 1, 2015, 4)
+    get_basic_info(my_props['MktDataLoader.Fundamental.Class.stock_basics'])        # 沪深上市公司基本情况
+    get_report_info(my_props['MktDataLoader.Fundamental.reports'], 1993, 1, 2015, 4)
     print 'download class info finished'
 
