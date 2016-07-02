@@ -32,9 +32,10 @@ class StockData:
     def check_stock_metadata(self):
         if not self.orgId:
             try:
-                time.sleep(randint(5, 25))
+                # time.sleep(randint(1, 15))
                 r = requests.post("http://www.cninfo.com.cn/cninfo-new/data/query",
-                                  data={"keyWord": self.stock_code}, timeout=45, stream=False)
+                                  data={"keyWord": self.stock_code}, timeout=45, stream=False,
+                                  headers={'Connection': 'close'})
                 if r.status_code == requests.codes.ok:
                     result = json.loads(r.content)
                     if len(result) > 0:
@@ -44,7 +45,7 @@ class StockData:
                 logging.error('download metadata failed for stock ' + self.stock_code)
                 return False
             except (requests.exceptions.ConnectionError, requests.exceptions.RequestException):
-                logging.error('download metadata failed for stock ' + self.stock_code)
+                logging.exception('download metadata failed for stock ' + self.stock_code)
                 return False
         return True
 
@@ -63,9 +64,6 @@ class CnInfoManager:
         self.base_path = base_path
         self.deserialization_stock_data()
         self.collect_disk_data()
-        log_path = self.base_path + "log/log_" + time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) + ".txt"
-        logging.basicConfig(filename=log_path, level=logging.DEBUG)
-        logging.info('start log...')
 
     def serialization_stock_data(self):
         serialization_path = self.base_path + 'stocks.json'
@@ -123,7 +121,7 @@ class CnInfoManager:
             file_obj.write(r.content)
             file_obj.close()
         except IOError:
-            logging.error(store_location + ' save failed, with url ' + download_url)
+            logging.exception(store_location + ' save failed, with url ' + download_url)
             return False
         return True
 
@@ -138,13 +136,16 @@ class CnInfoManager:
                 logging.warning(store_location + ' is already exists, with url ' + download_url)
                 return False
         except IOError:
-            logging.error(store_location + ' save failed, with url ' + download_url)
+            logging.exception(store_location + ' save failed, with url ' + download_url)
             return False
         return True
 
 if __name__ == '__main__':
     my_props = PropertiesReader.get_properties()
-    manager = CnInfoManager(my_props['MktDataLoader.Fundamental.cninfo'])
+    cninfo_path = my_props['MktDataLoader.Fundamental.cninfo']
+    log_path = cninfo_path + "log/log_" + time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) + ".txt"
+    logging.basicConfig(filename=log_path, level=logging.WARNING)
+    manager = CnInfoManager(cninfo_path)
     # manager.download_pdf('', '')
     manager.set_current_stock('000001')
     manager.download_price_zip('F:/Data/MktData/fundamental/cninfo/000001/sz_hq_000001_2005_2016.zip', 'http://www.cninfo.com.cn/cninfo-new/data/download')
