@@ -29,6 +29,7 @@ class StockData:
     def __init__(self, stock_code):
         self.stock_code = stock_code
 
+    # true means something updated
     def check_stock_metadata(self):
         if not self.orgId:
             try:
@@ -47,7 +48,7 @@ class StockData:
             except (requests.exceptions.ConnectionError, requests.exceptions.RequestException):
                 logging.exception('download metadata failed for stock ' + self.stock_code)
                 return False
-        return True
+        return False
 
 
 class CnInfoManager:
@@ -66,35 +67,37 @@ class CnInfoManager:
         self.collect_disk_data()
 
     def serialization_stock_data(self):
-        serialization_path = self.base_path + 'stocks.json'
-        f = open(serialization_path, 'w')
-        jsonpickle.set_encoder_options('simplejson', sort_keys=True, indent=4)
-        f.write(jsonpickle.encode(self.stocks))
-        f.close()
+        util.serialization_object(self.base_path + 'stocks.json', self.stocks)
 
     def deserialization_stock_data(self):
-        serialization_path = self.base_path + 'stocks.json'
-        if os.path.exists(serialization_path):
-            f = open(serialization_path, 'r')
-            obj = jsonpickle.decode(f.read())
+        obj = util.deserialization_object(self.base_path + 'stocks.json')
+        if obj is not None:
             self.stocks = obj
 
-    def collect_data_from_stock_dir(self):
-        folder = self.base_path + self.current_stock.stock_code
+    def collect_data_from_stock_dir(self, stock_code):
+        folder = self.base_path + stock_code
         if not os.path.exists(folder):
             os.mkdir(folder)
+        return util.deserialization_object(folder + '/metadata.json')
 
     def collect_disk_data(self):
-        for code in util.get_all_stock_codes():
+        all_stock_codes = util.get_all_stock_codes()
+        for code in all_stock_codes:
             if code is not None and not code.startswith('IDX'):
                 stock_code = code[2:]
-                if stock_code not in self.stocks:
+                obj = self.collect_data_from_stock_dir(stock_code)
+                if obj is not None:
+                    self.current_stock = obj
+                    self.stocks[stock_code] = self.current_stock
+                elif stock_code not in self.stocks:
                     self.current_stock = StockData(stock_code)
                     self.stocks[stock_code] = self.current_stock
-                    self.collect_data_from_stock_dir()
                 else:
                     self.current_stock = self.stocks[stock_code]
-                self.current_stock.check_stock_metadata()
+                if self.current_stock.check_stock_metadata():
+                    logging.info('save metadata for ' + self.current_stock.stock_code)
+                    util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
+                                              self.current_stock)
 
     def set_current_stock(self, stock_code):
         if stock_code in self.stocks:
@@ -144,7 +147,7 @@ if __name__ == '__main__':
     my_props = PropertiesReader.get_properties()
     cninfo_path = my_props['MktDataLoader.Fundamental.cninfo']
     log_path = cninfo_path + "log/log_" + time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) + ".txt"
-    logging.basicConfig(filename=log_path, level=logging.WARNING)
+    logging.basicConfig(filename=log_path, level=logging.INFO)
     manager = CnInfoManager(cninfo_path)
     # manager.download_pdf('', '')
     manager.set_current_stock('000001')
