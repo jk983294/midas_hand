@@ -29,7 +29,6 @@ def get_dataframe_from_file(file_path):
 
 def serialization_object(serialization_path, obj):
     f = open(serialization_path, 'w')
-    jsonpickle.set_encoder_options('simplejson', sort_keys=True, indent=4)
     f.write(jsonpickle.encode(obj))
     f.close()
 

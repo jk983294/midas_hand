@@ -3,13 +3,15 @@ import PropertiesReader
 import urllib2
 import json
 import jsonpickle
-import datetime
+from datetime import date
 import requests
 import time
 import os
 import urllib
 import re
 import codecs
+import zipfile
+import StringIO
 import MidasUtil as util
 import logging
 from random import randint
@@ -57,12 +59,16 @@ class CnInfoManager:
     ipo_url = base_url + 'information/issue/szsme%s.html'
     dividend_url = base_url + 'information/dividend/szsme%s.html'
     announcement_url = base_url + 'information/dividend/szsme%s.html'
+    price_url = base_url + 'cninfo-new/data/download'
     stocks = {}         # stock_code -> StockData
     current_stock = None
     allowed_domains = ["cninfo.com.cn"]
+    minYear = 2000
+    maxYear = None
 
     def __init__(self, base_path):
         self.base_path = base_path
+        self.maxYear = date.today().year
         self.deserialization_stock_data()
         self.collect_disk_data()
 
@@ -100,17 +106,14 @@ class CnInfoManager:
                                               self.current_stock)
 
     def set_current_stock(self, stock_code):
-        if stock_code in self.stocks:
+        if stock_code not in self.stocks:
             self.current_stock = None
         else:
             self.current_stock = self.stocks[stock_code]
 
-    def download_price_zip(self, store_location, download_url):
-        # pdfPath = self.base_path + '/' + file_name + '.pdf'
-        # realURL = self.homePage + "/" + download_url
-        # print pdfPath, realURL
+    def download_price_zip(self):
         try:
-            r = requests.post(download_url,
+            r = requests.post(self.price_url, stream=True,
                               files={
                                   "market": (None, self.current_stock.market),
                                   "type": (None, "hq"),
@@ -118,13 +121,12 @@ class CnInfoManager:
                                   "minYear": (None, "2000"),
                                   "maxYear": (None, "2016"),
                                   "orgid": (None, self.current_stock.orgId)
-                              }
-                              )
-            file_obj = open(store_location, 'w')
-            file_obj.write(r.content)
-            file_obj.close()
-        except IOError:
-            logging.exception(store_location + ' save failed, with url ' + download_url)
+                              })
+            if r.status_code == requests.codes.ok:
+                z = zipfile.ZipFile(StringIO.StringIO(r.content))
+                z.extractall(path=self.base_path + '/' + self.current_stock.stock_code + '/price/')
+        except (IOError, RuntimeError):
+            logging.exception(self.current_stock.stock_code + ' save price zip file failed')
             return False
         return True
 
@@ -144,13 +146,14 @@ class CnInfoManager:
         return True
 
 if __name__ == '__main__':
+    jsonpickle.set_encoder_options('simplejson', sort_keys=True, indent=4)
     my_props = PropertiesReader.get_properties()
     cninfo_path = my_props['MktDataLoader.Fundamental.cninfo']
     log_path = cninfo_path + "log/log_" + time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) + ".txt"
     logging.basicConfig(filename=log_path, level=logging.INFO)
     manager = CnInfoManager(cninfo_path)
     # manager.download_pdf('', '')
-    manager.set_current_stock('000001')
-    manager.download_price_zip('F:/Data/MktData/fundamental/cninfo/000001/sz_hq_000001_2005_2016.zip', 'http://www.cninfo.com.cn/cninfo-new/data/download')
+    manager.set_current_stock(u'000001')
+    manager.download_price_zip()
     manager.serialization_stock_data()
     print 'download class info finished'
