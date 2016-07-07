@@ -1,0 +1,90 @@
+package com.victor.utilities.finance.pricing;
+
+
+public class OptionPricing {
+
+    public double s0;               // current Price
+    public double strike;           // exercise price
+    public double r;                // risk free interest rate
+    public double volatility;       // yearly
+    public double u, d;             // up percentage / down percentage
+    public int steps;
+    public PricingNode[][] nodes;
+    public OptionType optionType = OptionType.English;
+    public TargetType targetType = TargetType.Stock;
+    public BuyType buyType = BuyType.Long;
+
+    public OptionPricing(double s0, double strike, double r, double volatility, int steps) {
+        this.s0 = s0;
+        this.strike = strike;
+        this.r = r;
+        this.volatility = volatility;
+        this.steps = steps;
+        nodes = new PricingNode[steps + 1][];
+        for (int i = 0; i <= steps; i++) {
+            nodes[i] = new PricingNode[i + 1];
+            for (int j = 0; j < i + 1; j++) {
+                nodes[i][j] = new PricingNode();
+            }
+        }
+    }
+
+    public void calculate(){
+        calculateTargetPrice();
+        calculateOptionPrice();
+    }
+
+    private void calculateOptionPrice(){
+        // price last layer first
+        for (int j = 0; j <= steps; j++) {
+            if(optionType == OptionType.American){
+                if(buyType == BuyType.Long){
+                    nodes[steps][j].optionPrice = Math.max(0d, nodes[steps][j].price - strike);
+                } else if(buyType == BuyType.Short){
+                    nodes[steps][j].optionPrice = Math.max(0d, strike - nodes[steps][j].price);
+                }
+            }
+        }
+
+        double a = Math.exp(r);
+        double p = (a - d) / (u - d);
+        double f = 0d;
+        for (int i = steps - 1; i >= 0; i--) {
+            for (int j = 0; j <= i; j++) {
+                f = (p * nodes[i + 1][j].optionPrice + (1 - p) * nodes[i + 1][j + 1].optionPrice) / a;
+                if(optionType == OptionType.American){
+                    if(buyType == BuyType.Long){
+                        nodes[i][j].optionPrice = Math.max(f, nodes[i][j].price - strike);
+                    } else if(buyType == BuyType.Short){
+                        nodes[i][j].optionPrice = Math.max(f, strike - nodes[i][j].price);
+                    }
+                } else if(optionType == OptionType.English){
+                    nodes[i][j].optionPrice = f;
+                }
+            }
+        }
+    }
+
+    private void calculateTargetPrice(){
+        u = Math.exp(volatility);
+        d = 1 / u;
+        nodes[0][0].price = s0;
+        for (int i = 1; i <= steps; i++) {
+            for (int j = 0; j < i; j++) {
+                nodes[i][j].price = nodes[i - 1][j].price * u;
+            }
+            nodes[i][i].price = nodes[i - 1][i - 1].price * d;
+        }
+    }
+
+    public String getResultString(){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i <= steps; i++) {
+            sb.append("\nstep ").append(i).append(" :\n");
+            for (int j = 0; j < i + 1; j++) {
+                sb.append("node ").append(j).append(" : ").append(nodes[i][j]).append("\n");
+            }
+        }
+        return sb.toString();
+    }
+}
