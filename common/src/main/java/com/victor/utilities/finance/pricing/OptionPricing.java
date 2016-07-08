@@ -8,33 +8,33 @@ public class OptionPricing {
     public double r;                // risk free interest rate
     public double volatility;       // yearly
     public double u, d;             // up percentage / down percentage
+    public double t;                // time (year)
     public int steps;
+    public double deltaT;           // step time
     public PricingNode[][] nodes;
     public OptionType optionType = OptionType.English;
     public TargetType targetType = TargetType.Stock;
     public BuyType buyType = BuyType.Long;
+    public PricingMethod pricingMethod = PricingMethod.BlackScholes;
 
-    public OptionPricing(double s0, double strike, double r, double volatility, int steps) {
+    public OptionPricing(double s0, double strike, double r, double volatility, double t, int steps) {
         this.s0 = s0;
         this.strike = strike;
         this.r = r;
         this.volatility = volatility;
+        this.t = t;
         this.steps = steps;
-        nodes = new PricingNode[steps + 1][];
-        for (int i = 0; i <= steps; i++) {
-            nodes[i] = new PricingNode[i + 1];
-            for (int j = 0; j < i + 1; j++) {
-                nodes[i][j] = new PricingNode();
-            }
-        }
+        deltaT = t / steps;
     }
 
     public void calculate(){
-        calculateTargetPrice();
-        calculateOptionPrice();
+        if(pricingMethod == PricingMethod.BinaryTree){
+            calculateTargetPriceWithBinaryTree();
+            calculateOptionPriceWithBinaryTree();
+        }
     }
 
-    private void calculateOptionPrice(){
+    private void calculateOptionPriceWithBinaryTree(){
         // price last layer first
         for (int j = 0; j <= steps; j++) {
             if(optionType == OptionType.American){
@@ -46,7 +46,7 @@ public class OptionPricing {
             }
         }
 
-        double a = Math.exp(r);
+        double a = Math.exp(r * deltaT);
         double p = (a - d) / (u - d);
         double f = 0d;
         for (int i = steps - 1; i >= 0; i--) {
@@ -65,8 +65,15 @@ public class OptionPricing {
         }
     }
 
-    private void calculateTargetPrice(){
-        u = Math.exp(volatility);
+    private void calculateTargetPriceWithBinaryTree(){
+        nodes = new PricingNode[steps + 1][];
+        for (int i = 0; i <= steps; i++) {
+            nodes[i] = new PricingNode[i + 1];
+            for (int j = 0; j < i + 1; j++) {
+                nodes[i][j] = new PricingNode();
+            }
+        }
+        u = Math.exp(volatility * Math.sqrt(deltaT));
         d = 1 / u;
         nodes[0][0].price = s0;
         for (int i = 1; i <= steps; i++) {
@@ -77,7 +84,7 @@ public class OptionPricing {
         }
     }
 
-    public String getResultString(){
+    public String getResultStringWithBinaryTree(){
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i <= steps; i++) {
             sb.append("\nstep ").append(i).append(" :\n");
