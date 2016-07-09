@@ -9,6 +9,8 @@ public class OptionPricing {
     public double volatility;       // yearly
     public double u, d;             // up percentage / down percentage
     public double t;                // time (year)
+    public double dividendRate = 0d;
+    public double foreignCurrencyInterestRate = 0d;
     public int steps;
     public double deltaT;           // step time
     public PricingNode[][] nodes;
@@ -35,24 +37,31 @@ public class OptionPricing {
     }
 
     private void calculateOptionPriceWithBinaryTree(){
-        // price last layer first
+        // price last layer first, no matter it is English or American option, last layer is the same
         for (int j = 0; j <= steps; j++) {
-            if(optionType == OptionType.American){
-                if(buyType == BuyType.Long){
-                    nodes[steps][j].optionPrice = Math.max(0d, nodes[steps][j].price - strike);
-                } else if(buyType == BuyType.Short){
-                    nodes[steps][j].optionPrice = Math.max(0d, strike - nodes[steps][j].price);
-                }
+            if(buyType == BuyType.Long){
+                nodes[steps][j].optionPrice = Math.max(0d, nodes[steps][j].price - strike);
+            } else if(buyType == BuyType.Short){
+                nodes[steps][j].optionPrice = Math.max(0d, strike - nodes[steps][j].price);
             }
         }
 
-        double a = Math.exp(r * deltaT);
+        double a = 1;
+        if(targetType == TargetType.Stock || targetType == TargetType.StockIndex){
+            a = Math.exp((r - dividendRate) * deltaT);
+        } else if(targetType == TargetType.Currency){
+            a = Math.exp((r - foreignCurrencyInterestRate) * deltaT);
+        } else if(targetType == TargetType.Future){
+            a = 1;
+        }
         double p = (a - d) / (u - d);
         double f = 0d;
+        double discount = Math.exp(r * deltaT);
         for (int i = steps - 1; i >= 0; i--) {
             for (int j = 0; j <= i; j++) {
-                f = (p * nodes[i + 1][j].optionPrice + (1 - p) * nodes[i + 1][j + 1].optionPrice) / a;
+                f = (p * nodes[i + 1][j].optionPrice + (1 - p) * nodes[i + 1][j + 1].optionPrice) / discount;
                 if(optionType == OptionType.American){
+                    // if American option, every step we can decide whether to exercise the option
                     if(buyType == BuyType.Long){
                         nodes[i][j].optionPrice = Math.max(f, nodes[i][j].price - strike);
                     } else if(buyType == BuyType.Short){
