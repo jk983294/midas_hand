@@ -61,12 +61,12 @@ public class StockVo {
     /**
      * add times series
      */
-    public void addTimeSeries( int[] times) throws ParseException {
+    public void addTimeSeries(int[] times) throws ParseException {
         if(!ArrayHelper.isNull(times)) {
             datesInt = times;
             start = datesInt[0];
             end = datesInt[datesInt.length - 1];
-            datesDate = TimeHelper.toDates(times);
+            datesDate = TimeHelper.cob2date(times);
             startDate = datesDate[0];
             endDate = datesDate[datesDate.length - 1];
         }

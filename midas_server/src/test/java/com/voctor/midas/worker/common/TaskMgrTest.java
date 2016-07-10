@@ -32,7 +32,7 @@ public class TaskMgrTest {
     @Test
     public void testLoadMarketDataTaskCmd() throws InterruptedException {
         logger.info("taskMgr.cmd(loadMarketData)");
-        taskMgr.cmd(CmdType.loadStock, new ArrayList<String>());
+        taskMgr.cmd(CmdType.load, new ArrayList<String>());
         TimeUnit.DAYS.sleep(1);
     }
 

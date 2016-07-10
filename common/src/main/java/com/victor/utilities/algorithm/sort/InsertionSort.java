@@ -1,5 +1,7 @@
 package com.victor.utilities.algorithm.sort;
 
+import java.util.List;
+
 /**
  * Insertion sort is a simple sorting algorithm: a comparison sort in which the
  * sorted array (or list) is built one entry at a time. It is much less
@@ -36,6 +38,27 @@ public class InsertionSort<T extends Comparable<T>> {
             if (jthElement.compareTo(jMinusOneElement) < 0) {
                 unsorted[j - 1] = jthElement;
                 unsorted[j] = jMinusOneElement;
+            } else {
+                break;
+            }
+        }
+    }
+
+    public static <T extends Comparable<T>> List<T> sort(List<T> unsorted) {
+        int length = unsorted.size();
+        for (int i = 1; i < length; i++) {
+            sort(i, unsorted);
+        }
+        return unsorted;
+    }
+
+    private static <T extends Comparable<T>> void sort(int i, List<T> unsorted) {
+        for (int j = i; j > 0; j--) {
+            T jthElement = unsorted.get(j);
+            T jMinusOneElement = unsorted.get(j - 1);
+            if (jthElement.compareTo(jMinusOneElement) < 0) {
+                unsorted.set(j - 1, jthElement);
+                unsorted.set(j, jMinusOneElement);
             } else {
                 break;
             }

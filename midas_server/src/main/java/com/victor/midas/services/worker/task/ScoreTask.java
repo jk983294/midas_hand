@@ -8,6 +8,8 @@ import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.concept.StockCrawlData;
 import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
+import com.victor.midas.services.worker.loader.FundDataLoader;
+import com.victor.midas.services.worker.loader.StockDataLoader;
 import com.victor.midas.train.score.ConceptScoreManager;
 import com.victor.midas.train.score.GeneralScoreManager;
 import com.victor.midas.train.score.ScoreManager;
@@ -49,7 +51,11 @@ public class ScoreTask extends TaskBase {
 
     private List<StockVo> getAllStock() throws Exception {
         if(isFromFileSystem){
-            return new MktDataTask().getStockFromFileSystem(loadPath);
+            if(loadStock){
+                return (List<StockVo>)(new StockDataLoader().load(loadPath));
+            } else {
+                return (List<StockVo>)(new FundDataLoader().load(loadPath));
+            }
         } else {
             if(params != null && params.size() > 1) {
                 StockVo stock = stocksService.queryStock(params.get(1));

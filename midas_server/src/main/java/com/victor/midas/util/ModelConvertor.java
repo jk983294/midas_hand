@@ -97,4 +97,12 @@ public class ModelConvertor {
         return timing == 0 ? "open" : "close";
     }
 
+    public static int string2date(String str){
+        int date = 0;
+        date += Integer.valueOf(str.substring(0,4)) * 10000;
+        date += Integer.valueOf(str.substring(5,7)) * 100;
+        date += Integer.valueOf(str.substring(8,10));
+        return date;
+    }
+
 }

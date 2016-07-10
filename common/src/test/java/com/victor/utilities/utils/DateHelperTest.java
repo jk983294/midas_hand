@@ -14,8 +14,8 @@ public class DateHelperTest {
     @Test
     public void toDateTest() throws ParseException {
         Date now = new Date();
-        int date2int = TimeHelper.toDate(now);
-        Date int2date = TimeHelper.toDate(date2int);
+        int date2int = TimeHelper.date2cob(now);
+        Date int2date = TimeHelper.cob2date(date2int);
         VisualAssist.print("current date", now);
         VisualAssist.print("current date convert to int", date2int);
         VisualAssist.print("current date int convert back to Date", int2date);

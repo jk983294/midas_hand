@@ -21,7 +21,7 @@ public class AdminService {
 	@PUT
 	@Path("/stocks")
 	public Response updateStocks() {		
-		taskMgr.cmd(CmdType.loadStock, new ArrayList<String>());
+		taskMgr.cmd(CmdType.load, new ArrayList<String>());
 		return Response.ok().build();
 	}
 	

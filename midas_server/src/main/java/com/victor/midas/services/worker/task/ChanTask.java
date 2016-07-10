@@ -9,6 +9,7 @@ import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
+import com.victor.midas.services.worker.loader.StockDataLoader;
 import com.victor.utilities.utils.IoHelper;
 import org.apache.log4j.Logger;
 
@@ -46,7 +47,7 @@ public class ChanTask extends TaskBase {
 
     private List<StockVo> getAllStock() throws Exception {
         if(isFromFileSystem){
-            return new MktDataTask().getStockFromFileSystem("F:\\Data\\MktData\\ALL");
+            return (List<StockVo>)(new StockDataLoader().load("F:\\Data\\MktData\\ALL"));
         } else {
             return stocksService.queryAllStock();
         }

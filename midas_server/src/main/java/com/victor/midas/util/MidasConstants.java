@@ -2,7 +2,7 @@ package com.victor.midas.util;
 
 import com.victor.midas.model.common.CmdParameter;
 import com.victor.midas.model.common.CmdType;
-import com.victor.utilities.utils.ArrayHelper;
+import com.victor.midas.model.common.MarketDataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +91,9 @@ public class MidasConstants {
         }
         for(CmdParameter cmdParameter : CmdParameter.values()){
             actions.add(cmdParameter.toString());
+        }
+        for(MarketDataType marketType : MarketDataType.values()){
+            actions.add(marketType.toString());
         }
     }
 

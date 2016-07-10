@@ -63,8 +63,7 @@ public class TaskMgr {
     	switch(cmdType){
             case delete :  callable = new DeleteStockCollTask( taskDao , stockInfoDao, stockDao, miscDao, params );  break;
             case create : callable = new CreateCollectionTask( taskDao , stockInfoDao, stockDao, miscDao, params ); break;
-            case loadStock : callable = new MktDataTask(taskDao, stocksService, environment, params, true); break;
-            case loadFund : callable = new MktDataTask(taskDao, stocksService, environment, params, false); break;
+            case load : callable = new MktDataTask(taskDao, stocksService, environment, params); break;
             case calculate : callable = new CalculateTask(taskDao, stocksService, params); break;
             case trainSingle :
             case trainStrategy : callable = new TrainTask(taskDao, stocksService, params, cmdType); break;

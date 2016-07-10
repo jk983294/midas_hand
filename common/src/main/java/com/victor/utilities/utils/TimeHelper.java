@@ -11,26 +11,26 @@ import java.text.SimpleDateFormat;
 public class TimeHelper {
     private final static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
-    public static Date toDate(int date) throws ParseException {
+    public static Date cob2date(int date) throws ParseException {
         return sdf.parse(new StringBuilder().append(date).toString());
     }
 
-    public static int toDate(Date date){
+    public static int date2cob(Date date){
         return Integer.valueOf(sdf.format(date));
     }
 
-    public static Date[] toDates(int[] date) throws ParseException {
+    public static Date[] cob2date(int[] date) throws ParseException {
         Date[] dates = new Date[date.length];
         for (int i = 0; i < date.length; i++) {
-            dates[i] = toDate(date[i]);
+            dates[i] = cob2date(date[i]);
         }
         return dates;
     }
 
-    public static int[] toDates(Date[] date){
+    public static int[] date2cob(Date[] date){
         int[] dates = new int[date.length];
         for (int i = 0; i < date.length; i++) {
-            dates[i] = toDate(date[i]);
+            dates[i] = date2cob(date[i]);
         }
         return dates;
     }
