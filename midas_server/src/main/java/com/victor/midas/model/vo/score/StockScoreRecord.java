@@ -1,5 +1,6 @@
 package com.victor.midas.model.vo.score;
 
+import com.google.common.collect.ComparisonChain;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class StockScoreRecord implements Comparable<StockScoreRecord> {
 
     @Override
     public int compareTo(StockScoreRecord o) {
-        return Integer.valueOf(o.cob).compareTo(cob);
+        return ComparisonChain.start().compare(o.cob, cob).result();
     }
 
     @Override

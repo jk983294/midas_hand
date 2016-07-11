@@ -14,7 +14,7 @@
 var urlBase = 'app/partials/';
 var midasApp = angular.module('midasApp', ['ngRoute', 'ngTable', 'flotang',
     'ui.bootstrap', 'ui.select', 'nvd3',
-    'formatFilters','DataService', 'UtilService']);
+    'formatFilters','DataService', 'UtilService', 'ui.grid']);
 
 midasApp.config(['$routeProvider',
     function ($routeProvider) {
@@ -53,6 +53,10 @@ midasApp.config(['$routeProvider',
             .when('/Commands', {
                 controller: 'TypeaheadCtrl',
                 templateUrl: urlBase + 'commandContent.html'
+            })
+            .when('/Bond', {
+                controller: 'bondController',
+                templateUrl: urlBase + 'bondContent.html'
             })
             .otherwise({
                 redirectTo: '/Overview'

@@ -1,6 +1,8 @@
 package com.victor.midas.model.vo;
 
 
+import com.google.common.collect.ComparisonChain;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +60,6 @@ public class MidasBond implements Comparable<MidasBond> {
 
     @Override
     public int compareTo(MidasBond o) {
-        return Integer.valueOf(cob).compareTo(o.cob);
+        return ComparisonChain.start().compare(cob, o.cob).result();
     }
 }

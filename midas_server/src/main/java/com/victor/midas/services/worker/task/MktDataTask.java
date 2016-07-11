@@ -3,6 +3,7 @@ package com.victor.midas.services.worker.task;
 import java.util.List;
 
 import com.victor.midas.model.common.MarketDataType;
+import com.victor.midas.model.vo.MidasBond;
 import com.victor.midas.services.worker.loader.FundDataLoader;
 import com.victor.midas.services.worker.loader.IDataLoader;
 import com.victor.midas.services.worker.loader.NationalDebtDataLoader;
@@ -10,6 +11,7 @@ import com.victor.midas.services.worker.loader.StockDataLoader;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import com.victor.midas.dao.TaskDao;
@@ -40,18 +42,25 @@ public class MktDataTask extends TaskBase {
             case stock: {
                 IDataLoader dataLoader = new StockDataLoader();
                 List<StockVo> stocks = (List<StockVo>)dataLoader.load(environment.getProperty("MktDataLoader.Stock.Path"));
-                stocksService.saveStocks(stocks);
+                if(CollectionUtils.isNotEmpty(stocks)){
+                    stocksService.saveStocks(stocks);
+                }
                 break;
             }
             case fund: {
                 IDataLoader dataLoader = new FundDataLoader();
                 List<StockVo> stocks = (List<StockVo>)dataLoader.load(environment.getProperty("MktDataLoader.Fund.Path"));
-                stocksService.saveStocks(stocks);
+                if(CollectionUtils.isNotEmpty(stocks)){
+                    stocksService.saveStocks(stocks);
+                }
                 break;
             }
             case bond: {
                 IDataLoader dataLoader = new NationalDebtDataLoader();
-                Object result = dataLoader.load(environment.getProperty("MktDataLoader.Bond.national.debt"));
+                List<MidasBond> bonds = (List<MidasBond>)dataLoader.load(environment.getProperty("MktDataLoader.Bond.national.debt"));
+                if(CollectionUtils.isNotEmpty(bonds)){
+                    stocksService.saveNationalDebt(bonds);
+                }
                 break;
             }
         }

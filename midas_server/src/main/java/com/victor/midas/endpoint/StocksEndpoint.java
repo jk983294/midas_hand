@@ -3,6 +3,7 @@ package com.victor.midas.endpoint;
 import com.victor.midas.model.db.DayFocusDb;
 import com.victor.midas.model.db.StockInfoDb;
 import com.victor.midas.model.train.SingleParameterTrainResults;
+import com.victor.midas.model.vo.MidasBond;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.TrainResult;
 import com.victor.midas.model.vo.score.StockScoreRecord;
@@ -120,6 +121,13 @@ public class StocksEndpoint {
     public List<StockScoreRecord> getConceptStockScoreRecord(@PathVariable("cobFrom") Integer cobFrom,
                                                       @PathVariable("cobTo") Integer cobTo) {
         return stocksService.getConceptScoreDao().queryStockScoreRecordByRange(cobFrom, cobTo);
+    }
+
+    @GET
+    @RequestMapping("/national-debt")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<MidasBond> getNationalDebt() {
+        return stocksService.queryNationalDebt();
     }
 
 	@GET

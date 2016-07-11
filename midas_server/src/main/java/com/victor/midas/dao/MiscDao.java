@@ -1,8 +1,10 @@
 package com.victor.midas.dao;
 
 import com.victor.midas.model.db.misc.FocusedStockNamesDb;
+import com.victor.midas.model.db.misc.NationalDebtDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
 import com.victor.midas.model.train.SingleParameterTrainResults;
+import com.victor.midas.model.vo.MidasBond;
 import com.victor.midas.util.MidasConstants;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * DAO for misc collection
@@ -21,11 +25,12 @@ public class MiscDao {
 
     private static final Logger logger = Logger.getLogger(StockDao.class);
 
-    private static Query allStockNamesQuery, singleTrainResultQuery;
+    private static Query allStockNamesQuery, singleTrainResultQuery, nationalDebtQuery;
 
     static {
         allStockNamesQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_ALL_STOCK_NAMES));
         singleTrainResultQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_SINGLE_TRAIN_RESULT));
+        nationalDebtQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_NATIONAL_DEBT));
     }
 
     @Autowired
@@ -45,6 +50,12 @@ public class MiscDao {
         return results;
     }
 
+    public List<MidasBond> queryNationalDebt(){
+        NationalDebtDb nationalDebtDb = mongoTemplate.findOne(nationalDebtQuery, NationalDebtDb.class, COLLECTION_NAME);
+        if(nationalDebtDb != null) return nationalDebtDb.getBonds();
+        return null;
+    }
+
     /**
      * save Misc to DB
      */
@@ -58,6 +69,11 @@ public class MiscDao {
 
     public void saveMisc(SingleParameterTrainResults results){
         mongoTemplate.save(results, COLLECTION_NAME);
+    }
+
+    public void saveMisc(List<MidasBond> bonds){
+        NationalDebtDb nationalDebtDb = new NationalDebtDb(MidasConstants.MISC_NATIONAL_DEBT, bonds);
+        mongoTemplate.save(nationalDebtDb, COLLECTION_NAME);
     }
 
 

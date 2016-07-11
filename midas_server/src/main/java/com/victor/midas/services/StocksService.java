@@ -15,6 +15,7 @@ import com.victor.midas.model.db.StockInfoDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
 import com.victor.midas.model.train.SingleParameterTrainResults;
 import com.victor.midas.model.vo.CalcParameter;
+import com.victor.midas.model.vo.MidasBond;
 import com.victor.midas.model.vo.StockVo;
 
 import com.victor.midas.model.vo.TrainResult;
@@ -119,6 +120,14 @@ public class StocksService {
 
     public void saveSingleParameterTrainResults(SingleParameterTrainResults results){
         miscDao.saveMisc(results);
+    }
+
+    public List<MidasBond> queryNationalDebt(){
+        return miscDao.queryNationalDebt();
+    }
+
+    public void saveNationalDebt(List<MidasBond> bonds){
+        miscDao.saveMisc(bonds);
     }
 
     public List<StockCrawlData> queryAllStockCrawlData(){

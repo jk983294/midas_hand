@@ -66,8 +66,10 @@ utilService.factory('Utils',
         function object2PropArray(object){
             var array = [];
             for (var prop in object) {
-                var attr = { name : prop, value : object[prop]};
-                array.push(attr);
+                if(prop && !prop.toString().startsWith("$")){
+                    var attr = { name : prop, value : object[prop]};
+                    array.push(attr);
+                }
             }
             return array;
         }
