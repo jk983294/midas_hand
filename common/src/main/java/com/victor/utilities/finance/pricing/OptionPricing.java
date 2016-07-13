@@ -1,6 +1,8 @@
 package com.victor.utilities.finance.pricing;
 
 
+import org.apache.commons.math3.distribution.NormalDistribution;
+
 public class OptionPricing {
 
     public double s0;               // current Price
@@ -8,8 +10,9 @@ public class OptionPricing {
     public double r;                // risk free interest rate
     public double volatility;       // yearly
     public double u, d;             // up percentage / down percentage
+    public double c, p;             // call / put price
     public double t;                // time (year)
-    public double dividendRate = 0d;
+    public double dividendRate = 0d;// yearly
     public double foreignCurrencyInterestRate = 0d;
     public int steps;
     public double deltaT;           // step time
@@ -29,11 +32,38 @@ public class OptionPricing {
         deltaT = t / steps;
     }
 
+    public OptionPricing(double s0, double strike, double r, double volatility, double t) {
+        this.s0 = s0;
+        this.strike = strike;
+        this.r = r;
+        this.volatility = volatility;
+        this.t = t;
+        pricingMethod = PricingMethod.BlackScholes;
+    }
+
     public void calculate(){
         if(pricingMethod == PricingMethod.BinaryTree){
             calculateTargetPriceWithBinaryTree();
             calculateOptionPriceWithBinaryTree();
+        } else if(pricingMethod == PricingMethod.BlackScholes){
+            calculateOptionPriceWithBlackScholes();
         }
+    }
+
+    NormalDistribution normal = new NormalDistribution(0, 1);
+    public void calculateOptionPriceWithBlackScholes(){
+        if(targetType == TargetType.Stock || targetType == TargetType.StockIndex){
+            double d1 = (Math.log(s0 / strike) + (r - dividendRate + volatility * volatility / 2.0) * t) / (volatility * Math.sqrt(t));
+            double d2 = (Math.log(s0 / strike) + (r - dividendRate - volatility * volatility / 2.0) * t) / (volatility * Math.sqrt(t));
+            c = s0 * Math.exp(-dividendRate * t) * normal.cumulativeProbability(d1) - strike * Math.exp(-r * t) * normal.cumulativeProbability(d2);
+            p = strike * Math.exp(-r * t) * normal.cumulativeProbability(-d2) - s0 * Math.exp(-dividendRate * t) * normal.cumulativeProbability(-d1);
+        } else if(targetType == TargetType.Currency){
+            double d1 = (Math.log(s0 / strike) + (r - foreignCurrencyInterestRate + volatility * volatility / 2.0) * t) / (volatility * Math.sqrt(t));
+            double d2 = (Math.log(s0 / strike) + (r - foreignCurrencyInterestRate - volatility * volatility / 2.0) * t) / (volatility * Math.sqrt(t));
+            c = s0 * Math.exp(-foreignCurrencyInterestRate * t) * normal.cumulativeProbability(d1) - strike * Math.exp(-r * t) * normal.cumulativeProbability(d2);
+            p = strike * Math.exp(-r * t) * normal.cumulativeProbability(-d2) - s0 * Math.exp(-foreignCurrencyInterestRate * t) * normal.cumulativeProbability(-d1);
+        }
+
     }
 
     private void calculateOptionPriceWithBinaryTree(){

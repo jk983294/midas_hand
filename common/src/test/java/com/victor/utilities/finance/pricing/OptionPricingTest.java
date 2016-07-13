@@ -71,4 +71,39 @@ public class OptionPricingTest {
         VisualAssist.print(optionPricing.getResultStringWithBinaryTree());
     }
 
+    @Test
+    public void test6(){
+        OptionPricing optionPricing = new OptionPricing(42.0, 40.0, 0.1, 0.2, 0.5);
+        optionPricing.optionType = OptionType.English;
+        optionPricing.pricingMethod = PricingMethod.BlackScholes;
+        optionPricing.targetType = TargetType.Stock;
+        optionPricing.calculateOptionPriceWithBlackScholes();
+        assertEquals(0.8085993729000887, optionPricing.p, epsilon);
+        assertEquals(4.759422392871528, optionPricing.c, epsilon);
+    }
+
+    @Test
+    public void test7(){
+        OptionPricing optionPricing = new OptionPricing(930.0, 900.0, 0.08, 0.2, 2.0/12);
+        optionPricing.optionType = OptionType.English;
+        optionPricing.pricingMethod = PricingMethod.BlackScholes;
+        optionPricing.targetType = TargetType.StockIndex;
+        optionPricing.dividendRate = 0.03;
+        optionPricing.calculateOptionPriceWithBlackScholes();
+        assertEquals(14.550996773772397, optionPricing.p, epsilon);
+        assertEquals(51.83295679649086, optionPricing.c, epsilon);
+    }
+
+    @Test
+    public void test8(){
+        OptionPricing optionPricing = new OptionPricing(1.6, 1.6, 0.08, 0.141, 4.0/12);
+        optionPricing.optionType = OptionType.English;
+        optionPricing.pricingMethod = PricingMethod.BlackScholes;
+        optionPricing.targetType = TargetType.Currency;
+        optionPricing.foreignCurrencyInterestRate = 0.11;
+        optionPricing.calculateOptionPriceWithBlackScholes();
+        assertEquals(0.058459066324003106, optionPricing.p, epsilon);
+        assertEquals(0.042957730192595744, optionPricing.c, epsilon);
+    }
+
 }
