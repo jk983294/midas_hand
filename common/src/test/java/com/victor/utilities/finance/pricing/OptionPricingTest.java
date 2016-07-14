@@ -106,4 +106,14 @@ public class OptionPricingTest {
         assertEquals(0.042957730192595744, optionPricing.c, epsilon);
     }
 
+    @Test
+    public void test9(){
+        OptionPricing optionPricing = new OptionPricing(1.6, 1.6, 0.08, 0d, 4.0/12);
+        optionPricing.optionType = OptionType.English;
+        optionPricing.pricingMethod = PricingMethod.BlackScholes;
+        optionPricing.targetType = TargetType.Currency;
+        optionPricing.foreignCurrencyInterestRate = 0.11;
+        assertEquals(0.141, optionPricing.calculateImpliedVolatility(0.042957730192595744, true), epsilon);
+    }
+
 }

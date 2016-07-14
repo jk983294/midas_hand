@@ -66,6 +66,28 @@ public class OptionPricing {
 
     }
 
+    public double calculateImpliedVolatility(double optionPrice, boolean isCallPrice){
+        double lowBound = 0d, upBound = 10d, optionPrice1, optionPrice2, optionPrice3;
+        while (true){
+            volatility = lowBound;
+            calculateOptionPriceWithBlackScholes();
+            optionPrice1 = isCallPrice ? c : p;
+            volatility = upBound;
+            calculateOptionPriceWithBlackScholes();
+            optionPrice2 = isCallPrice ? c : p;
+            volatility = (lowBound + upBound) / 2;
+            calculateOptionPriceWithBlackScholes();
+            optionPrice3 = isCallPrice ? c : p;
+            if(Math.abs(optionPrice3 - optionPrice) < 1e-6){
+                return volatility;
+            } else if((optionPrice1 - optionPrice) * (optionPrice3 - optionPrice) < 0){
+                upBound = volatility;
+            } else {
+                lowBound = volatility;
+            }
+        }
+    }
+
     private void calculateOptionPriceWithBinaryTree(){
         // price last layer first, no matter it is English or American option, last layer is the same
         for (int j = 0; j <= steps; j++) {
