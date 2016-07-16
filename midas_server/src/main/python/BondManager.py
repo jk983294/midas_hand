@@ -41,7 +41,7 @@ if __name__ == '__main__':
     log_path = bond_path + "log/log_" + time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) + ".txt"
     logging.basicConfig(filename=log_path, level=logging.INFO)
     manager = BondManager(bond_path)
-    cmd_string = 'sort_national_debt'
+    cmd_string = 'download_national_debt'
     if cmd_string == 'download_national_debt':
         manager.download_bond_excel(date.today().year)
     print 'download class info finished'
