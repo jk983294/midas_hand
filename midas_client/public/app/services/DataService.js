@@ -55,7 +55,7 @@ dataService.factory('StockDetail', ['$resource',
     function($resource){
         return $resource(
             serviceUrls.stockDetailUrl,
-            { stockCode:'IDX000001' }, // Query parameters
+            { stockCode:'IDX999999' }, // Query parameters
             {'query': { method: 'GET'}}
         );
     }
@@ -76,7 +76,7 @@ dataService.factory('StocksCmp', ['$resource',
         return $resource(
             serviceUrls.multiStockDetailUrl,
             {
-                stockCodes:'IDX000001_SZ002320'
+                stockCodes:'IDX999999_SZ002320'
             }, // Query parameters
             {'query': { method: 'GET' , isArray : true}}
         );
@@ -87,7 +87,7 @@ dataService.factory('TypeAheadTips', ['$resource',
     function($resource){
         return $resource(
             serviceUrls.typeAheadTipsUrl,
-            { queryStr:'IDX000001' }, // Query parameters
+            { queryStr:'IDX999999' }, // Query parameters
             {'query': { method: 'GET'}}
         );
     }
@@ -97,7 +97,7 @@ dataService.factory('TypeAheadAction', ['$resource',
     function($resource){
         return $resource(
             serviceUrls.typeAheadActionUrl,
-            { queryStr:'IDX000001' }, // Query parameters
+            { queryStr:'IDX999999' }, // Query parameters
             {'query': { method: 'GET'}}
         );
     }

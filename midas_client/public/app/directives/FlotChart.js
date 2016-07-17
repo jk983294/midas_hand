@@ -89,7 +89,32 @@ flotang.factory('chartService', ['Utils', 'StockUtils',
                 } else {
                     return getStockPlotDatas(data.stocks, data.startDay, data.endDay, data.showIndexes);
                 }
+            } else if (chartType === 'TimeSeries') {    // show all time series, format is [{label : 't', data :[[x1, y1],[x2, y2]]}]
+                if( Utils.isNull(data) || Utils.isNull(data.series)){
+                    return {
+                        data : defaultData,
+                        options : stockChartOptions
+                    };
+                } else {
+                    return getSeriesData(data.series);
+                }
+            }
+        }
 
+        function getSeriesData(series){
+            // calculate how many y axis needed, based on y data range, same range could share y axis
+            var sets = StockUtils.calcYaxisSets(series);
+            if(Utils.isNull(sets) || (sets.length == 1)){
+                return {
+                    options : stockChartOptions,
+                    data : series
+                };
+            } else {    // for more than one y axis, add corresponding y info
+                var yaxes = addAxisInfo(series, sets);
+                return {
+                    options : getFlotOptions(yaxes),
+                    data : series
+                };
             }
         }
 
@@ -100,6 +125,7 @@ flotang.factory('chartService', ['Utils', 'StockUtils',
                 var stock = stocks[i];
                 data = data.concat(StockUtils.getDataByTwoVaildDate(stock, startDay, endDay, showIndexes));
             }
+            console.log(data);
             // calculate how many y axis needed, based on y data range, same range could share y axis
             var sets = StockUtils.calcYaxisSets(data);
             if(Utils.isNull(sets) || (sets.length == 1)){

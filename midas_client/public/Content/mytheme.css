@@ -245,4 +245,6 @@ div.legend > table {
     -moz-border-radius: 4px;
 }
 
+.ui-grid-row:nth-child(odd):hover .ui-grid-cell{background:#5db8bb}
+.ui-grid-row:nth-child(even):hover .ui-grid-cell{background:#5db8bb}
 

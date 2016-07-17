@@ -27,6 +27,31 @@ utilService.factory('Utils',
             return properties;
         }
 
+        /**
+         * data is [{x : x1, y: y1, filter : filter}],
+         * get {label: yName, data : [[x1, y1]]} and filter between start and end if exists filter condition
+         */
+        function extractTimeSeries(array, xName, yName, filterName, start, end){
+            var results = new Array();
+            var minDay, maxDay
+            if(filterName){
+                minDay = Math.min(start, end);
+                maxDay = Math.max(start, end);
+            }
+            for(var i = 0, len = array.length; i < len; i++ ){
+                if(array[i][xName] && array[i][yName]){
+                    if(!filterName || (array[i][filterName] >= minDay && array[i][filterName] <= maxDay) ){
+                        results.push([array[i][xName], array[i][yName]]);
+                    }
+                }
+            }
+            return {
+                label: yName,
+                data : results
+            };
+        }
+
+
         function isInArray(array, toSearch){
             for(var i = 0, len = array.length; i < len; i++ ){
                 if(array[i] === toSearch) return true;
@@ -238,6 +263,7 @@ utilService.factory('Utils',
             object2array : object2array,
             object2PropArray : object2PropArray,
             extractProperty : extractProperty,
+            extractTimeSeries : extractTimeSeries,
             merge2Array : merge2Array,
             mergeForD3Point : mergeForD3Point,
             binaryIndexOf : binaryIndexOf,
