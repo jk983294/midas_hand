@@ -116,4 +116,26 @@ public class OptionPricingTest {
         assertEquals(0.141, optionPricing.calculateImpliedVolatility(0.042957730192595744, true), epsilon);
     }
 
+    @Test
+    public void test10(){
+        OptionPricing optionPricing = new OptionPricing(0d, 20.0, 0.09, 0.25, 4.0/12);
+        optionPricing.f0 = 20.0;
+        optionPricing.optionType = OptionType.English;
+        optionPricing.pricingMethod = PricingMethod.BlackScholes;
+        optionPricing.targetType = TargetType.Future;
+        optionPricing.calculateOptionPriceWithBlackScholes();
+        assertEquals(1.116641, optionPricing.p, epsilon);
+    }
+
+    @Test
+    public void test11(){
+        OptionPricing optionPricing = new OptionPricing(49d, 50.0, 0.05, 0.2, 0.3846);
+        optionPricing.optionType = OptionType.English;
+        optionPricing.pricingMethod = PricingMethod.BlackScholes;
+        optionPricing.targetType = TargetType.Stock;
+        optionPricing.calculateOptionPriceWithBlackScholes();
+        assertEquals(2.40046, optionPricing.c, epsilon);
+        assertEquals(0.5216016, optionPricing.deltaC, epsilon);
+    }
+
 }

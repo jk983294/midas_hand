@@ -6,11 +6,17 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 public class OptionPricing {
 
     public double s0;               // current Price
+    public double f0;               // current future Price
     public double strike;           // exercise price
     public double r;                // risk free interest rate
     public double volatility;       // yearly
     public double u, d;             // up percentage / down percentage
     public double c, p;             // call / put price
+    public double deltaC, deltaP;   // the quantity of asset to hedge one option contract
+    public double gammaC, gammaP;   // ratio of delta against asset price
+    public double thetaC, thetaP;   // ratio of asset value against time, time decay
+    public double vegaC, vegaP;     // ratio of asset value against volatility
+    public double rhoC, rhoP;       // ratio of asset value against interest rate
     public double t;                // time (year)
     public double dividendRate = 0d;// yearly
     public double foreignCurrencyInterestRate = 0d;
@@ -57,13 +63,55 @@ public class OptionPricing {
             double d2 = (Math.log(s0 / strike) + (r - dividendRate - volatility * volatility / 2.0) * t) / (volatility * Math.sqrt(t));
             c = s0 * Math.exp(-dividendRate * t) * normal.cumulativeProbability(d1) - strike * Math.exp(-r * t) * normal.cumulativeProbability(d2);
             p = strike * Math.exp(-r * t) * normal.cumulativeProbability(-d2) - s0 * Math.exp(-dividendRate * t) * normal.cumulativeProbability(-d1);
+            deltaC = Math.exp(-dividendRate * t) * normal.cumulativeProbability(d1);
+            deltaP = Math.exp(-dividendRate * t) * (normal.cumulativeProbability(d1) - 1d);
+            gammaC = Math.exp(-dividendRate * t) * normal.density(d1) / (s0 * volatility * Math.sqrt(t));
+            gammaP = gammaC;
+            thetaC = -s0 * normal.density(d1) * volatility * Math.exp(-dividendRate * t) / (2 * Math.sqrt(t))
+                    + dividendRate * s0 * normal.cumulativeProbability(d1) * Math.exp(-dividendRate * t)
+                    - r * strike * Math.exp(-r * t) * normal.cumulativeProbability(d2);
+            thetaP = -s0 * normal.density(d1) * volatility * Math.exp(-dividendRate * t) / (2 * Math.sqrt(t))
+                    - dividendRate * s0 * normal.cumulativeProbability(-d1) * Math.exp(-dividendRate * t)
+                    + r * strike * Math.exp(-r * t) * normal.cumulativeProbability(-d2);
+            vegaC = s0 * Math.sqrt(t) * normal.density(d1) * Math.exp(-dividendRate * t);
+            vegaP = vegaC;
+            rhoC = strike * t * Math.exp(-r * t) * normal.cumulativeProbability(d2);
+            rhoP = -strike * t * Math.exp(-r * t) * normal.cumulativeProbability(-d2);
         } else if(targetType == TargetType.Currency){
             double d1 = (Math.log(s0 / strike) + (r - foreignCurrencyInterestRate + volatility * volatility / 2.0) * t) / (volatility * Math.sqrt(t));
             double d2 = (Math.log(s0 / strike) + (r - foreignCurrencyInterestRate - volatility * volatility / 2.0) * t) / (volatility * Math.sqrt(t));
             c = s0 * Math.exp(-foreignCurrencyInterestRate * t) * normal.cumulativeProbability(d1) - strike * Math.exp(-r * t) * normal.cumulativeProbability(d2);
             p = strike * Math.exp(-r * t) * normal.cumulativeProbability(-d2) - s0 * Math.exp(-foreignCurrencyInterestRate * t) * normal.cumulativeProbability(-d1);
+            deltaC = Math.exp(-foreignCurrencyInterestRate * t) * normal.cumulativeProbability(d1);
+            deltaP = Math.exp(-foreignCurrencyInterestRate * t) * (normal.cumulativeProbability(d1) - 1d);
+            gammaC = Math.exp(-foreignCurrencyInterestRate * t) * normal.density(d1) / (s0 * volatility * Math.sqrt(t));
+            gammaP = gammaC;
+            thetaC = -s0 * normal.density(d1) * volatility * Math.exp(-foreignCurrencyInterestRate * t) / (2 * Math.sqrt(t))
+                    + foreignCurrencyInterestRate * s0 * normal.cumulativeProbability(d1) * Math.exp(-foreignCurrencyInterestRate * t)
+                    - r * strike * Math.exp(-r * t) * normal.cumulativeProbability(d2);
+            thetaP = -s0 * normal.density(d1) * volatility * Math.exp(-foreignCurrencyInterestRate * t) / (2 * Math.sqrt(t))
+                    - foreignCurrencyInterestRate * s0 * normal.cumulativeProbability(-d1) * Math.exp(-foreignCurrencyInterestRate * t)
+                    + r * strike * Math.exp(-r * t) * normal.cumulativeProbability(-d2);
+            vegaC = s0 * Math.sqrt(t) * normal.density(d1) * Math.exp(-foreignCurrencyInterestRate * t);
+            vegaP = vegaC;
+            rhoC = strike * t * Math.exp(-r * t) * normal.cumulativeProbability(d2);
+            rhoP = -strike * t * Math.exp(-r * t) * normal.cumulativeProbability(-d2);
+        } else if(targetType == TargetType.Future){
+            double d1 = (Math.log(f0 / strike) + (volatility * volatility / 2.0) * t) / (volatility * Math.sqrt(t));
+            double d2 = (Math.log(f0 / strike) + (- volatility * volatility / 2.0) * t) / (volatility * Math.sqrt(t));
+            c = Math.exp(-r * t) * (f0 * normal.cumulativeProbability(d1) - strike * normal.cumulativeProbability(d2));
+            p = Math.exp(-r * t) * (strike * normal.cumulativeProbability(-d2) - f0 * normal.cumulativeProbability(-d1));
+            gammaC = normal.density(d1) / (f0 * volatility * Math.sqrt(t));
+            gammaP = gammaC;
+            thetaC = -f0 * normal.density(d1) * volatility / (2 * Math.sqrt(t))
+                    - r * strike * Math.exp(-r * t) * normal.cumulativeProbability(d2);
+            thetaP = -f0 * normal.density(d1) * volatility / (2 * Math.sqrt(t))
+                    + r * strike * Math.exp(-r * t) * normal.cumulativeProbability(-d2);
+            vegaC = f0 * Math.sqrt(t) * normal.density(d1);
+            vegaP = vegaC;
+            rhoC = strike * t * Math.exp(-r * t) * normal.cumulativeProbability(d2);
+            rhoP = -strike * t * Math.exp(-r * t) * normal.cumulativeProbability(-d2);
         }
-
     }
 
     public double calculateImpliedVolatility(double optionPrice, boolean isCallPrice){
