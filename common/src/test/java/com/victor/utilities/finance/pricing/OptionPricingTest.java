@@ -138,4 +138,42 @@ public class OptionPricingTest {
         assertEquals(0.5216016, optionPricing.deltaC, epsilon);
     }
 
+    @Test
+    public void test12(){
+        OptionPricing optionPricing = new OptionPricing(50.0, 50.0, 0.1, 0.4, 0.4167, 5);
+        optionPricing.buyType = BuyType.Short;
+        optionPricing.optionType = OptionType.American;
+        optionPricing.pricingMethod = PricingMethod.BinaryTree;
+        optionPricing.targetType = TargetType.Stock;
+        optionPricing.calculate();
+        assertEquals(4.48859919, optionPricing.nodes[0][0].optionPrice, epsilon);
+        VisualAssist.print(optionPricing.getResultStringWithBinaryTree());
+    }
+
+    @Test
+    public void test13(){
+        OptionPricing optionPricing = new OptionPricing(300.0, 300.0, 0.08, 0.3, 0.3333, 4);
+        optionPricing.buyType = BuyType.Long;
+        optionPricing.optionType = OptionType.American;
+        optionPricing.pricingMethod = PricingMethod.BinaryTree;
+        optionPricing.targetType = TargetType.StockIndex;
+        optionPricing.dividendRate = 0.08;
+        optionPricing.calculate();
+        assertEquals(19.160080, optionPricing.nodes[0][0].optionPrice, epsilon);
+        VisualAssist.print(optionPricing.getResultStringWithBinaryTree());
+    }
+
+    @Test
+    public void test14(){
+        OptionPricing optionPricing = new OptionPricing(1.61, 1.6, 0.08, 0.12, 1d, 4);
+        optionPricing.buyType = BuyType.Short;
+        optionPricing.optionType = OptionType.American;
+        optionPricing.pricingMethod = PricingMethod.BinaryTree;
+        optionPricing.targetType = TargetType.Currency;
+        optionPricing.foreignCurrencyInterestRate = 0.09;
+        optionPricing.calculate();
+        assertEquals(0.070989962, optionPricing.nodes[0][0].optionPrice, epsilon);
+        VisualAssist.print(optionPricing.getResultStringWithBinaryTree());
+    }
+
 }
