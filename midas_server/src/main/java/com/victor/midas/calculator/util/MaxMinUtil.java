@@ -190,6 +190,24 @@ public class MaxMinUtil {
         return Math.max(0, current);
     }
 
+    public int getMaxIndexInDownTrend(int index) {
+        int current = index;
+        int maxIdx = getMaxIndexRecursive(current);
+        do {
+            current = getMaxIndexRecursive(getMinIndexRecursive(maxIdx));
+        } while (current >= 0 && current != maxIdx && getMaxPrice(current) > getMaxPrice(maxIdx));
+        return Math.max(0, maxIdx);
+    }
+
+    public int getMinIndexInUpTrend(int index) {
+        int current = index;
+        int minIdx = getMinIndexRecursive(current);
+        do {
+            current = getMinIndexRecursive(getMaxIndexRecursive(minIdx));
+        } while (current >= 0 && current != minIdx && getMinPrice(current) < getMinIndex(minIdx));
+        return Math.max(0, minIdx);
+    }
+
     public int[] getMaxIndex() {
         return maxIndex;
     }
