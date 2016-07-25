@@ -5,7 +5,8 @@ import java.util.Map;
 /**
  * used for key value pair
  */
-public class KeyValue<K, V> implements Map.Entry<K, V>
+public class KeyValue<K extends Comparable<K>, V>
+        implements Map.Entry<K, V>, Comparable<KeyValue<K, V>>
 {
     private K key;
     private V value;
@@ -34,5 +35,10 @@ public class KeyValue<K, V> implements Map.Entry<K, V>
     public V setValue(V value)
     {
         return this.value = value;
+    }
+
+    @Override
+    public int compareTo(KeyValue<K, V> o) {
+        return -key.compareTo(o.getKey());
     }
 }

@@ -6,6 +6,7 @@ package com.victor.midas.model.common;
 public enum CmdType {
     /** action */
     delete,
+    dayStats,
     load,
     create,
     calculate,

@@ -62,6 +62,7 @@ public class TaskMgr {
         Callable<Integer> callable = null;
     	switch(cmdType){
             case delete :  callable = new DeleteStockCollTask( taskDao , stockInfoDao, stockDao, miscDao, params );  break;
+            case dayStats :  callable = new DeleteStockCollTask( taskDao , stockInfoDao, stockDao, miscDao, params );  break;
             case create : callable = new CreateCollectionTask( taskDao , stockInfoDao, stockDao, miscDao, params ); break;
             case load : callable = new MktDataTask(taskDao, stocksService, environment, params); break;
             case calculate : callable = new CalculateTask(taskDao, stocksService, params); break;
