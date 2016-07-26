@@ -1,17 +1,20 @@
 package com.victor.midas.services.worker.common;
 
-import com.victor.midas.dao.TaskDao;
 import com.victor.midas.model.common.CmdType;
 import com.victor.midas.services.TaskMgr;
 import com.victor.midas.util.MidasException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
+@Component
+@Scope("prototype")
 public class PipedTask extends TaskBase {
 
 	private static final Logger logger = Logger.getLogger(PipedTask.class);
@@ -21,8 +24,7 @@ public class PipedTask extends TaskBase {
     private List<String> actionStrs;
 
 
-	public PipedTask(TaskDao taskdao, TaskMgr taskMgr, List<String> actionStrs) {
-		super(description, taskdao, actionStrs);
+	public void init(TaskMgr taskMgr, List<String> actionStrs) {
 		this.actionStrs = actionStrs;
         this.taskMgr = taskMgr;
 	}
@@ -54,5 +56,10 @@ public class PipedTask extends TaskBase {
         }
 		logger.info( description + " complete...");
 	}
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
 }

@@ -2,28 +2,22 @@ package com.victor.midas.services.worker.task;
 
 import com.victor.midas.crawl.ConceptCrawler;
 import com.victor.midas.crawl.GuBaPageProcessor;
-import com.victor.midas.dao.TaskDao;
 import com.victor.midas.model.common.CmdParameter;
-import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.spider.core.Spider;
 import com.victor.spider.core.pipeline.JsonFilePipeline;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
+@Scope("prototype")
 public class CrawlTask extends TaskBase {
 
 	private static final Logger logger = Logger.getLogger(CrawlTask.class);
 	private static final String description = "Data Crawl Task";
-
-	private StocksService stocksService;
-
-
-	public CrawlTask(TaskDao taskdao, StocksService stocksService, List<String> params) {
-		super(description, taskdao, params);
-		this.stocksService = stocksService;
-	}
 
 	@Override
 	public void doTask() throws Exception {
@@ -50,6 +44,11 @@ public class CrawlTask extends TaskBase {
         String stockCode = "000702";
         Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601766,211862489_1.html")
                 .addPipeline(new JsonFilePipeline("F:\\Data\\MktData\\guba")).run();
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
 }

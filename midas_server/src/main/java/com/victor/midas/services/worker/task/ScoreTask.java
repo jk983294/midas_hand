@@ -1,12 +1,8 @@
 package com.victor.midas.services.worker.task;
 
-import com.victor.midas.dao.ConceptScoreDao;
-import com.victor.midas.dao.ScoreDao;
-import com.victor.midas.dao.TaskDao;
 import com.victor.midas.model.common.CmdParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.concept.StockCrawlData;
-import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.midas.services.worker.loader.FundDataLoader;
 import com.victor.midas.services.worker.loader.StockDataLoader;
@@ -17,30 +13,25 @@ import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.utils.PerformanceUtil;
 import org.apache.log4j.Logger;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
+@Scope("prototype")
 public class ScoreTask extends TaskBase {
 
 	private static final Logger logger = Logger.getLogger(ScoreTask.class);
 	private static final String description = "Score Task";
 
-	private StocksService stocksService;
-
-    private ScoreDao scoreDao;
-    private ConceptScoreDao conceptScoreDao;
     /** default come from DB*/
     private boolean isFromFileSystem = false;
     private boolean loadStock = true;   // false means load fund
     private String loadPath;
 
-    public ScoreTask(TaskDao taskdao, StocksService stocksService, Environment environment, boolean isFromFileSystem, List<String> params, boolean loadStock) {
-        super(description, taskdao, params);
-        this.stocksService = stocksService;
-        this.scoreDao = stocksService.getScoreDao();
-        this.conceptScoreDao = stocksService.getConceptScoreDao();
+    public void init(boolean isFromFileSystem, boolean loadStock) {
         this.isFromFileSystem = isFromFileSystem;
         loadPath = environment.getProperty("MktDataLoader.Stock.Path");
         this.loadStock = loadStock;
@@ -111,6 +102,9 @@ public class ScoreTask extends TaskBase {
         return new GeneralScoreManager(stocks, indexName);
     }
 
-
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
 }

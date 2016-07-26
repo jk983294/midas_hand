@@ -2,45 +2,30 @@ package com.victor.midas.services.worker.task;
 
 import com.victor.midas.calculator.chan.ChanMorphologyExtend;
 import com.victor.midas.calculator.chan.model.ChanResults;
-import com.victor.midas.dao.ConceptScoreDao;
-import com.victor.midas.dao.ScoreDao;
-import com.victor.midas.dao.TaskDao;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.midas.services.worker.loader.StockDataLoader;
 import com.victor.utilities.utils.IoHelper;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
+@Component
+@Scope("prototype")
 public class ChanTask extends TaskBase {
 
 	private static final Logger logger = Logger.getLogger(ChanTask.class);
 	private static final String description = "Chan Task";
 
-	private StocksService stocksService;
-
-    private ScoreDao scoreDao;
-    private ConceptScoreDao conceptScoreDao;
     /** default come from DB*/
     private boolean isFromFileSystem = false;
     private Map<String,String> filepath2prefix;
 
-	public ChanTask(TaskDao taskdao, StocksService stocksService, List<String> params) {
-		super(description, taskdao, params);
-		this.stocksService = stocksService;
-        this.scoreDao = stocksService.getScoreDao();
-        this.conceptScoreDao = stocksService.getConceptScoreDao();
-	}
-
-    public ChanTask(TaskDao taskdao, StocksService stocksService, Map<String, String> filepath2prefix, List<String> params) {
-        super( description, taskdao, params);
-        this.stocksService = stocksService;
-        this.scoreDao = stocksService.getScoreDao();
-        this.conceptScoreDao = stocksService.getConceptScoreDao();
+    public void init(Map<String, String> filepath2prefix) {
         this.filepath2prefix = filepath2prefix;
         isFromFileSystem = true;
     }
@@ -82,5 +67,10 @@ public class ChanTask extends TaskBase {
 
 		logger.info( description + " complete...");
 	}
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
 }

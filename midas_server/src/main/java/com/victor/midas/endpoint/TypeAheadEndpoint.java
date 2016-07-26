@@ -103,6 +103,7 @@ public class TypeAheadEndpoint {
                 response.setDescription("No query string");
             }
         } catch (Exception e){
+            logger.error(e);
             response.setStatus(MidasConstants.RESPONSE_FAIL);
             response.setDescription("error caused by : " + e);
         }

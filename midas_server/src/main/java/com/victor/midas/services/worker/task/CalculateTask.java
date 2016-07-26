@@ -2,28 +2,22 @@ package com.victor.midas.services.worker.task;
 
 import com.victor.midas.calculator.IndexCalculator;
 import com.victor.midas.calculator.indicator.IndexChangePct;
-import com.victor.midas.dao.TaskDao;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.midas.util.MidasConstants;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
+@Scope("prototype")
 public class CalculateTask extends TaskBase {
 
 	private static final Logger logger = Logger.getLogger(CalculateTask.class);
 	private static final String description = "Data Calculation Task";
-
-	private StocksService stocksService;
-
-
-	public CalculateTask( TaskDao taskdao, StocksService stocksService, List<String> params) {
-		super(description, taskdao, params);
-		this.stocksService = stocksService;
-	}
 
 	@Override
 	public void doTask() throws Exception {
@@ -49,5 +43,10 @@ public class CalculateTask extends TaskBase {
         }
 		logger.info( description + " complete...");
 	}
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
 }

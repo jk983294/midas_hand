@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 
@@ -45,6 +46,8 @@ public class TaskMgr {
 
     @Autowired
     private StocksService stocksService;
+    @Autowired
+    private ApplicationContext context;
 
     @Autowired
     private Environment environment;
@@ -59,24 +62,30 @@ public class TaskMgr {
      */
     public Future<Integer> cmd(CmdType cmdType, List<String> params){
         Future<Integer> result = null;
-        Callable<Integer> callable = null;
+        TaskBase callable = null;
     	switch(cmdType){
-            case delete :  callable = new DeleteStockCollTask( taskDao , stockInfoDao, stockDao, miscDao, params );  break;
-            case dayStats :  callable = new DeleteStockCollTask( taskDao , stockInfoDao, stockDao, miscDao, params );  break;
-            case create : callable = new CreateCollectionTask( taskDao , stockInfoDao, stockDao, miscDao, params ); break;
-            case load : callable = new MktDataTask(taskDao, stocksService, environment, params); break;
-            case calculate : callable = new CalculateTask(taskDao, stocksService, params); break;
+            case delete :  callable = (DeleteStockCollTask) context.getBean("deleteStockCollTask");   break; //new ( taskDao , stockInfoDao, stockDao, miscDao, params );
+            case dayStats :  callable = (DeleteStockCollTask) context.getBean("deleteStockCollTask"); break;//new DeleteStockCollTask( taskDao , stockInfoDao, stockDao, miscDao, params );  break;
+            case create : callable = (CreateCollectionTask) context.getBean("createCollectionTask"); break;//new CreateCollectionTask( taskDao , stockInfoDao, stockDao, miscDao, params ); break;
+            case load : callable = (MktDataTask) context.getBean("mktDataTask"); break;//new MktDataTask(taskDao, stocksService, environment, params); break;
+            case calculate : callable = (CalculateTask) context.getBean("calculateTask"); break; //new CalculateTask(taskDao, stocksService, params);
             case trainSingle :
-            case trainStrategy : callable = new TrainTask(taskDao, stocksService, params, cmdType); break;
-            case plan : callable = new PlanTask(taskDao, stocksService, params); break;
-            case score : callable = new ScoreTask(taskDao, stocksService, environment, false, params, true); break;
-            case crawl : callable = new CrawlTask(taskDao, stocksService, params); break;
-            case load_score : callable = new ScoreTask(taskDao, stocksService, environment, true, params, true); break;
-            case chan : callable = new ChanTask(taskDao, stocksService, params); break;
-            case perf : callable = new PerfTask(taskDao, stocksService, params); break;
+            case trainStrategy : callable = (TrainTask) context.getBean("trainTask");break;//new TrainTask(taskDao, stocksService, params, cmdType); break;
+            case plan : callable = (PlanTask) context.getBean("planTask");break;//new PlanTask(taskDao, stocksService, params); break;
+            case score :
+                callable = (ScoreTask) context.getBean("scoreTask");
+                ((ScoreTask)callable).init(false, true);
+                break;//new ScoreTask(taskDao, stocksService, environment, false, params, true); break;
+            case crawl : callable = (CrawlTask) context.getBean("crawlTask");break;//new CrawlTask(taskDao, stocksService, params); break;
+            case load_score :
+                callable = (ScoreTask) context.getBean("scoreTask");
+                ((ScoreTask)callable).init(true, true);
+                break;//new ScoreTask(taskDao, stocksService, environment, true, params, true); break;
+            case chan : callable = (ChanTask) context.getBean("chanTask");break;//new ChanTask(taskDao, stocksService, params); break;
             default : logger.error("no such cmd in task manager.");
         }
         if(callable != null){
+            callable.ctor(params, cmdType);
             result = executor.submit(callable);
         }
         Thread.yield();
@@ -84,7 +93,9 @@ public class TaskMgr {
     }
 
     public void submitPipedTasks(List<String> actions){
-        executor.submit(new PipedTask(taskDao, this, actions));
+        Callable<Integer> callable = (PipedTask) context.getBean("pipedTask");
+        ((PipedTask)callable).init(this, actions);
+        executor.submit(callable);
         logger.error("task submitted." );
         Thread.yield();
     }

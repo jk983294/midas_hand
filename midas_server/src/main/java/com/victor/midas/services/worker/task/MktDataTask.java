@@ -9,35 +9,25 @@ import com.victor.midas.services.worker.loader.IDataLoader;
 import com.victor.midas.services.worker.loader.NationalDebtDataLoader;
 import com.victor.midas.services.worker.loader.StockDataLoader;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
-import com.victor.midas.dao.TaskDao;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component
+@Scope("prototype")
 public class MktDataTask extends TaskBase {
 	
 	private static final Logger logger = Logger.getLogger(MktDataTask.class);
 	private static final String description = "Market Data Load Task";
 
-	private StocksService stocksService;
-    private Environment environment;
     private MarketDataType dataType = MarketDataType.stock;
-
-	public MktDataTask(TaskDao taskdao, StocksService stocksService, Environment environment, List<String> params) {
-		super(description, taskdao, params);
-		this.stocksService = stocksService;
-        this.environment = environment;
-        dataType = MarketDataType.getDataType(MarketDataType.stock, params, 0);
-	}
-
-    public MktDataTask() {
-    }
 
     @Override
 	public void doTask() throws Exception {
+        dataType = MarketDataType.getDataType(MarketDataType.stock, params, 0);
         switch (dataType){
             case stock: {
                 IDataLoader dataLoader = new StockDataLoader();
@@ -66,5 +56,10 @@ public class MktDataTask extends TaskBase {
         }
 		logger.info( description + " complete...");
 	}
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
 }

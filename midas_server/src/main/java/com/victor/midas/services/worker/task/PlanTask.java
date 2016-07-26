@@ -1,35 +1,22 @@
 package com.victor.midas.services.worker.task;
 
-import com.victor.midas.dao.MiscDao;
-import com.victor.midas.dao.TaskDao;
-import com.victor.midas.dao.TrainDao;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.midas.train.TradePlanManager;
 import com.victor.utilities.utils.PerformanceUtil;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
+@Scope("prototype")
 public class PlanTask extends TaskBase {
 
 	private static final Logger logger = Logger.getLogger(PlanTask.class);
 	private static final String description = "Plan Task";
-
-	private StocksService stocksService;
-
-    private TrainDao trainDao;
-
-    private MiscDao miscDao;
-
-	public PlanTask(TaskDao taskdao, StocksService stocksService, List<String> params) {
-		super(description, taskdao, params);
-		this.stocksService = stocksService;
-        this.trainDao = stocksService.getTrainDao();
-        this.miscDao = stocksService.getMiscDao();
-	}
 
 	@Override
 	public void doTask() throws Exception {
@@ -57,4 +44,8 @@ public class PlanTask extends TaskBase {
 		logger.info( description + " complete...");
 	}
 
+    @Override
+    public String getDescription() {
+        return description;
+    }
 }

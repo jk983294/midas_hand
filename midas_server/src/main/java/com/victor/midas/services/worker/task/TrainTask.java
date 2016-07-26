@@ -1,10 +1,5 @@
 package com.victor.midas.services.worker.task;
 
-import com.victor.midas.calculator.macd.IndexMacdAdvancedSignal;
-import com.victor.midas.calculator.revert.PriceCrashRevertSignal;
-import com.victor.midas.calculator.score.StockRevertScoreRank;
-import com.victor.midas.calculator.score.StockScoreRank;
-import com.victor.midas.calculator.score.StockSupportScoreRank;
 import com.victor.midas.model.common.CmdParameter;
 import com.victor.midas.model.common.CmdType;
 import com.victor.midas.model.vo.CalcParameter;
@@ -24,26 +19,18 @@ import com.victor.utilities.utils.PerformanceUtil;
 import com.victor.utilities.utils.RegExpHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.List;
 
+@Component
+@Scope("prototype")
 public class TrainTask extends TaskBase {
 
 	private static final Logger logger = Logger.getLogger(TrainTask.class);
 	private static final String description = "Train Task";
-
-	private StocksService stocksService;
-
-    private TrainDao trainDao;
-    private CmdType cmdType;
-
-	public TrainTask(TaskDao taskdao, StocksService stocksService, List<String> params, CmdType cmdType) {
-		super(description, taskdao, params);
-		this.stocksService = stocksService;
-        this.trainDao = stocksService.getTrainDao();
-        this.cmdType = cmdType;
-	}
 
 	@Override
 	public void doTask() throws Exception {
@@ -100,6 +87,11 @@ public class TrainTask extends TaskBase {
         trainDao.saveTrainResult(manager.getTrainResult());
 
         PerformanceUtil.manuallyGC(stocks);
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
 }

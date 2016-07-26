@@ -2,28 +2,14 @@ package com.victor.midas.services.worker.task;
 
 import com.victor.midas.services.worker.common.TaskBase;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import com.victor.midas.dao.*;
-
-import java.util.List;
-
+@Component
+@Scope("prototype")
 public class CreateCollectionTask extends TaskBase {
 	private static final Logger logger = Logger.getLogger(CreateCollectionTask.class);
 	private static final String description = "Create Collection Task";
-
-    private StockInfoDao stockInfoDao;
-    private StockDao stockDao;
-    private MiscDao miscDao;
-    private TaskDao taskDao;
-
-
-	public CreateCollectionTask(TaskDao taskDao, StockInfoDao stockInfoDao, StockDao stockDao, MiscDao miscDao, List<String> params) {
-		super(description, taskDao, params);
-        this.stockInfoDao = stockInfoDao;
-        this.stockDao = stockDao;
-        this.miscDao = miscDao;
-        this.taskDao = taskDao;
-	}
 
 	@Override
 	public void doTask() throws Exception {
@@ -32,6 +18,11 @@ public class CreateCollectionTask extends TaskBase {
         stockDao.createCollection();
         miscDao.createCollection();
 		logger.info(description + " complete...");
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
 	}
 
 }
