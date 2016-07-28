@@ -25,6 +25,7 @@ public class MidasConstants {
     public static final String MISC_ALL_STOCK_NAMES = "AllStockNames";
     public static final String MISC_SINGLE_TRAIN_RESULT = "SingleTrainResult";
     public static final String MISC_NATIONAL_DEBT = "NationalDebt";
+    public static final String MISC_STOCK_DAY_STATS_COBS = "StockDayStatsCobs";
 
     /**
      * collection name
@@ -38,6 +39,7 @@ public class MidasConstants {
     public static final String TRAIN_COLLECTION_NAME = "StockTrain";
     public static final String SCORE_COLLECTION_NAME = "StockScore";
     public static final String CONCEPT_SCORE_COLLECTION_NAME = "StockConceptScore";
+    public static final String STOCK_DAY_STATS_COLLECTION_NAME = "StockDayStats";
 
     /**
      * sequence collection's document id

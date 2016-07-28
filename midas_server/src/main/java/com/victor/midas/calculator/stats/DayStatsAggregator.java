@@ -1,14 +1,12 @@
 package com.victor.midas.calculator.stats;
 
 import com.victor.midas.calculator.common.AggregationCalcBase;
+import com.victor.midas.calculator.score.DayStatsScore;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockDayStats;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.algorithm.search.TopKElements;
-import com.victor.utilities.math.stats.ma.MaBase;
-import com.victor.utilities.math.stats.ma.SMA;
 import com.victor.utilities.model.KeyValue;
 import com.victor.utilities.utils.ArrayHelper;
 
@@ -27,6 +25,11 @@ public class DayStatsAggregator extends AggregationCalcBase {
     }
 
     public List<StockDayStats> dayStatses = new ArrayList<>();
+
+    @Override
+    public void setRequiredCalculators() {
+        requiredCalculators.add(DayStatsScore.INDEX_NAME);
+    }
 
     @Override
     public void calculate() throws MidasException {

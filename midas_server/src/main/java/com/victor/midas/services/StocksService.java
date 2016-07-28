@@ -12,16 +12,15 @@ import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.dao.*;
 import com.victor.midas.model.db.DayFocusDb;
 import com.victor.midas.model.db.StockInfoDb;
+import com.victor.midas.model.db.misc.SampleCobDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
 import com.victor.midas.model.train.SingleParameterTrainResults;
-import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.model.vo.MidasBond;
-import com.victor.midas.model.vo.StockVo;
+import com.victor.midas.model.vo.*;
 
-import com.victor.midas.model.vo.TrainResult;
 import com.victor.midas.model.vo.concept.StockCrawlData;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.ModelConvertor;
+import com.victor.utilities.math.FibonacciSequence;
 import org.apache.log4j.Logger;
 
 import org.reflections.Reflections;
@@ -53,6 +52,8 @@ public class StocksService {
     private StockCrawlDataDao stockCrawlDataDao;
 	@Autowired
 	private TypeAhead typeAhead;
+    @Autowired
+    private StockDayStatsDao stockDayStatsDao;
 
     // register all calculator to factory
     static {
@@ -92,6 +93,13 @@ public class StocksService {
         List<StockInfoDb> stockInfoDbs = ModelConvertor.convert2StockInfo(stocks);
         stockInfoDao.saveStockInfo(stockInfoDbs);
         stockDao.saveStocks(stocks);
+    }
+
+    public void saveDayStatsList(List<StockDayStats> dayStatsList) throws MidasException {
+        List<StockDayStats> sample = FibonacciSequence.sample(dayStatsList);
+        SampleCobDb cobs = ModelConvertor.extractCob(sample);
+        miscDao.saveMisc(cobs);
+        stockDayStatsDao.save(dayStatsList);
     }
 
     public TrainResult queryTrainResult(Long trainId){

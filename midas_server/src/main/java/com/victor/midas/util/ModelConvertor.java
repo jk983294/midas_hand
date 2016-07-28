@@ -1,8 +1,10 @@
 package com.victor.midas.util;
 
 import com.victor.midas.model.db.*;
+import com.victor.midas.model.db.misc.SampleCobDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
 import com.victor.midas.model.train.StockTrain;
+import com.victor.midas.model.vo.StockDayStats;
 import com.victor.midas.model.vo.StockVo;
 
 import java.util.*;
@@ -60,6 +62,14 @@ public class ModelConvertor {
             map.put(stock.getStockName(), stock);
         }
         return map;
+    }
+
+    public static SampleCobDb extractCob(List<StockDayStats> samples){
+        List<Integer> cobs = new ArrayList<>();
+        for (StockDayStats dayStats : samples){
+            cobs.add(dayStats.getCob());
+        }
+        return new SampleCobDb(MidasConstants.MISC_STOCK_DAY_STATS_COBS, cobs);
     }
 
     /**

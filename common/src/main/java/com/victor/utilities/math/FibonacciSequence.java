@@ -1,5 +1,12 @@
 package com.victor.utilities.math;
 
+import org.apache.commons.collections4.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 public class FibonacciSequence {
 
     public static int[] sequence;
@@ -93,6 +100,25 @@ public class FibonacciSequence {
         B[1][1] = c * f + d * h;
 
         return B;
+    }
+
+    /**
+     * sample reversely
+     */
+    public static <T> List<T> sample(List<T> data) {
+        if(CollectionUtils.isEmpty(data) || data.size() < 3) return data;
+        int a = 2, b = 3, tmp, len = data.size();
+        List<T> results = new ArrayList<>();
+        results.add(data.get(len - 1));
+        results.add(data.get(len - 2));
+        while (a < len) {
+            results.add(data.get(len - a - 1));
+            tmp = b;
+            b += a;
+            a = tmp;
+        }
+        Collections.reverse(results);
+        return results;
     }
 
     public static final int fibonacciSequenceUsingBinetsFormula(int n) {

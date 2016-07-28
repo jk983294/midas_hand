@@ -18,7 +18,7 @@ public class IndexCalculator {
     private static final Logger logger = Logger.getLogger(IndexCalculator.class);
 
     private List<ICalculator> calculators;
-    private ICalculator targetCalculator;
+    public ICalculator targetCalculator;
     public MidasTrainOptions options;
 
     private boolean isBigDataSet;

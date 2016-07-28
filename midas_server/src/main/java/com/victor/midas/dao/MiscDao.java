@@ -2,6 +2,7 @@ package com.victor.midas.dao;
 
 import com.victor.midas.model.db.misc.FocusedStockNamesDb;
 import com.victor.midas.model.db.misc.NationalDebtDb;
+import com.victor.midas.model.db.misc.SampleCobDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
 import com.victor.midas.model.train.SingleParameterTrainResults;
 import com.victor.midas.model.vo.MidasBond;
@@ -25,12 +26,13 @@ public class MiscDao {
 
     private static final Logger logger = Logger.getLogger(StockDao.class);
 
-    private static Query allStockNamesQuery, singleTrainResultQuery, nationalDebtQuery;
+    private static Query allStockNamesQuery, singleTrainResultQuery, nationalDebtQuery, dayStatsCobsQuery;
 
     static {
         allStockNamesQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_ALL_STOCK_NAMES));
         singleTrainResultQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_SINGLE_TRAIN_RESULT));
         nationalDebtQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_NATIONAL_DEBT));
+        dayStatsCobsQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_STOCK_DAY_STATS_COBS));
     }
 
     @Autowired
@@ -56,11 +58,20 @@ public class MiscDao {
         return null;
     }
 
+    public SampleCobDb querySampleCobs(){
+        SampleCobDb cobDb = mongoTemplate.findOne(dayStatsCobsQuery, SampleCobDb.class, COLLECTION_NAME);
+        return cobDb;
+    }
+
     /**
      * save Misc to DB
      */
     public void saveMisc(StockNamesDb stockNamesDb){
         mongoTemplate.save(stockNamesDb, COLLECTION_NAME);
+    }
+
+    public void saveMisc(SampleCobDb cobs){
+        mongoTemplate.save(cobs, COLLECTION_NAME);
     }
 
     public void saveMisc(FocusedStockNamesDb focusedStockNamesDb){

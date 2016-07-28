@@ -5,6 +5,7 @@ import com.victor.midas.services.TaskMgr;
 import com.victor.midas.util.MidasException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -20,21 +21,15 @@ public class PipedTask extends TaskBase {
 	private static final Logger logger = Logger.getLogger(PipedTask.class);
 	private static final String description = "Pipe Task";
 
+    @Autowired
 	private TaskMgr taskMgr;
-    private List<String> actionStrs;
-
-
-	public void init(TaskMgr taskMgr, List<String> actionStrs) {
-		this.actionStrs = actionStrs;
-        this.taskMgr = taskMgr;
-	}
 
 	@Override
 	public void doTask() throws Exception {
         logger.info( description + " start...");
-        logger.info("cmd " + actionStrs);
-        if(CollectionUtils.isNotEmpty(actionStrs)){
-            for(String action : actionStrs){
+        logger.info("cmd " + params);
+        if(CollectionUtils.isNotEmpty(params)){
+            for(String action : params){
                 String[] actions = action.split(" ");
                 if(actions.length > 0){
                     try {
