@@ -39,6 +39,6 @@ public class KeyValue<K extends Comparable<K>, V>
 
     @Override
     public int compareTo(KeyValue<K, V> o) {
-        return -key.compareTo(o.getKey());
+        return key.compareTo(o.getKey());
     }
 }

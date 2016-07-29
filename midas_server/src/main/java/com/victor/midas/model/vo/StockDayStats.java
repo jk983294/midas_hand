@@ -16,6 +16,7 @@ public class StockDayStats implements Comparable<StockDayStats> {
     private int cob;
 
     public List<KeyValue<Double, String>> upPct = new ArrayList<>();
+    public List<KeyValue<Double, String>> downPct = new ArrayList<>();
 
     public StockDayStats(int cob) {
         this.cob = cob;
