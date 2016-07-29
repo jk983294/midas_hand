@@ -445,6 +445,11 @@ public abstract class TabWriterBase {
         }
         sheet.addValidationData(dataValidation);
     }
+    
+    protected void setGroupRow(int rowFrom, int rowTo, boolean isCollapsed) {
+        sheet.groupRow(rowFrom, rowTo);
+        sheet.setRowGroupCollapsed(rowFrom, isCollapsed);
+    }
 
     /**
      * calculate number digit length
