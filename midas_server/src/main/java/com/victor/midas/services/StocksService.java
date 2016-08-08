@@ -2,6 +2,8 @@ package com.victor.midas.services;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +23,7 @@ import com.victor.midas.model.vo.concept.StockCrawlData;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.ModelConvertor;
 import com.victor.utilities.math.FibonacciSequence;
+import com.victor.utilities.utils.TimeHelper;
 import org.apache.log4j.Logger;
 
 import org.reflections.Reflections;
@@ -100,6 +103,16 @@ public class StocksService {
         SampleCobDb cobs = ModelConvertor.extractCob(sample);
         miscDao.saveMisc(cobs);
         stockDayStatsDao.save(dayStatsList);
+    }
+
+    public List<StockDayStats> queryDayStatsList(int cob) throws MidasException, ParseException {
+        if(cob < 0){
+            List<Integer> cobs = miscDao.querySampleCobs().getCobs();
+            return stockDayStatsDao.queryByCob(cobs);
+        }
+        int monthInt = TimeHelper.cob2month(cob) - 2;
+        int twoMonthAgo = TimeHelper.date2cob(TimeHelper.month2date(monthInt));
+        return stockDayStatsDao.queryByCob(twoMonthAgo, cob);
     }
 
     public TrainResult queryTrainResult(Long trainId){

@@ -43,6 +43,18 @@ public class StockDayStatsDao {
         return mongoTemplate.findOne(new Query(Criteria.where("_id").is(date)), StockDayStats.class, COLLECTION_NAME);
     }
 
+    public List<StockDayStats> queryByCob(List<Integer> cobs){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").in(cobs));
+        return mongoTemplate.find(query, StockDayStats.class, COLLECTION_NAME);
+    }
+
+    public List<StockDayStats> queryByCob(Integer cobFrom, Integer cobTo){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").lte(cobTo).and("_id").gte(cobFrom));
+        return mongoTemplate.find(query, StockDayStats.class, COLLECTION_NAME);
+    }
+
     public List<StockDayStats> queryAll(){
         List<StockDayStats> records = mongoTemplate.findAll(StockDayStats.class, COLLECTION_NAME);
         Collections.sort(records);

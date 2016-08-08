@@ -2,6 +2,7 @@ package com.victor.utilities.utils;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -39,4 +40,33 @@ public class TimeHelper {
         if(str == null) return null;
         return Timestamp.valueOf(str);
     }
+
+    public static int cob2month(int cob){
+        int year = cob / 10000;
+        int month = (cob % 10000) / 100;
+        return (year - 1900) * 12 + month;
+    }
+
+    /**
+     * last business day of that month
+     * @param monthInt
+     * @return
+     * @throws ParseException
+     */
+    public static Date month2date(int monthInt) throws ParseException {
+        monthInt++;
+        int year = monthInt / 12 + 1900;
+        int month = monthInt % 12;
+        int cob = year * 10000 + month * 100 + 1;   // next month first day
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(cob2date(cob));
+
+        int dayOfWeek;
+        do {
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        } while (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY);
+        return cal.getTime();
+    }
+
 }
