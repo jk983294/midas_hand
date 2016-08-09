@@ -19,6 +19,14 @@
             </tr>
         </table>
 
+        <table ng-table="dayStatsSampleTableParams" template-pagination="custom/pager" class="table table-bordered table-hover">
+            <tr ng-repeat="dayStats in $data">
+                <td data-title="'COB'" filter="{ 'desp': 'text' }" sortable="'cob'">{{dayStats.cob}}</td>
+                <td data-title="'Down Pct'" filter="{ 'date': 'text' }">{{dayStats.downPct | keyValueList}}</td>
+                <td data-title="'Up Pct'" filter="{ 'start': 'text' }">{{dayStats.upPct | keyValueList}}</td>
+            </tr>
+        </table>
+
         <script type="text/ng-template" id="custom/pager">
             <ul class="pager ng-cloak">
                 <li ng-repeat="page in pages"

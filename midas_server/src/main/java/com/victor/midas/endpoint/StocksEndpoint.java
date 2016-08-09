@@ -4,6 +4,7 @@ import com.victor.midas.model.db.DayFocusDb;
 import com.victor.midas.model.db.StockInfoDb;
 import com.victor.midas.model.train.SingleParameterTrainResults;
 import com.victor.midas.model.vo.MidasBond;
+import com.victor.midas.model.vo.StockDayStats;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.TrainResult;
 import com.victor.midas.model.vo.score.StockScoreRecord;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -128,6 +130,13 @@ public class StocksEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public List<MidasBond> getNationalDebt() {
         return stocksService.queryNationalDebt();
+    }
+
+    @GET
+    @RequestMapping("/day-stats/{cob}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<StockDayStats> getStockScoreRecord(@PathVariable("cob") Integer cob) throws MidasException, ParseException {
+        return stocksService.queryDayStatsList(cob);
     }
 
 	@GET

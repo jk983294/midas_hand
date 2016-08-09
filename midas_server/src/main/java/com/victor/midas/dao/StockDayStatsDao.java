@@ -51,7 +51,7 @@ public class StockDayStatsDao {
 
     public List<StockDayStats> queryByCob(Integer cobFrom, Integer cobTo){
         Query query = new Query();
-        query.addCriteria(Criteria.where("_id").lte(cobTo).and("_id").gte(cobFrom));
+        query.addCriteria(Criteria.where("_id").lte(cobTo).gte(cobFrom));
         return mongoTemplate.find(query, StockDayStats.class, COLLECTION_NAME);
     }
 

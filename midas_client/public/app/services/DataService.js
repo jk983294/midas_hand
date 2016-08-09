@@ -19,6 +19,7 @@ var serviceUrls = (function(){
     var scoreUrl = isRemote ? urlBase + 'stocks/score' : 'app/data/score.json';
     var nationalDebtUrl = isRemote ? urlBase + 'stocks/national-debt' : 'app/data/nationalDebt.json';
     var scoreRangeUrl = isRemote ? urlBase + 'stocks/score/:cobFrom/:cobTo' : 'app/data/score.json';
+    var dayStatsRangeUrl = isRemote ? urlBase + 'stocks/day-stats/:cob' : 'app/data/dayStats.json';
     var conceptScoreUrl = isRemote ? urlBase + 'stocks/conceptScore' : 'app/data/conceptScore.json';
     var conceptScoreRangeUrl = isRemote ? urlBase + 'stocks/conceptScore/:cobFrom/:cobTo' : 'app/data/conceptScore.json';
     var singleTrainResultUrl = isRemote ? urlBase + 'stocks/singleTrainResult' : 'app/data/SingleTrainResults.json';
@@ -37,7 +38,8 @@ var serviceUrls = (function(){
         conceptScoreUrl : conceptScoreUrl,
         conceptScoreRangeUrl : conceptScoreRangeUrl,
         planUrl : planUrl,
-        singleTrainResultUrl : singleTrainResultUrl
+        singleTrainResultUrl : singleTrainResultUrl,
+        dayStatsRangeUrl : dayStatsRangeUrl
     };
 })();
 
@@ -183,8 +185,20 @@ dataService.factory('singleTrainResultQuery', ['$resource',
     function($resource){
         return $resource(
             serviceUrls.singleTrainResultUrl,
-            {  },
+            {},
             {'query': { method: 'GET'}}
+        );
+    }
+]);
+
+dataService.factory('DayStatsRangeQuery', ['$resource',
+    function($resource){
+        return $resource(
+            serviceUrls.dayStatsRangeUrl,
+            {
+                cob : -1
+            },
+            {'query': { method: 'GET' , isArray : true}}
         );
     }
 ]);
@@ -192,11 +206,11 @@ dataService.factory('singleTrainResultQuery', ['$resource',
 dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'StocksCmp',
     'TypeAheadTips', 'TypeAheadAction', 'TaskQuery', 'TrainResult', 'PlanQuery',
     'ScoreQuery', 'NationalDebtQuery', 'ScoreRangeQuery', 'ConceptScoreQuery',
-    'ConceptScoreRangeQuery', 'singleTrainResultQuery',
+    'ConceptScoreRangeQuery', 'singleTrainResultQuery', 'DayStatsRangeQuery',
     function($resource, StockInfos, StockDetail, StocksCmp,
              TypeAheadTips, TypeAheadAction, TaskQuery, TrainResult, PlanQuery,
              ScoreQuery, NationalDebtQuery, ScoreRangeQuery, ConceptScoreQuery,
-             ConceptScoreRangeQuery, singleTrainResultQuery){
+             ConceptScoreRangeQuery, singleTrainResultQuery, DayStatsRangeQuery){
         var stockInfos = {};
 
         // get future object
@@ -238,6 +252,12 @@ dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'Stoc
 
         function getScores(){
             return ScoreQuery.query();
+        }
+
+        function getDayStats(cob){
+            return DayStatsRangeQuery.query({
+                cob : cob
+            });
         }
 
         function getNationalDebt(){
@@ -288,6 +308,7 @@ dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'Stoc
             getConceptScores : getConceptScores,
             getConceptScoresRange : getConceptScoresRange,
             getSingleTrainResult : getSingleTrainResult,
+            getDayStats : getDayStats,
 
             dateFormats : dateFormats,
 

@@ -58,6 +58,17 @@ angular.module('formatFilters', []).filter('addPct', function() {
         if( status === "Finished"  ) return levels[2];
         else  return levels[0];
     };
+}).filter('keyValueList', function() {
+    function keyValue2Html(data){
+        return data.value + ' '+ format_number(data.key, 2);
+    };
+    return function(keyValueList) {
+        var result = keyValue2Html(keyValueList[0]);
+        for(var i = 1, len = keyValueList.length; i < len; ++i){
+            result += (', ' + keyValue2Html(keyValueList[i]));
+        }
+        return result;
+    };
 }).filter('scoreList', function() {
     function sortScoreRecord(a, b){
         return b.score - a.score;

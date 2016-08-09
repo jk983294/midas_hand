@@ -22,3 +22,4 @@ loadStock | score score_macd
 load_score score_macd
 score score_pcrs
 score score_macd
+calculate dsa

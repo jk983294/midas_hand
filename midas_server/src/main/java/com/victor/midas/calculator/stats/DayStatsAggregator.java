@@ -11,6 +11,7 @@ import com.victor.utilities.model.KeyValue;
 import com.victor.utilities.utils.ArrayHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,6 +20,8 @@ import java.util.List;
 public class DayStatsAggregator extends AggregationCalcBase {
 
     public static final String INDEX_NAME = "dsa";
+
+    public static final int wantedCount = 8;
 
     public DayStatsAggregator(CalcParameter parameter) {
         super(parameter);
@@ -53,8 +56,10 @@ public class DayStatsAggregator extends AggregationCalcBase {
                     name2index.put(stockName, index + 1);       //advanceIndex
                 }
             }
-            dayStats.upPct = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.upPct, 20));
-            dayStats.downPct = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.downPct, 20));
+            dayStats.upPct = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.upPct, wantedCount));
+            Collections.sort(dayStats.upPct);
+            dayStats.downPct = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.downPct, wantedCount));
+            Collections.sort(dayStats.downPct);
             dayStatses.add(dayStats);
         }
     }
