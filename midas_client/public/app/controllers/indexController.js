@@ -78,7 +78,7 @@ midasApp.controller('indexController', function ($scope, $routeParams, MidasData
     $scope.updateDatePick = function(){
         if( Utils.isNull(stocks) || Utils.isNull($scope.multipleChoice.availableIndexes)) return;
         $scope.plotData = getPlotData();
-    }
+    };
 
     function getPlotData(){
         return {

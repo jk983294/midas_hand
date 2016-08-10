@@ -27,6 +27,30 @@
             </tr>
         </table>
 
+        <div class="row">
+            <div class="col-md-3">
+                <p class="input-group">
+                    <input type="text" class="form-control" datepicker-popup="{{datepicker.format}}" ng-model="datepicker.dt1"
+                           is-open="datepicker.opened1" min-date="datepicker.minDay" max-date="datepicker.maxDay"
+                           datepicker-options="datepicker.dateOptions"
+                           ng-required="true" close-text="Close" ng-change="updateDatePick()" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="open1($event)">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </button>
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <table ng-table="dayStatsSelectedTableParams" template-pagination="custom/pager" class="table table-bordered table-hover">
+            <tr ng-repeat="dayStats1 in $data">
+                <td data-title="'COB'" filter="{ 'desp': 'text' }" sortable="'cob'">{{dayStats1.cob}}</td>
+                <td data-title="'Down Pct'" filter="{ 'date': 'text' }">{{dayStats1.downPct | keyValueList}}</td>
+                <td data-title="'Up Pct'" filter="{ 'start': 'text' }">{{dayStats1.upPct | keyValueList}}</td>
+            </tr>
+        </table>
+
         <script type="text/ng-template" id="custom/pager">
             <ul class="pager ng-cloak">
                 <li ng-repeat="page in pages"
