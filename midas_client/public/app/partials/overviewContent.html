@@ -21,9 +21,11 @@
 
         <table ng-table="dayStatsSampleTableParams" template-pagination="custom/pager" class="table table-bordered table-hover">
             <tr ng-repeat="dayStats in $data">
-                <td data-title="'COB'" filter="{ 'desp': 'text' }" sortable="'cob'">{{dayStats.cob}}</td>
-                <td data-title="'Down Pct'" filter="{ 'date': 'text' }">{{dayStats.downPct | keyValueList}}</td>
-                <td data-title="'Up Pct'" filter="{ 'start': 'text' }">{{dayStats.upPct | keyValueList}}</td>
+                <td data-title="'COB'" filter="{ 'cob': 'text' }" sortable="'cob'">{{dayStats.cob}}</td>
+                <td data-title="'Down Pct'">{{dayStats.downPct | keyValueList}}</td>
+                <td data-title="'Up Pct'">{{dayStats.upPct | keyValueList}}</td>
+                <td data-title="'Down Pct Time'">{{dayStats.downPctTime | keyValueList}}</td>
+                <td data-title="'Up Pct Time'">{{dayStats.upPctTime | keyValueList}}</td>
             </tr>
         </table>
 
@@ -46,8 +48,10 @@
         <table ng-table="dayStatsSelectedTableParams" template-pagination="custom/pager" class="table table-bordered table-hover">
             <tr ng-repeat="dayStats1 in $data">
                 <td data-title="'COB'" filter="{ 'desp': 'text' }" sortable="'cob'">{{dayStats1.cob}}</td>
-                <td data-title="'Down Pct'" filter="{ 'date': 'text' }">{{dayStats1.downPct | keyValueList}}</td>
-                <td data-title="'Up Pct'" filter="{ 'start': 'text' }">{{dayStats1.upPct | keyValueList}}</td>
+                <td data-title="'Down Pct'">{{dayStats1.downPct | keyValueList}}</td>
+                <td data-title="'Up Pct'">{{dayStats1.upPct | keyValueList}}</td>
+                <td data-title="'Down Pct Time'">{{dayStats1.downPctTime | keyValueList}}</td>
+                <td data-title="'Up Pct Time'">{{dayStats1.upPctTime | keyValueList}}</td>
             </tr>
         </table>
 

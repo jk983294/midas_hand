@@ -47,9 +47,13 @@ public class DayStatsScore extends IndexCalcBase {
             minIdx = mmPriceUtil10.getMinIndexInUpTrend(i);
             upTrendTime[i] = i - minIdx;
             upTrendPct[i] = MathStockUtil.calculateChangePct(mmPriceUtil10.getMinPrice(minIdx), end[i]);
+            // up trend more time, less height, more better
+            upTrendTime[i] = upTrendTime[i] / (0.01 + upTrendPct[i]);
             maxIdx = mmPriceUtil10.getMaxIndexInDownTrend(i);
             downTrendTime[i] = i - maxIdx;
             downTrendPct[i] = MathStockUtil.calculateChangePct(end[i], mmPriceUtil10.getMaxPrice(maxIdx));
+            // down trend more time, more depth, more better
+            downTrendTime[i] = downTrendTime[i] * (0.01 + downTrendPct[i]);
         }
     }
 

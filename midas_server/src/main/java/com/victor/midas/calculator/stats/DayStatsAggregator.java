@@ -53,6 +53,8 @@ public class DayStatsAggregator extends AggregationCalcBase {
                     downTrendTime = (double[])stock.queryCmpIndex("downTrendTime");
                     dayStats.upPct.add(new KeyValue<>(upTrendPct[index], stockName));
                     dayStats.downPct.add(new KeyValue<>(downTrendPct[index], stockName));
+                    dayStats.upPctTime.add(new KeyValue<>(upTrendTime[index], stockName));
+                    dayStats.downPctTime.add(new KeyValue<>(downTrendTime[index], stockName));
                     name2index.put(stockName, index + 1);       //advanceIndex
                 }
             }
@@ -60,6 +62,10 @@ public class DayStatsAggregator extends AggregationCalcBase {
             Collections.sort(dayStats.upPct);
             dayStats.downPct = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.downPct, wantedCount));
             Collections.sort(dayStats.downPct);
+            dayStats.upPctTime = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.upPctTime, wantedCount));
+            Collections.sort(dayStats.upPctTime);
+            dayStats.downPctTime = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.downPctTime, wantedCount));
+            Collections.sort(dayStats.downPctTime);
             dayStatses.add(dayStats);
         }
     }
