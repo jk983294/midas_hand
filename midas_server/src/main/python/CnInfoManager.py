@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 import PropertiesReader
-import urllib2
 import json
 import jsonpickle
 from datetime import date
@@ -8,13 +7,11 @@ import requests
 import time
 import os
 import urllib
-import re
-import codecs
 import zipfile
 import StringIO
 import MidasUtil as util
 import logging
-from random import randint
+import sys
 
 # GET http://www.cninfo.com.cn/information/dividend/szsme002320.html
 # GET http://www.cninfo.com.cn/information/issue/szsme002320.html
@@ -35,7 +32,6 @@ class StockData:
     def check_stock_metadata(self):
         if not self.orgId:
             try:
-                # time.sleep(randint(1, 15))
                 r = requests.post("http://www.cninfo.com.cn/cninfo-new/data/query",
                                   data={"keyWord": self.stock_code}, timeout=45, stream=False,
                                   headers={'Connection': 'close'})
@@ -70,7 +66,7 @@ class CnInfoManager:
         self.base_path = base_path
         self.maxYear = date.today().year
         self.deserialization_stock_data()
-        self.collect_disk_data()
+        self.do_cmd('collect_disk_data')
 
     def serialization_stock_data(self):
         util.serialization_object(self.base_path + 'stocks.json', self.stocks)
@@ -84,28 +80,49 @@ class CnInfoManager:
         folder = self.base_path + stock_code
         if not os.path.exists(folder):
             os.mkdir(folder)
-        return util.deserialization_object(folder + '/metadata.json')
+        else:
+            obj = util.deserialization_object(folder + '/metadata.json')
+            if obj is not None:     # use this one as benchmark
+                self.current_stock = obj
+                self.stocks[stock_code] = self.current_stock
 
-    def collect_disk_data(self):
+    def do_cmd(self, cmd_str):
         all_stock_codes = util.get_all_stock_codes()
         for code in all_stock_codes:
             if code is not None and not code.startswith('IDX'):
                 stock_code = code[2:]
-                obj = self.collect_data_from_stock_dir(stock_code)
-                if obj is not None:
-                    self.current_stock = obj
-                    self.stocks[stock_code] = self.current_stock
-                elif stock_code not in self.stocks:
+                if stock_code not in self.stocks:
                     self.current_stock = StockData(stock_code)
                     self.stocks[stock_code] = self.current_stock
                 else:
                     self.current_stock = self.stocks[stock_code]
-                if self.current_stock.check_stock_metadata():
-                    logging.info('save metadata for ' + self.current_stock.stock_code)
-                    util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
-                                              self.current_stock)
+
+                if cmd_str == 'download_price_zip':
+                    manager.download_price_zip()
+                elif cmd_str == 'collect_disk_data':
+                    self.collect_data_from_stock_dir(stock_code)
+                elif cmd_str == 'download_stock_metadata':
+                    self.download_stock_metadata()
+
+    def download_stock_metadata(self):
+        if self.current_stock.check_stock_metadata():
+            logging.info('save metadata for ' + self.current_stock.stock_code)
+            util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
+                                      self.current_stock)
 
     def set_current_stock(self, stock_code):
+        if stock_code not in self.stocks:
+            self.current_stock = None
+        else:
+            self.current_stock = self.stocks[stock_code]
+
+    def download_ipo_report(self, stock_code):
+        if stock_code not in self.stocks:
+            self.current_stock = None
+        else:
+            self.current_stock = self.stocks[stock_code]
+
+    def download_reports(self, stock_code):
         if stock_code not in self.stocks:
             self.current_stock = None
         else:
@@ -153,7 +170,12 @@ if __name__ == '__main__':
     logging.basicConfig(filename=log_path, level=logging.INFO)
     manager = CnInfoManager(cninfo_path)
     # manager.download_pdf('', '')
-    manager.set_current_stock(u'000001')
-    manager.download_price_zip()
+    # manager.set_current_stock(u'000001')
+
+    cmd_string = 'download_stock_metadata'
+    if len(sys.argv) > 1:
+        cmd_string = sys.argv[1]
+    print "do command ", cmd_string
+    manager.do_cmd(cmd_string)
     manager.serialization_stock_data()
     print 'download class info finished'
