@@ -8,6 +8,7 @@ import time
 import os
 import urllib
 import zipfile
+from zipfile import BadZipfile
 import StringIO
 import MidasUtil as util
 import logging
@@ -56,15 +57,19 @@ class CnInfoManager:
     dividend_url = base_url + 'information/dividend/szsme%s.html'
     announcement_url = base_url + 'information/dividend/szsme%s.html'
     price_url = base_url + 'cninfo-new/data/download'
+    price_path_pattern = '{code}/price/{market}_hq_{code}_{year}.csv'
     stocks = {}         # stock_code -> StockData
     current_stock = None
     allowed_domains = ["cninfo.com.cn"]
-    minYear = 2000
+    minYear = '2000'
     maxYear = None
+    fromYear = None
+    toYear = None
+    forceDownload = False   # True means download regardless existence, False won't download when exist
 
     def __init__(self, base_path):
         self.base_path = base_path
-        self.maxYear = date.today().year
+        self.maxYear = str(date.today().year)
         self.deserialization_stock_data()
         self.do_cmd('collect_disk_data')
 
@@ -128,21 +133,30 @@ class CnInfoManager:
         else:
             self.current_stock = self.stocks[stock_code]
 
+    def is_price_file_exist(self):
+        target_path = self.base_path + self.price_path_pattern.format(market=self.current_stock.market,
+                                                                      code=self.current_stock.stock_code,
+                                                                      year=self.toYear)
+        return os.path.exists(target_path)
+
     def download_price_zip(self):
+        if not self.forceDownload and self.is_price_file_exist():
+            logging.info(self.current_stock.stock_code + ' target year price file exist.')
+            return True
         try:
             r = requests.post(self.price_url, stream=True,
                               files={
                                   "market": (None, self.current_stock.market),
                                   "type": (None, "hq"),
                                   "code": (None, self.current_stock.stock_code),
-                                  "minYear": (None, "2000"),
-                                  "maxYear": (None, "2016"),
+                                  "minYear": (None, self.fromYear),
+                                  "maxYear": (None, self.toYear),
                                   "orgid": (None, self.current_stock.orgId)
                               })
             if r.status_code == requests.codes.ok:
                 z = zipfile.ZipFile(StringIO.StringIO(r.content))
                 z.extractall(path=self.base_path + '/' + self.current_stock.stock_code + '/price/')
-        except (IOError, RuntimeError):
+        except (IOError, RuntimeError, BadZipfile):
             logging.exception(self.current_stock.stock_code + ' save price zip file failed')
             return False
         return True
@@ -175,7 +189,16 @@ if __name__ == '__main__':
     cmd_string = 'download_stock_metadata'
     if len(sys.argv) > 1:
         cmd_string = sys.argv[1]
+        if cmd_string == 'download_price_zip':
+            if len(sys.argv) == 4:
+                manager.fromYear = sys.argv[2]
+                manager.toYear = sys.argv[3]
+            else:
+                manager.fromYear = manager.maxYear
+                manager.toYear = manager.maxYear
+                manager.forceDownload = True
     print "do command ", cmd_string
+    print 'argument list:', str(sys.argv)
     manager.do_cmd(cmd_string)
     manager.serialization_stock_data()
     print 'download class info finished'
