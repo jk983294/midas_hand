@@ -19,15 +19,50 @@ import sys
 # POST http://www.cninfo.com.cn/cninfo-new/announcement/query?stock=002320&searchkey=&category=category_ndbg_szsh%3Bcategory_bndbg_szsh%3Bcategory_yjdbg_szsh%3Bcategory_sjdbg_szsh%3B&pageNum=1&pageSize=30&column=szse_sme&tabName=fulltext&sortName=&sortType=&limit=&seDate=
 
 
+class ReportMetadata:
+    announcementId = None
+    announcementTitle = None
+    announcementTime = None
+    is_download = False
+
+    def __init__(self, announcement_id, announcement_title, announcement_time):
+        self.announcementId = announcement_id
+        self.announcementTitle = announcement_title
+        self.announcementTime = announcement_time
+
+
 class StockData:
     stock_code = ''
     plate = ''
     market = ''
     ipo_file = None
+    exchange_name = None
     orgId = ''
+    report_metadata = []
+    fromCob = None      # for report date track purpose
+    toCob = None        # for report date track purpose
 
     def __init__(self, stock_code):
         self.stock_code = stock_code
+        self.exchange_name = self.get_exchange_name()
+
+    def get_exchange_name(self):
+        if self.stock_code.startswith('6'):
+            return "sse"
+        elif self.stock_code.startswith('000'):
+            return "szse_main"
+        elif self.stock_code.startswith('002'):
+            return "szse_sme"
+        elif self.stock_code.startswith('3'):
+            return "szse_gem"
+
+    def is_report_metadata_need_download(self, from_cob, to_cob):
+        if self.fromCob is None or self.toCob is None:
+            return True
+        elif self.fromCob <= from_cob and self.toCob >= to_cob:
+            return False
+        else:
+            return True
 
     # true means something updated
     def check_stock_metadata(self):
@@ -56,8 +91,11 @@ class CnInfoManager:
     ipo_url = base_url + 'information/issue/szsme%s.html'
     dividend_url = base_url + 'information/dividend/szsme%s.html'
     announcement_url = base_url + 'information/dividend/szsme%s.html'
+    report_metadata_url = base_url + 'cninfo-new/announcement/query'
     price_url = base_url + 'cninfo-new/data/download'
     price_path_pattern = '{code}/price/{market}_hq_{code}_{year}.csv'
+    report_category = "category_ndbg_szsh;category_bndbg_szsh;category_yjdbg_szsh;category_sjdbg_szsh;"
+    ipo_category = "category_scgkfx_szsh;"
     stocks = {}         # stock_code -> StockData
     current_stock = None
     allowed_domains = ["cninfo.com.cn"]
@@ -65,6 +103,8 @@ class CnInfoManager:
     maxYear = None
     fromYear = None
     toYear = None
+    fromCob = None
+    toCob = None
     forceDownload = False   # True means download regardless existence, False won't download when exist
 
     def __init__(self, base_path):
@@ -108,12 +148,39 @@ class CnInfoManager:
                     self.collect_data_from_stock_dir(stock_code)
                 elif cmd_str == 'download_stock_metadata':
                     self.download_stock_metadata()
+                elif cmd_str == 'download_report_metadata':
+                    self.download_report_metadata()
+                elif cmd_str == 'fix_metadata':
+                    self.fix_metadata()
 
     def download_stock_metadata(self):
         if self.current_stock.check_stock_metadata():
             logging.info('save metadata for ' + self.current_stock.stock_code)
             util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
                                       self.current_stock)
+
+    def download_report_metadata(self):
+        if self.current_stock.is_report_metadata_need_download():
+            try:
+                r = requests.post(self.report_metadata_url, stream=True,
+                                  files={
+                                      "stock": (None, self.current_stock.stock_code),
+                                      "category": (None, self.report_category),
+                                      "pageNum": (None, "1"),
+                                      "pageSize": (None, "1000"),
+                                      "column": (None, self.current_stock.exchange_name),
+                                      "tabName": (None, "fulltext")
+                                  })
+                if r.status_code == requests.codes.ok:
+                    result = json.loads(r.content)
+                    if len(result) > 0:
+                        print result
+
+                    logging.info('save report metadata for ' + self.current_stock.stock_code)
+                    util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
+                                              self.current_stock)
+            except (IOError, RuntimeError):
+                logging.exception(self.current_stock.stock_code + ' save report metadata failed')
 
     def set_current_stock(self, stock_code):
         if stock_code not in self.stocks:
@@ -141,7 +208,7 @@ class CnInfoManager:
 
     def download_price_zip(self):
         if not self.forceDownload and self.is_price_file_exist():
-            logging.info(self.current_stock.stock_code + ' target year price file exist.')
+            # logging.info(self.current_stock.stock_code + ' target year price file exist.')
             return True
         try:
             r = requests.post(self.price_url, stream=True,
@@ -176,6 +243,12 @@ class CnInfoManager:
             return False
         return True
 
+    def fix_metadata(self):
+        self.current_stock.exchange_name = self.current_stock.get_exchange_name()
+        logging.info('fix metadata for ' + self.current_stock.stock_code)
+        util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
+                                  self.current_stock)
+
 if __name__ == '__main__':
     jsonpickle.set_encoder_options('simplejson', sort_keys=True, indent=4)
     my_props = PropertiesReader.get_properties()
@@ -197,6 +270,9 @@ if __name__ == '__main__':
                 manager.fromYear = manager.maxYear
                 manager.toYear = manager.maxYear
                 manager.forceDownload = True
+        elif cmd_string == 'download_report_metadata':
+            manager.fromCob = int(sys.argv[2])
+            manager.toCobCob = int(sys.argv[3])
     print "do command ", cmd_string
     print 'argument list:', str(sys.argv)
     manager.do_cmd(cmd_string)
