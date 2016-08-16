@@ -31,6 +31,37 @@ class ReportMetadata:
         self.announcementTime = announcement_time
 
 
+class ReportMetadataCategory:
+    fromCob = None          # for report date track purpose
+    toCob = None            # for report date track purpose
+    category = None
+    report_metadata = {}    # { report_id : ReportMetadata}
+
+    def __init__(self, category):
+        self.category = category
+
+    def update_effective_cob(self, from_cob, to_cob):
+        if self.fromCob is None or self.toCob is None:
+            self.fromCob = from_cob
+            self.toCob = to_cob
+        else:
+            if self.fromCob > from_cob:
+                self.fromCob = from_cob
+            if self.toCob < to_cob:
+                self.toCob = to_cob
+
+    def add_report_metadata(self, metadata):
+        self.report_metadata[metadata.announcementId] = metadata
+
+    def is_report_metadata_need_download(self, from_cob, to_cob):
+        if self.fromCob is None or self.toCob is None:
+            return True
+        elif self.fromCob <= from_cob and self.toCob >= to_cob:
+            return False
+        else:
+            return True
+
+
 class StockData:
     stock_code = ''
     plate = ''
@@ -38,13 +69,16 @@ class StockData:
     ipo_file = None
     exchange_name = None
     orgId = ''
-    report_metadata = []
-    fromCob = None      # for report date track purpose
-    toCob = None        # for report date track purpose
+    report_category = {}    # {category : ReportMetadataCategory}
 
     def __init__(self, stock_code):
         self.stock_code = stock_code
         self.exchange_name = self.get_exchange_name()
+
+    def get_report_metadata(self, metadata_category):
+        if metadata_category not in self.report_category:
+            self.report_category[metadata_category] = ReportMetadataCategory(metadata_category)
+        return self.report_category[metadata_category]
 
     def get_exchange_name(self):
         if self.stock_code.startswith('6'):
@@ -55,14 +89,6 @@ class StockData:
             return "szse_sme"
         elif self.stock_code.startswith('3'):
             return "szse_gem"
-
-    def is_report_metadata_need_download(self, from_cob, to_cob):
-        if self.fromCob is None or self.toCob is None:
-            return True
-        elif self.fromCob <= from_cob and self.toCob >= to_cob:
-            return False
-        else:
-            return True
 
     # true means something updated
     def check_stock_metadata(self):
@@ -94,10 +120,11 @@ class CnInfoManager:
     report_metadata_url = base_url + 'cninfo-new/announcement/query'
     price_url = base_url + 'cninfo-new/data/download'
     price_path_pattern = '{code}/price/{market}_hq_{code}_{year}.csv'
-    report_category = "category_ndbg_szsh;category_bndbg_szsh;category_yjdbg_szsh;category_sjdbg_szsh;"
+    report_categories = ["category_ndbg_szsh;", "category_bndbg_szsh;", "category_yjdbg_szsh;", "category_sjdbg_szsh;"]
     ipo_category = "category_scgkfx_szsh;"
     stocks = {}         # stock_code -> StockData
     current_stock = None
+    current_category_metadata = None
     allowed_domains = ["cninfo.com.cn"]
     minYear = '2000'
     maxYear = None
@@ -160,25 +187,46 @@ class CnInfoManager:
                                       self.current_stock)
 
     def download_report_metadata(self):
-        if self.current_stock.is_report_metadata_need_download():
-            try:
-                r = requests.post(self.report_metadata_url, stream=True,
-                                  files={
-                                      "stock": (None, self.current_stock.stock_code),
-                                      "category": (None, self.report_category),
-                                      "pageNum": (None, "1"),
-                                      "pageSize": (None, "1000"),
-                                      "column": (None, self.current_stock.exchange_name),
-                                      "tabName": (None, "fulltext")
-                                  })
-                if r.status_code == requests.codes.ok:
-                    result = json.loads(r.content)
-                    if len(result) > 0:
-                        print result
+        for category in self.report_categories:
+            self.download_report_metadata_category(category)
 
-                    logging.info('save report metadata for ' + self.current_stock.stock_code)
-                    util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
-                                              self.current_stock)
+    def download_report_metadata_category(self, category):
+        self.current_category_metadata = self.current_stock.get_report_metadata(category)
+        if self.current_category_metadata.is_report_metadata_need_download(self.fromCob, self.toCob):
+            try:
+                page_num = 1
+                while True:
+                    r = requests.post(self.report_metadata_url,
+                                      files={
+                                          "stock": (None, self.current_stock.stock_code),
+                                          "category": (None, category),
+                                          "pageNum": (None, str(page_num)),
+                                          "pageSize": (None, "30"),
+                                          "column": (None, self.current_stock.exchange_name),
+                                          "tabName": (None, "fulltext")
+                                      }, timeout=45, stream=False,
+                                      headers={'Connection': 'close'})
+                    if r.status_code == requests.codes.ok:
+                        result = json.loads(r.content)
+                        reports = result['announcements']
+                        for report in reports:
+                            if not util.contains(report['announcementTitle'], u"摘要"):
+                                report_metadata = ReportMetadata(report['announcementId'],
+                                                                 report['announcementTitle'],
+                                                                 report['announcementTime'])
+                                self.current_category_metadata.add_report_metadata(report_metadata)
+
+                        if result['hasMore']:
+                            page_num += 1
+                        else:
+                            break
+                    else:
+                        logging.error('download report metadata for ' + self.current_stock.stock_code)
+                        return None
+                self.current_category_metadata.update_effective_cob(self.fromCob, self.toCob)
+                logging.info('save report metadata for ' + self.current_stock.stock_code)
+                util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
+                                          self.current_stock)
             except (IOError, RuntimeError):
                 logging.exception(self.current_stock.stock_code + ' save report metadata failed')
 
@@ -211,7 +259,7 @@ class CnInfoManager:
             # logging.info(self.current_stock.stock_code + ' target year price file exist.')
             return True
         try:
-            r = requests.post(self.price_url, stream=True,
+            r = requests.post(self.price_url,
                               files={
                                   "market": (None, self.current_stock.market),
                                   "type": (None, "hq"),
@@ -219,7 +267,8 @@ class CnInfoManager:
                                   "minYear": (None, self.fromYear),
                                   "maxYear": (None, self.toYear),
                                   "orgid": (None, self.current_stock.orgId)
-                              })
+                              }, timeout=45, stream=False,
+                              headers={'Connection': 'close'})
             if r.status_code == requests.codes.ok:
                 z = zipfile.ZipFile(StringIO.StringIO(r.content))
                 z.extractall(path=self.base_path + '/' + self.current_stock.stock_code + '/price/')
@@ -256,8 +305,8 @@ if __name__ == '__main__':
     log_path = cninfo_path + "log/log_" + time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) + ".txt"
     logging.basicConfig(filename=log_path, level=logging.INFO)
     manager = CnInfoManager(cninfo_path)
-    # manager.download_pdf('', '')
     # manager.set_current_stock(u'000001')
+    # manager.download_report_metadata()
 
     cmd_string = 'download_stock_metadata'
     if len(sys.argv) > 1:

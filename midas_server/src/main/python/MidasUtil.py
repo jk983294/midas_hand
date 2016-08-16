@@ -43,6 +43,10 @@ def deserialization_object(serialization_path):
         return None
 
 
+def contains(source, pattern):
+    return pattern in source
+
+
 def get_all_stock_codes():
     client = MongoClient("mongodb://localhost:27017")
     db = client.prod
