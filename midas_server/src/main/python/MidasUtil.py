@@ -5,6 +5,7 @@ import os.path
 import pandas as pd
 from pymongo import MongoClient
 import jsonpickle
+import datetime
 
 
 def json_object_to_convert(obj):
@@ -29,7 +30,7 @@ def get_dataframe_from_file(file_path):
 
 def serialization_object(serialization_path, obj):
     f = open(serialization_path, 'w')
-    f.write(jsonpickle.encode(obj))
+    f.write(jsonpickle.encode(obj).encode('utf-8'))
     f.close()
 
 
@@ -43,6 +44,15 @@ def deserialization_object(serialization_path):
         return None
 
 
+def cob2date(cob):
+    date_time = datetime.datetime.strptime(str(cob), '%Y%m%d')
+    return date_time.strftime('%Y-%m-%d')
+
+
+def cob2date_range_string(cob1, cob2):
+    return "{cob1} ~ {cob2}".format(cob1=cob2date(cob1), cob2=cob2date(cob2))
+
+
 def contains(source, pattern):
     return pattern in source
 
@@ -54,6 +64,8 @@ def get_all_stock_codes():
     return names['stockNames']
 
 if __name__ == '__main__':
-    print get_all_stock_codes()
+    print cob2date(20120923)
+    print cob2date_range_string(20120923, 20160816)
+    # print get_all_stock_codes()
     print 'test finished'
 

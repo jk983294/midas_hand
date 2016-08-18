@@ -19,26 +19,20 @@ import sys
 # POST http://www.cninfo.com.cn/cninfo-new/announcement/query?stock=002320&searchkey=&category=category_ndbg_szsh%3Bcategory_bndbg_szsh%3Bcategory_yjdbg_szsh%3Bcategory_sjdbg_szsh%3B&pageNum=1&pageSize=30&column=szse_sme&tabName=fulltext&sortName=&sortType=&limit=&seDate=
 
 
-class ReportMetadata:
-    announcementId = None
-    announcementTitle = None
-    announcementTime = None
-    is_download = False
-
+class ReportMetadata(object):
     def __init__(self, announcement_id, announcement_title, announcement_time):
         self.announcementId = announcement_id
         self.announcementTitle = announcement_title
         self.announcementTime = announcement_time
+        self.is_download = False
 
 
-class ReportMetadataCategory:
-    fromCob = None          # for report date track purpose
-    toCob = None            # for report date track purpose
-    category = None
-    report_metadata = {}    # { report_id : ReportMetadata}
-
+class ReportMetadataCategory(object):
     def __init__(self, category):
         self.category = category
+        self.fromCob = None             # for report date track purpose
+        self.toCob = None               # for report date track purpose
+        self.report_metadata = {}       # { report_id : ReportMetadata}
 
     def update_effective_cob(self, from_cob, to_cob):
         if self.fromCob is None or self.toCob is None:
@@ -62,18 +56,15 @@ class ReportMetadataCategory:
             return True
 
 
-class StockData:
-    stock_code = ''
-    plate = ''
-    market = ''
-    ipo_file = None
-    exchange_name = None
-    orgId = ''
-    report_category = {}    # {category : ReportMetadataCategory}
-
+class StockData(object):
     def __init__(self, stock_code):
         self.stock_code = stock_code
         self.exchange_name = self.get_exchange_name()
+        self.plate = ''
+        self.market = ''
+        self.ipo_file = None
+        self.orgId = ''
+        self.report_category = {}       # {category : ReportMetadataCategory}
 
     def get_report_metadata(self, metadata_category):
         if metadata_category not in self.report_category:
@@ -203,7 +194,8 @@ class CnInfoManager:
                                           "pageNum": (None, str(page_num)),
                                           "pageSize": (None, "30"),
                                           "column": (None, self.current_stock.exchange_name),
-                                          "tabName": (None, "fulltext")
+                                          "tabName": (None, "fulltext"),
+                                          "seDate": (None, util.cob2date_range_string(self.fromCob, self.toCob)),
                                       }, timeout=45, stream=False,
                                       headers={'Connection': 'close'})
                     if r.status_code == requests.codes.ok:
@@ -223,6 +215,7 @@ class CnInfoManager:
                     else:
                         logging.error('download report metadata for ' + self.current_stock.stock_code)
                         return None
+
                 self.current_category_metadata.update_effective_cob(self.fromCob, self.toCob)
                 logging.info('save report metadata for ' + self.current_stock.stock_code)
                 util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
@@ -293,7 +286,7 @@ class CnInfoManager:
         return True
 
     def fix_metadata(self):
-        self.current_stock.exchange_name = self.current_stock.get_exchange_name()
+        self.current_stock.report_category = {}
         logging.info('fix metadata for ' + self.current_stock.stock_code)
         util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
                                   self.current_stock)
@@ -321,7 +314,7 @@ if __name__ == '__main__':
                 manager.forceDownload = True
         elif cmd_string == 'download_report_metadata':
             manager.fromCob = int(sys.argv[2])
-            manager.toCobCob = int(sys.argv[3])
+            manager.toCob = int(sys.argv[3])
     print "do command ", cmd_string
     print 'argument list:', str(sys.argv)
     manager.do_cmd(cmd_string)
