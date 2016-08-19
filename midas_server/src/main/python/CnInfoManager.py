@@ -45,7 +45,11 @@ class ReportMetadataCategory(object):
                 self.toCob = to_cob
 
     def add_report_metadata(self, metadata):
-        self.report_metadata[metadata.announcementId] = metadata
+        if metadata.announcementId not in self.report_metadata:
+            self.report_metadata[metadata.announcementId] = metadata
+            return True
+        else:
+            return False
 
     def is_report_metadata_need_download(self, from_cob, to_cob):
         if self.fromCob is None or self.toCob is None:
@@ -168,6 +172,8 @@ class CnInfoManager:
                     self.download_stock_metadata()
                 elif cmd_str == 'download_report_metadata':
                     self.download_report_metadata()
+                elif cmd_str == 'download_reports':
+                    self.download_reports()
                 elif cmd_str == 'fix_metadata':
                     self.fix_metadata()
 
@@ -182,6 +188,7 @@ class CnInfoManager:
             self.download_report_metadata_category(category)
 
     def download_report_metadata_category(self, category):
+        has_new_report_metadata = False
         self.current_category_metadata = self.current_stock.get_report_metadata(category)
         if self.current_category_metadata.is_report_metadata_need_download(self.fromCob, self.toCob):
             try:
@@ -206,7 +213,8 @@ class CnInfoManager:
                                 report_metadata = ReportMetadata(report['announcementId'],
                                                                  report['announcementTitle'],
                                                                  report['announcementTime'])
-                                self.current_category_metadata.add_report_metadata(report_metadata)
+                                if self.current_category_metadata.add_report_metadata(report_metadata):
+                                    has_new_report_metadata = True
 
                         if result['hasMore']:
                             page_num += 1
@@ -217,11 +225,16 @@ class CnInfoManager:
                         return None
 
                 self.current_category_metadata.update_effective_cob(self.fromCob, self.toCob)
-                logging.info('save report metadata for ' + self.current_stock.stock_code)
-                util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
-                                          self.current_stock)
+                if has_new_report_metadata:
+                    logging.info('save report metadata for ' + self.current_stock.stock_code)
+                    util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
+                                              self.current_stock)
             except (IOError, RuntimeError):
                 logging.exception(self.current_stock.stock_code + ' save report metadata failed')
+
+    def download_reports(self):
+        for category in self.report_categories:
+            self.current_category_metadata = self.current_stock.get_report_metadata(category)
 
     def set_current_stock(self, stock_code):
         if stock_code not in self.stocks:
