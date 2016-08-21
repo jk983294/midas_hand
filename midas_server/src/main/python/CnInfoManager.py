@@ -13,6 +13,7 @@ import StringIO
 import MidasUtil as util
 import logging
 import sys
+import datetime
 
 # GET http://www.cninfo.com.cn/information/dividend/szsme002320.html
 # GET http://www.cninfo.com.cn/information/issue/szsme002320.html
@@ -114,12 +115,15 @@ class CnInfoManager:
     announcement_url = base_url + 'information/dividend/szsme%s.html'
     report_metadata_url = base_url + 'cninfo-new/announcement/query'
     price_url = base_url + 'cninfo-new/data/download'
+    report_url = base_url + 'cninfo-new/disclosure/{market}/download/{id}'
     price_path_pattern = '{code}/price/{market}_hq_{code}_{year}.csv'
+    report_path_pattern = '{code}/reports/{id}_{cob}_{title}'
     report_categories = ["category_ndbg_szsh;", "category_bndbg_szsh;", "category_yjdbg_szsh;", "category_sjdbg_szsh;"]
     ipo_category = "category_scgkfx_szsh;"
     stocks = {}         # stock_code -> StockData
     current_stock = None
     current_category_metadata = None
+    current_report_metadata = None
     allowed_domains = ["cninfo.com.cn"]
     minYear = '2000'
     maxYear = None
@@ -233,8 +237,28 @@ class CnInfoManager:
                 logging.exception(self.current_stock.stock_code + ' save report metadata failed')
 
     def download_reports(self):
-        for category in self.report_categories:
-            self.current_category_metadata = self.current_stock.get_report_metadata(category)
+        for category in self.current_stock.report_category:
+            self.current_category_metadata = self.current_stock.report_category[category]
+            for report_id in self.current_category_metadata.report_metadata:
+                self.current_report_metadata = self.current_category_metadata.report_metadata[report_id]
+                if not self.current_report_metadata.is_download:
+                    self.download_report()
+
+    def download_report(self):
+        date_str = util.timestamp2date_str(self.current_report_metadata.announcementTime / 1000)
+        report_path = self.report_path_pattern.format(code=self.current_stock.stock_code,
+                                                      id=self.current_report_metadata.announcementId,
+                                                      cob=util.date_str2cob(date_str),
+                                                      title=self.current_report_metadata.announcementTitle)
+        target_path = self.base_path + report_path
+        if os.path.exists(target_path):
+            return False
+
+        target_url = self.report_url.format(code=self.current_stock.stock_code)
+        r = requests.get(target_url, stream=True, params={"announceTime": date_str})
+        with open(target_path, 'wb') as fd:
+            for chunk in r.iter_content(chunk_size=1024):
+                fd.write(chunk)
 
     def set_current_stock(self, stock_code):
         if stock_code not in self.stocks:
@@ -243,12 +267,6 @@ class CnInfoManager:
             self.current_stock = self.stocks[stock_code]
 
     def download_ipo_report(self, stock_code):
-        if stock_code not in self.stocks:
-            self.current_stock = None
-        else:
-            self.current_stock = self.stocks[stock_code]
-
-    def download_reports(self, stock_code):
         if stock_code not in self.stocks:
             self.current_stock = None
         else:

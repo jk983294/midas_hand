@@ -44,6 +44,16 @@ def deserialization_object(serialization_path):
         return None
 
 
+def date_str2cob(date_str):
+    date_time = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+    return int(date_time.strftime('%Y%m%d'))
+
+
+def timestamp2date_str(timestamp):
+    date_time = datetime.datetime.fromtimestamp(timestamp)
+    return date_time.strftime('%Y-%m-%d')
+
+
 def cob2date(cob):
     date_time = datetime.datetime.strptime(str(cob), '%Y%m%d')
     return date_time.strftime('%Y-%m-%d')
@@ -66,6 +76,8 @@ def get_all_stock_codes():
 if __name__ == '__main__':
     print cob2date(20120923)
     print cob2date_range_string(20120923, 20160816)
+    print timestamp2date_str(1430323200)
+    print date_str2cob('2015-04-30')
     # print get_all_stock_codes()
     print 'test finished'
 
