@@ -115,9 +115,9 @@ class CnInfoManager:
     announcement_url = base_url + 'information/dividend/szsme%s.html'
     report_metadata_url = base_url + 'cninfo-new/announcement/query'
     price_url = base_url + 'cninfo-new/data/download'
-    report_url = base_url + 'cninfo-new/disclosure/{market}/download/{id}'
+    report_url = base_url + 'cninfo-new/disclosure/{exchange_name}/download/{id}'
     price_path_pattern = '{code}/price/{market}_hq_{code}_{year}.csv'
-    report_path_pattern = '{code}/reports/{id}_{cob}_{title}'
+    report_path_pattern = u'{code}/reports/{id}_{cob}_{title}.pdf'
     report_categories = ["category_ndbg_szsh;", "category_bndbg_szsh;", "category_yjdbg_szsh;", "category_sjdbg_szsh;"]
     ipo_category = "category_scgkfx_szsh;"
     stocks = {}         # stock_code -> StockData
@@ -239,10 +239,16 @@ class CnInfoManager:
     def download_reports(self):
         for category in self.current_stock.report_category:
             self.current_category_metadata = self.current_stock.report_category[category]
+            has_new_report_downloaded = False
             for report_id in self.current_category_metadata.report_metadata:
                 self.current_report_metadata = self.current_category_metadata.report_metadata[report_id]
                 if not self.current_report_metadata.is_download:
-                    self.download_report()
+                    if self.download_report():
+                        has_new_report_downloaded = True
+            if has_new_report_downloaded:
+                logging.info('save report metadata for ' + self.current_stock.stock_code)
+                util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
+                                          self.current_stock)
 
     def download_report(self):
         date_str = util.timestamp2date_str(self.current_report_metadata.announcementTime / 1000)
@@ -251,14 +257,27 @@ class CnInfoManager:
                                                       cob=util.date_str2cob(date_str),
                                                       title=self.current_report_metadata.announcementTitle)
         target_path = self.base_path + report_path
-        if os.path.exists(target_path):
+        dir_path = os.path.dirname(target_path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+        elif os.path.exists(target_path):
+            self.current_report_metadata.is_download = True
             return False
 
-        target_url = self.report_url.format(code=self.current_stock.stock_code)
-        r = requests.get(target_url, stream=True, params={"announceTime": date_str})
-        with open(target_path, 'wb') as fd:
-            for chunk in r.iter_content(chunk_size=1024):
-                fd.write(chunk)
+        target_url = self.report_url.format(exchange_name=self.current_stock.exchange_name,
+                                            id=self.current_report_metadata.announcementId)
+        try:
+            r = requests.get(target_url, stream=True, params={"announceTime": date_str},
+                             headers={'Connection': 'close'})
+            with open(target_path, 'wb') as fd:
+                for chunk in r.iter_content(chunk_size=1024):
+                    fd.write(chunk)
+            self.current_report_metadata.is_download = True
+            return True
+        except (IOError, RuntimeError):
+            logging.exception(self.current_stock.stock_code + ' save report failed. ' +
+                              self.current_report_metadata.announcementTitle)
+            return False
 
     def set_current_stock(self, stock_code):
         if stock_code not in self.stocks:
