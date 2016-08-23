@@ -2,10 +2,12 @@
 import urllib2
 import json
 import os.path
+import os
 import pandas as pd
 from pymongo import MongoClient
 import jsonpickle
 import datetime
+import logging
 
 
 def json_object_to_convert(obj):
@@ -72,6 +74,14 @@ def get_all_stock_codes():
     db = client.prod
     names = db.StockMisc.find_one({"_id": "AllStockNames"})
     return names['stockNames']
+
+
+def delete_file(file_path):
+    try:
+        os.remove(file_path)
+        logging.info('delete file : ' + file_path)
+    except (IOError, RuntimeError):
+        logging.exception('delete file failed : ' + file_path)
 
 if __name__ == '__main__':
     print cob2date(20120923)

@@ -275,6 +275,7 @@ class CnInfoManager:
             self.current_report_metadata.is_download = True
             return True
         except (IOError, RuntimeError):
+            util.delete_file(target_path)
             logging.exception(self.current_stock.stock_code + ' save report failed. ' +
                               self.current_report_metadata.announcementTitle)
             return False
@@ -317,21 +318,6 @@ class CnInfoManager:
                 z.extractall(path=self.base_path + '/' + self.current_stock.stock_code + '/price/')
         except (IOError, RuntimeError, BadZipfile):
             logging.exception(self.current_stock.stock_code + ' save price zip file failed')
-            return False
-        return True
-
-    def download_pdf(self, store_location, download_url):
-        # pdfPath = self.base_path + '/' + file_name + '.pdf'
-        # realURL = self.homePage + "/" + download_url
-        # print pdfPath, realURL
-        try:
-            if not os.path.exists(store_location):
-                urllib.urlretrieve(download_url, store_location)
-            else:
-                logging.warning(store_location + ' is already exists, with url ' + download_url)
-                return False
-        except IOError:
-            logging.exception(store_location + ' save failed, with url ' + download_url)
             return False
         return True
 
