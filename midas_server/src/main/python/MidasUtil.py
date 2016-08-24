@@ -78,8 +78,9 @@ def get_all_stock_codes():
 
 def delete_file(file_path):
     try:
-        os.remove(file_path)
-        logging.info('delete file : ' + file_path)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            logging.info('delete file : ' + file_path)
     except (IOError, RuntimeError):
         logging.exception('delete file failed : ' + file_path)
 

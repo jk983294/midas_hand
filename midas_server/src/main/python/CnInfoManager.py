@@ -36,14 +36,19 @@ class ReportMetadataCategory(object):
         self.report_metadata = {}       # { report_id : ReportMetadata}
 
     def update_effective_cob(self, from_cob, to_cob):
+        has_changed = False
         if self.fromCob is None or self.toCob is None:
             self.fromCob = from_cob
             self.toCob = to_cob
+            has_changed = True
         else:
             if self.fromCob > from_cob:
                 self.fromCob = from_cob
+                has_changed = True
             if self.toCob < to_cob:
                 self.toCob = to_cob
+                has_changed = True
+        return has_changed
 
     def add_report_metadata(self, metadata):
         if metadata.announcementId not in self.report_metadata:
@@ -79,7 +84,7 @@ class StockData(object):
     def get_exchange_name(self):
         if self.stock_code.startswith('6'):
             return "sse"
-        elif self.stock_code.startswith('000'):
+        elif self.stock_code.startswith('000') or self.stock_code.startswith('001'):
             return "szse_main"
         elif self.stock_code.startswith('002'):
             return "szse_sme"
@@ -142,6 +147,11 @@ class CnInfoManager:
     def serialization_stock_data(self):
         util.serialization_object(self.base_path + 'stocks.json', self.stocks)
 
+    def serialization_single_stock_data(self):
+        logging.info('save metadata for ' + self.current_stock.stock_code)
+        util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
+                                  self.current_stock)
+
     def deserialization_stock_data(self):
         obj = util.deserialization_object(self.base_path + 'stocks.json')
         if obj is not None:
@@ -168,24 +178,25 @@ class CnInfoManager:
                 else:
                     self.current_stock = self.stocks[stock_code]
 
-                if cmd_str == 'download_price_zip':
-                    manager.download_price_zip()
-                elif cmd_str == 'collect_disk_data':
-                    self.collect_data_from_stock_dir(stock_code)
-                elif cmd_str == 'download_stock_metadata':
-                    self.download_stock_metadata()
-                elif cmd_str == 'download_report_metadata':
-                    self.download_report_metadata()
-                elif cmd_str == 'download_reports':
-                    self.download_reports()
-                elif cmd_str == 'fix_metadata':
-                    self.fix_metadata()
+                self.do_cmd_single(cmd_str, stock_code)
+
+    def do_cmd_single(self, cmd_str, stock_code):
+        if cmd_str == 'download_price_zip':
+            self.download_price_zip()
+        elif cmd_str == 'collect_disk_data':
+            self.collect_data_from_stock_dir(stock_code)
+        elif cmd_str == 'download_stock_metadata':
+            self.download_stock_metadata()
+        elif cmd_str == 'download_report_metadata':
+            self.download_report_metadata()
+        elif cmd_str == 'download_reports':
+            self.download_reports()
+        elif cmd_str == 'fix_metadata':
+            self.fix_metadata()
 
     def download_stock_metadata(self):
         if self.current_stock.check_stock_metadata():
-            logging.info('save metadata for ' + self.current_stock.stock_code)
-            util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
-                                      self.current_stock)
+            self.serialization_single_stock_data()
 
     def download_report_metadata(self):
         for category in self.report_categories:
@@ -227,13 +238,10 @@ class CnInfoManager:
                     else:
                         logging.error('download report metadata for ' + self.current_stock.stock_code)
                         return None
-
-                self.current_category_metadata.update_effective_cob(self.fromCob, self.toCob)
-                if has_new_report_metadata:
-                    logging.info('save report metadata for ' + self.current_stock.stock_code)
-                    util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
-                                              self.current_stock)
-            except (IOError, RuntimeError):
+                if self.current_category_metadata.update_effective_cob(self.fromCob, self.toCob) \
+                        or has_new_report_metadata:
+                    self.serialization_single_stock_data()
+            except (IOError, AttributeError, RuntimeError):
                 logging.exception(self.current_stock.stock_code + ' save report metadata failed')
 
     def download_reports(self):
@@ -246,9 +254,7 @@ class CnInfoManager:
                     if self.download_report():
                         has_new_report_downloaded = True
             if has_new_report_downloaded:
-                logging.info('save report metadata for ' + self.current_stock.stock_code)
-                util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
-                                          self.current_stock)
+                self.serialization_single_stock_data()
 
     def download_report(self):
         date_str = util.timestamp2date_str(self.current_report_metadata.announcementTime / 1000)
@@ -262,7 +268,7 @@ class CnInfoManager:
             os.makedirs(dir_path)
         elif os.path.exists(target_path):
             self.current_report_metadata.is_download = True
-            return False
+            return True
 
         target_url = self.report_url.format(exchange_name=self.current_stock.exchange_name,
                                             id=self.current_report_metadata.announcementId)
@@ -275,9 +281,9 @@ class CnInfoManager:
             self.current_report_metadata.is_download = True
             return True
         except (IOError, RuntimeError):
-            util.delete_file(target_path)
             logging.exception(self.current_stock.stock_code + ' save report failed. ' +
                               self.current_report_metadata.announcementTitle)
+            util.delete_file(target_path)
             return False
 
     def set_current_stock(self, stock_code):
@@ -322,10 +328,9 @@ class CnInfoManager:
         return True
 
     def fix_metadata(self):
-        self.current_stock.report_category = {}
-        logging.info('fix metadata for ' + self.current_stock.stock_code)
-        util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
-                                  self.current_stock)
+        if self.current_stock.exchange_name is None:
+            self.current_stock.exchange_name = self.current_stock.get_exchange_name()
+            self.serialization_single_stock_data()
 
 if __name__ == '__main__':
     jsonpickle.set_encoder_options('simplejson', sort_keys=True, indent=4)
@@ -334,6 +339,8 @@ if __name__ == '__main__':
     log_path = cninfo_path + "log/log_" + time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) + ".txt"
     logging.basicConfig(filename=log_path, level=logging.INFO)
     manager = CnInfoManager(cninfo_path)
+
+    # single stock function debug purpose
     # manager.set_current_stock(u'000001')
     # manager.download_report_metadata()
 
