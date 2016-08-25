@@ -8,6 +8,7 @@ from pymongo import MongoClient
 import jsonpickle
 import datetime
 import logging
+import PyPDF2
 
 
 def json_object_to_convert(obj):
@@ -67,6 +68,20 @@ def cob2date_range_string(cob1, cob2):
 
 def contains(source, pattern):
     return pattern in source
+
+
+def array_contains(source, patterns):
+    for pattern in patterns:
+        if pattern in source:
+            return True
+    return False
+
+
+def is_valid_pdf(path):
+    try:
+        PyPDF2.PdfFileReader(open(path, "rb"))
+    except PyPDF2.utils.PdfReadError:
+        print("invalid PDF file")
 
 
 def get_all_stock_codes():

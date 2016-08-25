@@ -6,14 +6,12 @@ from datetime import date
 import requests
 import time
 import os
-import urllib
 import zipfile
 from zipfile import BadZipfile
 import StringIO
 import MidasUtil as util
 import logging
 import sys
-import datetime
 
 # GET http://www.cninfo.com.cn/information/dividend/szsme002320.html
 # GET http://www.cninfo.com.cn/information/issue/szsme002320.html
@@ -124,6 +122,7 @@ class CnInfoManager:
     price_path_pattern = '{code}/price/{market}_hq_{code}_{year}.csv'
     report_path_pattern = u'{code}/reports/{id}_{cob}_{title}.pdf'
     report_categories = ["category_ndbg_szsh;", "category_bndbg_szsh;", "category_yjdbg_szsh;", "category_sjdbg_szsh;"]
+    report_ignore_patterns = [u"摘要", u"H股"]
     ipo_category = "category_scgkfx_szsh;"
     stocks = {}         # stock_code -> StockData
     current_stock = None
@@ -148,7 +147,7 @@ class CnInfoManager:
         util.serialization_object(self.base_path + 'stocks.json', self.stocks)
 
     def serialization_single_stock_data(self):
-        logging.info('save metadata for ' + self.current_stock.stock_code)
+        logging.warn('save metadata for ' + self.current_stock.stock_code)
         util.serialization_object(self.base_path + self.current_stock.stock_code + '/metadata.json',
                                   self.current_stock)
 
@@ -191,6 +190,8 @@ class CnInfoManager:
             self.download_report_metadata()
         elif cmd_str == 'download_reports':
             self.download_reports()
+        elif cmd_str == 'check_report_integrity':
+            self.check_report_integrity()
         elif cmd_str == 'fix_metadata':
             self.fix_metadata()
 
@@ -224,7 +225,7 @@ class CnInfoManager:
                         result = json.loads(r.content)
                         reports = result['announcements']
                         for report in reports:
-                            if not util.contains(report['announcementTitle'], u"摘要"):
+                            if not util.array_contains(report['announcementTitle'], self.report_ignore_patterns):
                                 report_metadata = ReportMetadata(report['announcementId'],
                                                                  report['announcementTitle'],
                                                                  report['announcementTime'])
@@ -262,7 +263,8 @@ class CnInfoManager:
                                                       id=self.current_report_metadata.announcementId,
                                                       cob=util.date_str2cob(date_str),
                                                       title=self.current_report_metadata.announcementTitle)
-        target_path = self.base_path + report_path
+
+        target_path = self.base_path + report_path.replace("*", "")
         dir_path = os.path.dirname(target_path)
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
@@ -273,6 +275,7 @@ class CnInfoManager:
         target_url = self.report_url.format(exchange_name=self.current_stock.exchange_name,
                                             id=self.current_report_metadata.announcementId)
         try:
+            logging.warn("download " + target_path)
             r = requests.get(target_url, stream=True, params={"announceTime": date_str},
                              headers={'Connection': 'close'})
             with open(target_path, 'wb') as fd:
@@ -285,6 +288,18 @@ class CnInfoManager:
                               self.current_report_metadata.announcementTitle)
             util.delete_file(target_path)
             return False
+
+    def check_report_integrity(self):
+        for category in self.current_stock.report_category:
+            self.current_category_metadata = self.current_stock.report_category[category]
+            has_new_report_downloaded = False
+            for report_id in self.current_category_metadata.report_metadata:
+                self.current_report_metadata = self.current_category_metadata.report_metadata[report_id]
+                if self.current_report_metadata.is_download:
+                    if self.download_report():
+                        has_new_report_downloaded = True
+            if has_new_report_downloaded:
+                self.serialization_single_stock_data()
 
     def set_current_stock(self, stock_code):
         if stock_code not in self.stocks:
@@ -306,7 +321,7 @@ class CnInfoManager:
 
     def download_price_zip(self):
         if not self.forceDownload and self.is_price_file_exist():
-            # logging.info(self.current_stock.stock_code + ' target year price file exist.')
+            # logging.warn(self.current_stock.stock_code + ' target year price file exist.')
             return True
         try:
             r = requests.post(self.price_url,
@@ -337,7 +352,7 @@ if __name__ == '__main__':
     my_props = PropertiesReader.get_properties()
     cninfo_path = my_props['MktDataLoader.Fundamental.cninfo']
     log_path = cninfo_path + "log/log_" + time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) + ".txt"
-    logging.basicConfig(filename=log_path, level=logging.INFO)
+    logging.basicConfig(filename=log_path, level=logging.WARN)
     manager = CnInfoManager(cninfo_path)
 
     # single stock function debug purpose
