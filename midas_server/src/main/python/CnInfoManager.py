@@ -258,13 +258,7 @@ class CnInfoManager:
                 self.serialization_single_stock_data()
 
     def download_report(self):
-        date_str = util.timestamp2date_str(self.current_report_metadata.announcementTime / 1000)
-        report_path = self.report_path_pattern.format(code=self.current_stock.stock_code,
-                                                      id=self.current_report_metadata.announcementId,
-                                                      cob=util.date_str2cob(date_str),
-                                                      title=self.current_report_metadata.announcementTitle)
-
-        target_path = self.base_path + report_path.replace("*", "")
+        date_str, target_path, target_url = self.get_report_path()
         dir_path = os.path.dirname(target_path)
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
@@ -272,8 +266,6 @@ class CnInfoManager:
             self.current_report_metadata.is_download = True
             return True
 
-        target_url = self.report_url.format(exchange_name=self.current_stock.exchange_name,
-                                            id=self.current_report_metadata.announcementId)
         try:
             logging.warn("download " + target_path)
             r = requests.get(target_url, stream=True, params={"announceTime": date_str},
@@ -292,14 +284,31 @@ class CnInfoManager:
     def check_report_integrity(self):
         for category in self.current_stock.report_category:
             self.current_category_metadata = self.current_stock.report_category[category]
-            has_new_report_downloaded = False
+            has_integrity_checked = False
+            to_delete_report_id = []
             for report_id in self.current_category_metadata.report_metadata:
                 self.current_report_metadata = self.current_category_metadata.report_metadata[report_id]
-                if self.current_report_metadata.is_download:
-                    if self.download_report():
-                        has_new_report_downloaded = True
-            if has_new_report_downloaded:
+                date_str, target_path, target_url = self.get_report_path()
+                if util.array_contains(self.current_report_metadata.announcementTitle, self.report_ignore_patterns):
+                    if self.current_report_metadata.is_download:
+                        util.delete_file(target_path)
+                    to_delete_report_id.append(report_id)
+                elif self.current_report_metadata.is_download and util.is_invalid_pdf(target_path):
+                    util.delete_file(target_path)
+                    self.current_report_metadata.is_download = False
+            if has_integrity_checked:
                 self.serialization_single_stock_data()
+
+    def get_report_path(self):
+        date_str = util.timestamp2date_str(self.current_report_metadata.announcementTime / 1000)
+        report_path = self.report_path_pattern.format(code=self.current_stock.stock_code,
+                                                      id=self.current_report_metadata.announcementId,
+                                                      cob=util.date_str2cob(date_str),
+                                                      title=self.current_report_metadata.announcementTitle)
+        target_path = self.base_path + report_path.replace("*", "")
+        target_url = self.report_url.format(exchange_name=self.current_stock.exchange_name,
+                                            id=self.current_report_metadata.announcementId)
+        return date_str, target_path, target_url
 
     def set_current_stock(self, stock_code):
         if stock_code not in self.stocks:

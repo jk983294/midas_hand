@@ -77,11 +77,12 @@ def array_contains(source, patterns):
     return False
 
 
-def is_valid_pdf(path):
+def is_invalid_pdf(path):
     try:
         PyPDF2.PdfFileReader(open(path, "rb"))
+        return False
     except PyPDF2.utils.PdfReadError:
-        print("invalid PDF file")
+        return True
 
 
 def get_all_stock_codes():
