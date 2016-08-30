@@ -15,7 +15,6 @@ import sys
 
 # GET http://www.cninfo.com.cn/information/dividend/szsme002320.html
 # GET http://www.cninfo.com.cn/information/issue/szsme002320.html
-# POST http://www.cninfo.com.cn/cninfo-new/announcement/query?stock=002320&searchkey=&category=category_ndbg_szsh%3Bcategory_bndbg_szsh%3Bcategory_yjdbg_szsh%3Bcategory_sjdbg_szsh%3B&pageNum=1&pageSize=30&column=szse_sme&tabName=fulltext&sortName=&sortType=&limit=&seDate=
 
 
 class ReportMetadata(object):
@@ -268,8 +267,7 @@ class CnInfoManager:
 
         try:
             logging.warn("download " + target_path)
-            r = requests.get(target_url, stream=True, params={"announceTime": date_str},
-                             headers={'Connection': 'close'})
+            r = requests.get(target_url, stream=True, params={"announceTime": date_str})
             with open(target_path, 'wb') as fd:
                 for chunk in r.iter_content(chunk_size=1024):
                     fd.write(chunk)
@@ -285,17 +283,25 @@ class CnInfoManager:
         for category in self.current_stock.report_category:
             self.current_category_metadata = self.current_stock.report_category[category]
             has_integrity_checked = False
-            to_delete_report_id = []
+            to_delete_report_ids = []
             for report_id in self.current_category_metadata.report_metadata:
                 self.current_report_metadata = self.current_category_metadata.report_metadata[report_id]
                 date_str, target_path, target_url = self.get_report_path()
                 if util.array_contains(self.current_report_metadata.announcementTitle, self.report_ignore_patterns):
                     if self.current_report_metadata.is_download:
                         util.delete_file(target_path)
-                    to_delete_report_id.append(report_id)
+                    to_delete_report_ids.append(report_id)
                 elif self.current_report_metadata.is_download and util.is_invalid_pdf(target_path):
                     util.delete_file(target_path)
                     self.current_report_metadata.is_download = False
+
+            if len(to_delete_report_ids) > 0:
+                has_integrity_checked = True
+                for to_delete_report_id in to_delete_report_ids:
+                    logging.warn(self.current_stock.stock_code + " delete report " +
+                                 self.current_category_metadata.report_metadata[to_delete_report_id].announcementTitle)
+                    del self.current_category_metadata.report_metadata[to_delete_report_id]
+
             if has_integrity_checked:
                 self.serialization_single_stock_data()
 

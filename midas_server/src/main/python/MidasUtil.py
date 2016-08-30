@@ -4,6 +4,7 @@ import json
 import os.path
 import os
 import pandas as pd
+from PyPDF2.utils import PdfReadError
 from pymongo import MongoClient
 import jsonpickle
 import datetime
@@ -81,7 +82,8 @@ def is_invalid_pdf(path):
     try:
         PyPDF2.PdfFileReader(open(path, "rb"))
         return False
-    except PyPDF2.utils.PdfReadError:
+    except (IOError, PdfReadError):
+        logging.exception('invalid pdf : ' + path)
         return True
 
 
@@ -96,7 +98,7 @@ def delete_file(file_path):
     try:
         if os.path.exists(file_path):
             os.remove(file_path)
-            logging.info('delete file : ' + file_path)
+            logging.warn('delete file : ' + file_path)
     except (IOError, RuntimeError):
         logging.exception('delete file failed : ' + file_path)
 
