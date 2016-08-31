@@ -79,8 +79,13 @@ def array_contains(source, patterns):
 
 
 def is_invalid_pdf(path):
+    if not os.path.exists(path):
+        logging.warn('not exist file : ' + path)
+        return True
     try:
-        PyPDF2.PdfFileReader(open(path, "rb"))
+        fd = open(path, 'rb')
+        PyPDF2.PdfFileReader(fd)
+        fd.close()
         return False
     except (IOError, PdfReadError):
         logging.exception('invalid pdf : ' + path)

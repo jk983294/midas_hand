@@ -121,7 +121,7 @@ class CnInfoManager:
     price_path_pattern = '{code}/price/{market}_hq_{code}_{year}.csv'
     report_path_pattern = u'{code}/reports/{id}_{cob}_{title}.pdf'
     report_categories = ["category_ndbg_szsh;", "category_bndbg_szsh;", "category_yjdbg_szsh;", "category_sjdbg_szsh;"]
-    report_ignore_patterns = [u"摘要", u"H股"]
+    report_ignore_patterns = [u"摘要", u"H股", u"英文版"]
     ipo_category = "category_scgkfx_szsh;"
     stocks = {}         # stock_code -> StockData
     current_stock = None
@@ -292,8 +292,9 @@ class CnInfoManager:
                         util.delete_file(target_path)
                     to_delete_report_ids.append(report_id)
                 elif self.current_report_metadata.is_download and util.is_invalid_pdf(target_path):
-                    util.delete_file(target_path)
+                    has_integrity_checked = True
                     self.current_report_metadata.is_download = False
+                    util.delete_file(target_path)
 
             if len(to_delete_report_ids) > 0:
                 has_integrity_checked = True
