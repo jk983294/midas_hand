@@ -245,6 +245,10 @@ class CnInfoManager:
                 logging.exception(self.current_stock.stock_code + ' save report metadata failed')
 
     def download_reports(self):
+        dir_path = self.base_path + '/' + self.current_stock.stock_code + '/reports/'
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
         for category in self.current_stock.report_category:
             self.current_category_metadata = self.current_stock.report_category[category]
             has_new_report_downloaded = False
@@ -258,10 +262,7 @@ class CnInfoManager:
 
     def download_report(self):
         date_str, target_path, target_url = self.get_report_path()
-        dir_path = os.path.dirname(target_path)
-        if not os.path.exists(dir_path):
-            os.makedirs(dir_path)
-        elif os.path.exists(target_path):
+        if os.path.exists(target_path):
             self.current_report_metadata.is_download = True
             return True
 
