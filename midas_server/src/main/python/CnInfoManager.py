@@ -23,6 +23,7 @@ class ReportMetadata(object):
         self.announcementTitle = announcement_title
         self.announcementTime = announcement_time
         self.is_download = False
+        self.is_valid = False
 
 
 class ReportMetadataCategory(object):
@@ -292,10 +293,16 @@ class CnInfoManager:
                     if self.current_report_metadata.is_download:
                         util.delete_file(target_path)
                     to_delete_report_ids.append(report_id)
-                elif self.current_report_metadata.is_download and util.is_invalid_pdf(target_path):
-                    has_integrity_checked = True
-                    self.current_report_metadata.is_download = False
-                    util.delete_file(target_path)
+                elif self.current_report_metadata.is_download:
+                    if not self.current_report_metadata.is_valid:
+                        if util.is_invalid_pdf(target_path):
+                            has_integrity_checked = True
+                            self.current_report_metadata.is_download = False
+                            self.current_report_metadata.is_valid = False
+                            util.delete_file(target_path)
+                        else:
+                            has_integrity_checked = True
+                            self.current_report_metadata.is_valid = True
 
             if len(to_delete_report_ids) > 0:
                 has_integrity_checked = True
@@ -360,6 +367,14 @@ class CnInfoManager:
         return True
 
     def fix_metadata(self):
+        for category in self.current_stock.report_category:
+            self.current_category_metadata = self.current_stock.report_category[category]
+            for report_id in self.current_category_metadata.report_metadata:
+                self.current_report_metadata = self.current_category_metadata.report_metadata[report_id]
+                self.current_report_metadata.is_valid = False
+
+        self.serialization_single_stock_data()
+
         if self.current_stock.exchange_name is None:
             self.current_stock.exchange_name = self.current_stock.get_exchange_name()
             self.serialization_single_stock_data()
