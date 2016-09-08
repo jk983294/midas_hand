@@ -87,7 +87,7 @@ def is_invalid_pdf(path):
         PyPDF2.PdfFileReader(fd)
         fd.close()
         return False
-    except (IOError, PdfReadError):
+    except (IOError, PdfReadError, ValueError):
         logging.exception('invalid pdf : ' + path)
         return True
 
