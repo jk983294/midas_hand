@@ -271,7 +271,7 @@ class CnInfoManager:
             logging.warn("download " + target_path)
             r = requests.get(target_url, stream=True, params={"announceTime": date_str})
             with open(target_path, 'wb') as fd:
-                for chunk in r.iter_content(chunk_size=1024):
+                for chunk in r.iter_content(chunk_size=16384):
                     fd.write(chunk)
             self.current_report_metadata.is_download = True
             return True
