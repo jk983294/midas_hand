@@ -19,6 +19,7 @@ public enum CmdType {
     crawl,
     load_score,
     chan,
+    reports,
 
 
     bad_cmd

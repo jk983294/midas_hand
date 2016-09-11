@@ -306,6 +306,10 @@ public class RegExpHelper {
         return null;
     }
 
+    public static boolean isMatch(String str, Pattern pattern){
+        return str != null && pattern.matcher(str).matches();
+    }
+
     /**
      * remove space and ,
      * @param str

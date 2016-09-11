@@ -47,10 +47,10 @@ public class StocksEndpoint {
     public List<StockVo> getTwoStocks(@PathVariable("names") String names) {
         List<StockVo> array = new ArrayList<>();
         if(names != null) {
-            String[] stringlets = names.split(" ");
-            for (int i = 0; i < stringlets.length; i++) {
-                if(StringPatternAware.isStockCode(stringlets[i])){
-                    array.add(stocksService.queryStock(stringlets[i]));
+            String[] stringLets = names.split(" ");
+            for (int i = 0; i < stringLets.length; i++) {
+                if(StringPatternAware.isStockCode(stringLets[i])){
+                    array.add(stocksService.queryStock(stringLets[i]));
                 }
             }
         }

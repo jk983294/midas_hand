@@ -41,6 +41,7 @@ public class TaskMgr {
             case dayStats :  callable = (DeleteStockCollTask) context.getBean("deleteStockCollTask"); break;
             case create : callable = (CreateCollectionTask) context.getBean("createCollectionTask"); break;
             case load : callable = (MktDataTask) context.getBean("mktDataTask"); break;
+            case reports : callable = (ParseReportTask) context.getBean("parseReportTask"); break;
             case calculate : callable = (CalculateTask) context.getBean("calculateTask"); break;
             case trainSingle :
             case trainStrategy : callable = (TrainTask) context.getBean("trainTask");break;
