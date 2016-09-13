@@ -15,6 +15,20 @@ import sys
 
 # GET http://www.cninfo.com.cn/information/dividend/szsme002320.html
 # GET http://www.cninfo.com.cn/information/issue/szsme002320.html
+#查市盈率的：
+#http://biz.finance.sina.com.cn/company/compare/img_syl_compare.php?stock_code=600036,&limit=2400
+#600036改成想查的股票代码 2400改成任何你想查看的多少天 
+
+#查市净率的：
+#http://biz.finance.sina.com.cn/company/compare/img_sjl_compare.php?stock_code=600036,&limit=2400
+#600036改成想查的股票代码 2400改成任何你想查看的多少天 
+
+#如果同时查询多支个股可以在股票代码后面加逗号和股票代码就行了
+#比如：http://biz.finance.sina.com.cn/company/compare/img_syl_compare.php?stock_code=000002,000001,600030&limit=1500
+
+#理性人网站上提供了个股的历史PE、PB、PS数据。
+#例如国药一致，https://www.rational-person.com/analytics/company#/000028/detail/chart
+
 
 
 class ReportMetadata(object):
