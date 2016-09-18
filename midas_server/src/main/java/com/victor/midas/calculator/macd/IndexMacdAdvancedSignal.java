@@ -10,7 +10,6 @@ import com.victor.midas.calculator.macd.model.MacdSection;
 import com.victor.midas.calculator.macd.model.MacdSectionStatus;
 import com.victor.midas.calculator.macd.model.MacdSectionType;
 import com.victor.midas.calculator.macd.model.MacdSectionUtil;
-import com.victor.midas.calculator.util.LineBreakoutUtil;
 import com.victor.midas.model.common.StockState;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.common.MidasTrainOptions;
@@ -18,9 +17,6 @@ import com.victor.midas.util.MidasException;
 import com.victor.utilities.math.stats.ma.MaBase;
 import com.victor.utilities.math.stats.ma.SMA;
 import com.victor.utilities.utils.MathHelper;
-import org.apache.commons.collections.CollectionUtils;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,7 +32,7 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
     private double[] score;
     private double[] vMa5, pMa60;
 
-    private List<Integer> idxes;
+    private List<Integer> points;
     private List<MacdSection> sections;
     private List<MacdSection> greenSections;
     private List<MacdSection> redSections;
@@ -72,7 +68,7 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
         greenSections = macdSectionUtil.greenSections;
         redSections = macdSectionUtil.redSections;
         overrideGreenSections = macdSectionUtil.overrideGreenSections;
-        idxes = macdSectionUtil.idxes;
+        points = macdSectionUtil.points;
 
         lines = new IndexLines();
 
@@ -85,26 +81,19 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
             macdSectionUtil.update(i);
             lastSection = macdSectionUtil.lastSection;
 
-            if(state == StockState.HoldMoney){
-//                if(lastLine1 != null && lastLine2 != null && lastLine3 != null
-//                        && lastSection.shouldHoldByStatus()
-//                        && lastLine1.cnt == 2 && lastLine2.cnt < 7
-//                        && MathHelper.isLessAbs(lastLine2.point2.value, lastLine2.point1.value, singleDouble)
-//                        && lastLine1.point1.value > 0 && lastLine3.isLineCrossZeroUp()){
-//                    score[i] = 1d;
-//                    state = StockState.HoldStock;
-//                }
+            if(state == StockState.HoldMoney && lastSection.signalType == SignalType.buy){
                 if(lastSection.type == MacdSectionType.green){
-                    if(lastSection.signalType == SignalType.buy && greenSections.size() > 1){
+                    if(greenSections.size() > 1){
                         //macdSectionUtil.updateGreenSectionDivergence(greenSections);
                         MacdSection preGreenSection = greenSections.get(greenSections.size() - 2);
-                        if(idxes.size() >= 4 && lastSection.status == MacdSectionStatus.decay2 && MathHelper.isMoreAbs(preGreenSection.limit1, lastSection.limit1, 0.65)){
+                        if(points.size() >= 4 && lastSection.status == MacdSectionStatus.decay2
+                                && MathHelper.isMoreAbs(preGreenSection.limit1, lastSection.limit1, 0.65)){
                             score[i] = 6d;
                             state = StockState.HoldStock;
                         }
                     }
-                    if(lastSection.status == MacdSectionStatus.decay2 && lastSection.signalType == SignalType.buy
-                            && end[i] < end[lastSection.limitIndex1] && Math.abs(macdBar[i]) < Math.abs(macdBar[lastSection.limitIndex1]) * 0.105){
+                    if(lastSection.status == MacdSectionStatus.decay2 && end[i] < end[lastSection.limitIndex1]
+                            && Math.abs(macdBar[i]) < Math.abs(macdBar[lastSection.limitIndex1]) * 0.105){
                         score[i] = 7d;
                         state = StockState.HoldStock;
                     }
@@ -114,8 +103,7 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
                     }
                 } else if(lastSection.type == MacdSectionType.red && greenSections.size() > 0 && redSections.size() > 1){
                     MacdSection lastGreen = greenSections.get(greenSections.size() - 1);
-                    MacdSection lastRed = redSections.get(redSections.size() - 2);
-                    if(lastSection.signalType == SignalType.buy && lastSection.status == MacdSectionStatus.grow2
+                    if(lastSection.status == MacdSectionStatus.grow2
                             && MathHelper.isLessAbs(lastSection.limit1, lastGreen.limit1, 0.45d)
                             && min[lastSection.limitIndex2] < lastGreen.priceLimit
                             && changePct[lastSection.limitIndex2] < -0.06d){  // the first time when price still big fall, but bar arise
