@@ -38,7 +38,6 @@ public class TaskMgr {
         TaskBase callable = null;
     	switch(cmdType){
             case delete :  callable = (DeleteStockCollTask) context.getBean("deleteStockCollTask");   break;
-            case dayStats :  callable = (DeleteStockCollTask) context.getBean("deleteStockCollTask"); break;
             case create : callable = (CreateCollectionTask) context.getBean("createCollectionTask"); break;
             case load : callable = (MktDataTask) context.getBean("mktDataTask"); break;
             case reports : callable = (ParseReportTask) context.getBean("parseReportTask"); break;

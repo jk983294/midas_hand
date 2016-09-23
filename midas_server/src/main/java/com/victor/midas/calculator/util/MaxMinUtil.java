@@ -15,6 +15,7 @@ public class MaxMinUtil {
     private double[] start;
     private double[] max;
     private double[] min;
+    private int[] dates;
     private int len;
 
     private boolean useEndStartPair = true;
@@ -39,6 +40,7 @@ public class MaxMinUtil {
         start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
         max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
         min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
+        dates = stock.getDatesInt();
         len = end.length;
     }
 
@@ -206,8 +208,8 @@ public class MaxMinUtil {
         do {
             minIdx = current;
             current = getMinIndexRecursive(getMaxIndexRecursive(minIdx));
-        } while (current >= 0 && current != minIdx && getMinPrice(current) < getMinIndex(minIdx));
-        return getMinIndex(minIdx) < getMinIndex(current) ? minIdx : current;
+        } while (current >= 0 && current != minIdx && getMinPrice(current) < getMinPrice(minIdx));
+        return getMinPrice(minIdx) < getMinPrice(current) ? minIdx : current;
     }
 
     public int[] getMaxIndex() {

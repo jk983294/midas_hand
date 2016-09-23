@@ -22,10 +22,12 @@
         <table ng-table="dayStatsSampleTableParams" template-pagination="custom/pager" class="table table-bordered table-hover">
             <tr ng-repeat="dayStats in $data">
                 <td data-title="'COB'" filter="{ 'cob': 'text' }" sortable="'cob'">{{dayStats.cob}}</td>
-                <td data-title="'Down Pct'">{{dayStats.downPct | keyValueList}}</td>
-                <td data-title="'Up Pct'">{{dayStats.upPct | keyValueList}}</td>
-                <td data-title="'Down Pct Time'">{{dayStats.downPctTime | keyValueList}}</td>
-                <td data-title="'Up Pct Time'">{{dayStats.upPctTime | keyValueList}}</td>
+                <td data-title="'Up Slow'">{{dayStats.upSlow | keyValueList}}</td>
+                <td data-title="'Down Fast'">{{dayStats.downFast | keyValueList}}</td>
+                <td data-title="'Long Term Up'">{{dayStats.longTermUpPct | keyValueList}}</td>
+                <td data-title="'Long Term Down'">{{dayStats.longTermDownPct | keyValueList}}</td>
+                <td data-title="'Short Term Up'">{{dayStats.shortTermUpPct | keyValueList}}</td>
+                <td data-title="'Short Term Down'">{{dayStats.shortTermDownPct | keyValueList}}</td>
             </tr>
         </table>
 
@@ -46,12 +48,14 @@
         </div>
 
         <table ng-table="dayStatsSelectedTableParams" template-pagination="custom/pager" class="table table-bordered table-hover">
-            <tr ng-repeat="dayStats1 in $data">
-                <td data-title="'COB'" filter="{ 'desp': 'text' }" sortable="'cob'">{{dayStats1.cob}}</td>
-                <td data-title="'Down Pct'">{{dayStats1.downPct | keyValueList}}</td>
-                <td data-title="'Up Pct'">{{dayStats1.upPct | keyValueList}}</td>
-                <td data-title="'Down Pct Time'">{{dayStats1.downPctTime | keyValueList}}</td>
-                <td data-title="'Up Pct Time'">{{dayStats1.upPctTime | keyValueList}}</td>
+            <tr ng-repeat="dayStats in $data">
+                <td data-title="'COB'" filter="{ 'desp': 'text' }" sortable="'cob'">{{dayStats.cob}}</td>
+                <td data-title="'Up Slow'">{{dayStats.upSlow | keyValueList}}</td>
+                <td data-title="'Down Fast'">{{dayStats.downFast | keyValueList}}</td>
+                <td data-title="'Long Term Up'">{{dayStats.longTermUpPct | keyValueList}}</td>
+                <td data-title="'Long Term Down'">{{dayStats.longTermDownPct | keyValueList}}</td>
+                <td data-title="'Short Term Up'">{{dayStats.shortTermUpPct | keyValueList}}</td>
+                <td data-title="'Short Term Down'">{{dayStats.shortTermDownPct | keyValueList}}</td>
             </tr>
         </table>
 

@@ -15,10 +15,12 @@ public class StockDayStats implements Comparable<StockDayStats> {
     @Id
     private int cob;
 
-    public List<KeyValue<Double, String>> upPct = new ArrayList<>();
-    public List<KeyValue<Double, String>> downPct = new ArrayList<>();
-    public List<KeyValue<Double, String>> upPctTime = new ArrayList<>();
-    public List<KeyValue<Double, String>> downPctTime = new ArrayList<>();
+    public List<KeyValue<Double, String>> longTermUpPct = new ArrayList<>();
+    public List<KeyValue<Double, String>> longTermDownPct = new ArrayList<>();
+    public List<KeyValue<Double, String>> shortTermUpPct = new ArrayList<>();
+    public List<KeyValue<Double, String>> shortTermDownPct = new ArrayList<>();
+    public List<KeyValue<Double, String>> upSlow = new ArrayList<>();
+    public List<KeyValue<Double, String>> downFast = new ArrayList<>();
 
     public StockDayStats(int cob) {
         this.cob = cob;
@@ -32,36 +34,52 @@ public class StockDayStats implements Comparable<StockDayStats> {
         this.cob = cob;
     }
 
-    public List<KeyValue<Double, String>> getUpPct() {
-        return upPct;
+    public List<KeyValue<Double, String>> getLongTermUpPct() {
+        return longTermUpPct;
     }
 
-    public void setUpPct(List<KeyValue<Double, String>> upPct) {
-        this.upPct = upPct;
+    public void setLongTermUpPct(List<KeyValue<Double, String>> longTermUpPct) {
+        this.longTermUpPct = longTermUpPct;
     }
 
-    public List<KeyValue<Double, String>> getDownPct() {
-        return downPct;
+    public List<KeyValue<Double, String>> getLongTermDownPct() {
+        return longTermDownPct;
     }
 
-    public void setDownPct(List<KeyValue<Double, String>> downPct) {
-        this.downPct = downPct;
+    public void setLongTermDownPct(List<KeyValue<Double, String>> longTermDownPct) {
+        this.longTermDownPct = longTermDownPct;
     }
 
-    public List<KeyValue<Double, String>> getUpPctTime() {
-        return upPctTime;
+    public List<KeyValue<Double, String>> getShortTermUpPct() {
+        return shortTermUpPct;
     }
 
-    public void setUpPctTime(List<KeyValue<Double, String>> upPctTime) {
-        this.upPctTime = upPctTime;
+    public void setShortTermUpPct(List<KeyValue<Double, String>> shortTermUpPct) {
+        this.shortTermUpPct = shortTermUpPct;
     }
 
-    public List<KeyValue<Double, String>> getDownPctTime() {
-        return downPctTime;
+    public List<KeyValue<Double, String>> getShortTermDownPct() {
+        return shortTermDownPct;
     }
 
-    public void setDownPctTime(List<KeyValue<Double, String>> downPctTime) {
-        this.downPctTime = downPctTime;
+    public void setShortTermDownPct(List<KeyValue<Double, String>> shortTermDownPct) {
+        this.shortTermDownPct = shortTermDownPct;
+    }
+
+    public List<KeyValue<Double, String>> getUpSlow() {
+        return upSlow;
+    }
+
+    public void setUpSlow(List<KeyValue<Double, String>> upSlow) {
+        this.upSlow = upSlow;
+    }
+
+    public List<KeyValue<Double, String>> getDownFast() {
+        return downFast;
+    }
+
+    public void setDownFast(List<KeyValue<Double, String>> downFast) {
+        this.downFast = downFast;
     }
 
     @Override
@@ -85,11 +103,4 @@ public class StockDayStats implements Comparable<StockDayStats> {
         return cob;
     }
 
-    @Override
-    public String toString() {
-        return "StockDayStats{" +
-                "cob=" + cob +
-                ", upPct=" + upPct +
-                '}';
-    }
 }

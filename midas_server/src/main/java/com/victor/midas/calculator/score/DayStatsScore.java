@@ -19,7 +19,8 @@ public class DayStatsScore extends IndexCalcBase {
 
     private MaxMinUtil mmPriceUtil10, mmPriceUtil60;
 
-    private double[] upTrendPct, upTrendTime, downTrendPct, downTrendTime, correlationAgainstMarket;
+    private double[] longTermUpPct, shortTermDownPct,
+            longTermDownPct, shortTermUpPct, upSlow, downFast, correlationAgainstMarket;
 
 
     public DayStatsScore(CalcParameter parameter) {
@@ -35,25 +36,44 @@ public class DayStatsScore extends IndexCalcBase {
     public void calculate() throws MidasException {
         calculateScore();
 
-        addIndexData("upTrendPct", upTrendPct);
-        addIndexData("upTrendTime", upTrendTime);
-        addIndexData("downTrendPct", downTrendPct);
-        addIndexData("downTrendTime", downTrendTime);
+        addIndexData("longTermUpPct", longTermUpPct);
+        addIndexData("longTermDownPct", longTermDownPct);
+        addIndexData("shortTermUpPct", shortTermUpPct);
+        addIndexData("shortTermDownPct", shortTermDownPct);
+
+        addIndexData("upSlow", upSlow);
+        addIndexData("downFast", downFast);
     }
 
     private void calculateScore(){
         int minIdx, maxIdx;
         for (int i = 5; i < len; i++) {
-            minIdx = mmPriceUtil10.getMinIndexInUpTrend(i);
-            upTrendTime[i] = i - minIdx;
-            upTrendPct[i] = MathStockUtil.calculateChangePct(mmPriceUtil10.getMinPrice(minIdx), end[i]);
-            // up trend more time, less height, more better
-            upTrendTime[i] = upTrendTime[i] / (0.01 + upTrendPct[i]);
-            maxIdx = mmPriceUtil10.getMaxIndexInDownTrend(i);
-            downTrendTime[i] = i - maxIdx;
-            downTrendPct[i] = MathStockUtil.calculateChangePct(end[i], mmPriceUtil10.getMaxPrice(maxIdx));
-            // down trend more time, more depth, more better
-            downTrendTime[i] = downTrendTime[i] * (0.01 + downTrendPct[i]);
+//            if(dates[i] == 20160914){
+//                System.out.println("wow");
+//            }
+            longTermUpPct[i] = MathStockUtil.calculateChangePct(
+                    mmPriceUtil60.getMinPrice(mmPriceUtil60.getMinIndexInUpTrend(i)), end[i]);
+            longTermDownPct[i] = MathStockUtil.calculateChangePct(
+                    end[i], mmPriceUtil60.getMaxPrice(mmPriceUtil60.getMaxIndexInDownTrend(i)));
+            shortTermUpPct[i] = MathStockUtil.calculateChangePct(
+                    mmPriceUtil60.getMinPrice(mmPriceUtil10.getMinIndexInUpTrend(i)), end[i]);
+            shortTermDownPct[i] = MathStockUtil.calculateChangePct(
+                    end[i], mmPriceUtil60.getMaxPrice(mmPriceUtil10.getMaxIndexInDownTrend(i)));
+
+            /**
+             * bottom fishing, if stock suffer a long term down trend, and go up very slow
+             */
+            upSlow[i] = longTermDownPct[i] * ((double)(i - mmPriceUtil10.getMinIndexInUpTrend(i))) / (0.01 + shortTermUpPct[i]);
+
+            /**
+             * bottom fishing, if stock suffer a long term down trend, and then accelerate to drop
+             */
+            if(i - mmPriceUtil10.getMaxIndexInDownTrend(i) > 4){
+                downFast[i] = 1000d * longTermDownPct[i] * shortTermDownPct[i] / ((double)(i - mmPriceUtil10.getMaxIndexInDownTrend(i) + 1));
+            } else {
+                downFast[i] = 0d;
+            }
+
         }
     }
 
@@ -64,10 +84,12 @@ public class DayStatsScore extends IndexCalcBase {
         mmPriceUtil60 = new MaxMinUtil(stock);
         mmPriceUtil60.calcMaxMinIndex(60);
 
-        upTrendPct = new double[len];
-        upTrendTime = new double[len];
-        downTrendPct = new double[len];
-        downTrendTime = new double[len];
+        longTermUpPct = new double[len];
+        shortTermDownPct = new double[len];
+        longTermDownPct = new double[len];
+        shortTermUpPct = new double[len];
+        upSlow = new double[len];
+        downFast = new double[len];
         correlationAgainstMarket = new double[len];
     }
 

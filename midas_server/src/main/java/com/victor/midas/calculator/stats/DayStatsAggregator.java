@@ -36,7 +36,7 @@ public class DayStatsAggregator extends AggregationCalcBase {
 
     @Override
     public void calculate() throws MidasException {
-        double[] upTrendPct, upTrendTime, downTrendPct, downTrendTime;
+        double[] longTermUpPct, longTermDownPct, shortTermUpPct, shortTermDownPct, upSlow, downFast;
         int marketCob;
         String stockName;
         for (int i = 0; i < len; i++) {
@@ -47,25 +47,33 @@ public class DayStatsAggregator extends AggregationCalcBase {
                 stockName = stock.getStockName();
                 index = name2index.get(stockName);
                 if(stock.isSameDayWithIndex(marketCob, index)){
-                    upTrendPct = (double[])stock.queryCmpIndex("upTrendPct");
-                    upTrendTime = (double[])stock.queryCmpIndex("upTrendTime");
-                    downTrendPct = (double[])stock.queryCmpIndex("downTrendPct");
-                    downTrendTime = (double[])stock.queryCmpIndex("downTrendTime");
-                    dayStats.upPct.add(new KeyValue<>(upTrendPct[index], stockName));
-                    dayStats.downPct.add(new KeyValue<>(downTrendPct[index], stockName));
-                    dayStats.upPctTime.add(new KeyValue<>(upTrendTime[index], stockName));
-                    dayStats.downPctTime.add(new KeyValue<>(downTrendTime[index], stockName));
+                    longTermUpPct = (double[])stock.queryCmpIndex("longTermUpPct");
+                    longTermDownPct = (double[])stock.queryCmpIndex("longTermDownPct");
+                    shortTermUpPct = (double[])stock.queryCmpIndex("shortTermUpPct");
+                    shortTermDownPct = (double[])stock.queryCmpIndex("shortTermDownPct");
+                    upSlow = (double[])stock.queryCmpIndex("upSlow");
+                    downFast = (double[])stock.queryCmpIndex("downFast");
+                    dayStats.longTermUpPct.add(new KeyValue<>(longTermUpPct[index], stockName));
+                    dayStats.longTermDownPct.add(new KeyValue<>(longTermDownPct[index], stockName));
+                    dayStats.shortTermUpPct.add(new KeyValue<>(shortTermUpPct[index], stockName));
+                    dayStats.shortTermDownPct.add(new KeyValue<>(shortTermDownPct[index], stockName));
+                    dayStats.upSlow.add(new KeyValue<>(upSlow[index], stockName));
+                    dayStats.downFast.add(new KeyValue<>(downFast[index], stockName));
                     name2index.put(stockName, index + 1);       //advanceIndex
                 }
             }
-            dayStats.upPct = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.upPct, wantedCount));
-            Collections.sort(dayStats.upPct);
-            dayStats.downPct = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.downPct, wantedCount));
-            Collections.sort(dayStats.downPct);
-            dayStats.upPctTime = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.upPctTime, wantedCount));
-            Collections.sort(dayStats.upPctTime);
-            dayStats.downPctTime = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.downPctTime, wantedCount));
-            Collections.sort(dayStats.downPctTime);
+            dayStats.longTermUpPct = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.longTermUpPct, wantedCount));
+            Collections.sort(dayStats.longTermUpPct);
+            dayStats.longTermDownPct = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.longTermDownPct, wantedCount));
+            Collections.sort(dayStats.longTermDownPct);
+            dayStats.shortTermUpPct = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.shortTermUpPct, wantedCount));
+            Collections.sort(dayStats.shortTermUpPct);
+            dayStats.shortTermDownPct = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.shortTermDownPct, wantedCount));
+            Collections.sort(dayStats.shortTermDownPct);
+            dayStats.upSlow = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.upSlow, wantedCount));
+            Collections.sort(dayStats.upSlow);
+            dayStats.downFast = ArrayHelper.array2list(TopKElements.getFirstK(dayStats.downFast, wantedCount));
+            Collections.sort(dayStats.downFast);
             dayStatses.add(dayStats);
         }
     }
