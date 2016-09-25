@@ -34,19 +34,14 @@ public class BalanceSheetExtractor {
             logger.warn("no balance sheet found.");
         } else if(tables.size() > 2){
             logger.warn("more than two balance sheets found.");
-        }
-
-        for (ReportTable table : tables){
-            extractTable(table.contents);
+        } else if(tables.get(0).contents == null || tables.get(0).contents.size() < 5){
+            logger.warn("no content found in balance sheet.");
+        } else {
+            extractTable(tables.get(0).contents);
         }
     }
 
     private void extractTable(List<ReportLine> contents){
-        if(contents == null || contents.size() < 5){
-            logger.warn("no content found in balance sheet.");
-            return;
-        }
-
         checkAnnotationUseNumber(contents);
 
         String content;
