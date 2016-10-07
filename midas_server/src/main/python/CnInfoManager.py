@@ -204,10 +204,21 @@ class CnInfoManager:
             self.download_report_metadata()
         elif cmd_str == 'download_reports':
             self.download_reports()
+        elif cmd_str == 'get_un_download_reports':
+            self.get_un_download_reports()
         elif cmd_str == 'check_report_integrity':
             self.check_report_integrity()
         elif cmd_str == 'fix_metadata':
             self.fix_metadata()
+
+    def get_un_download_reports(self):
+        for category in self.current_stock.report_category:
+            self.current_category_metadata = self.current_stock.report_category[category]
+            for report_id in self.current_category_metadata.report_metadata:
+                self.current_report_metadata = self.current_category_metadata.report_metadata[report_id]
+                date_str, target_path, target_url = self.get_report_path()
+                if not self.current_report_metadata.is_download:
+                    logging.warn("missing report " + target_path + " , " + target_url)
 
     def download_stock_metadata(self):
         if self.current_stock.check_stock_metadata():

@@ -113,5 +113,6 @@ if __name__ == '__main__':
     print timestamp2date_str(1430323200)
     print date_str2cob('2015-04-30')
     # print get_all_stock_codes()
+    print 'test %s %d finished' % ("a", 2)
     print 'test finished'
 
