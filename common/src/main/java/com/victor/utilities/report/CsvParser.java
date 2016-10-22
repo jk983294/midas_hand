@@ -1,7 +1,7 @@
 package com.victor.utilities.report;
 
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,10 +85,6 @@ public class CsvParser {
         for(int i = 0; i < dataCount; ++i){
             columns.put(header.get(i), columnArray.get(i));
         }
-    }
-
-    public static String escapeSqlForNewLineCharacter(String sql){
-        return sql.replace("\n", "'||CHR(10)||'");
     }
 
 }
