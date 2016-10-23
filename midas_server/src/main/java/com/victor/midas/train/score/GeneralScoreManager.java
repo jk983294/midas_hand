@@ -98,8 +98,11 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
                 severity = StockSeverity.Normal;
             } else {
                 severity = StockSeverity.Warning;
+                if(stockScores.size() == 0){                    // keep all warning days
+                    stockScores.add(new StockScore("fake", -1d, cob));
+                }
             }
-            if(i == len - 1 && stockScores.size() == 0){
+            if(i == len - 1 && stockScores.size() == 0){        // always keep last day
                 stockScores.add(new StockScore("fake", -1d, cob));
             }
             ScoreHelper.perfCollect(stockScores, cob, perfCollector, scoreRecords, severity);
