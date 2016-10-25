@@ -15,20 +15,6 @@ import sys
 
 # GET http://www.cninfo.com.cn/information/dividend/szsme002320.html
 # GET http://www.cninfo.com.cn/information/issue/szsme002320.html
-#查市盈率的：
-#http://biz.finance.sina.com.cn/company/compare/img_syl_compare.php?stock_code=600036,&limit=2400
-#600036改成想查的股票代码 2400改成任何你想查看的多少天 
-
-#查市净率的：
-#http://biz.finance.sina.com.cn/company/compare/img_sjl_compare.php?stock_code=600036,&limit=2400
-#600036改成想查的股票代码 2400改成任何你想查看的多少天 
-
-#如果同时查询多支个股可以在股票代码后面加逗号和股票代码就行了
-#比如：http://biz.finance.sina.com.cn/company/compare/img_syl_compare.php?stock_code=000002,000001,600030&limit=1500
-
-#理性人网站上提供了个股的历史PE、PB、PS数据。
-#例如国药一致，https://www.rational-person.com/analytics/company#/000028/detail/chart
-
 
 
 class ReportMetadata(object):
@@ -136,7 +122,7 @@ class CnInfoManager:
     price_path_pattern = '{code}/price/{market}_hq_{code}_{year}.csv'
     report_path_pattern = u'{code}/reports/{id}_{cob}_{title}.pdf'
     report_categories = ["category_ndbg_szsh;", "category_bndbg_szsh;", "category_yjdbg_szsh;", "category_sjdbg_szsh;"]
-    report_ignore_patterns = [u"摘要", u"H股", u"英文版"]
+    report_ignore_patterns = [u"摘要", u"H股", u"英文版", u"英文"]
     ipo_category = "category_scgkfx_szsh;"
     stocks = {}         # stock_code -> StockData
     current_stock = None
@@ -181,6 +167,10 @@ class CnInfoManager:
                 self.stocks[stock_code] = self.current_stock
 
     def do_cmd(self, cmd_str):
+        if cmd_str == 'delete_un_downloadable_reports' or cmd_str == 'fix_metadata':
+            is_sure = raw_input("are you sure to continue? (y/n)\n")
+            if is_sure != 'y':
+                return
         all_stock_codes = util.get_all_stock_codes()
         for code in all_stock_codes:
             if code is not None and not code.startswith('IDX'):
@@ -208,8 +198,30 @@ class CnInfoManager:
             self.get_un_download_reports()
         elif cmd_str == 'check_report_integrity':
             self.check_report_integrity()
+        elif cmd_str == 'delete_un_downloadable_reports':
+            self.delete_un_downloadable_reports()
         elif cmd_str == 'fix_metadata':
             self.fix_metadata()
+
+    def delete_un_downloadable_reports(self):
+        has_deleted = False
+        for category in self.current_stock.report_category:
+            self.current_category_metadata = self.current_stock.report_category[category]
+            to_delete_report_ids = []
+            for report_id in self.current_category_metadata.report_metadata:
+                self.current_report_metadata = self.current_category_metadata.report_metadata[report_id]
+                if not self.current_report_metadata.is_download:
+                    to_delete_report_ids.append(report_id)
+
+            if len(to_delete_report_ids) > 0:
+                has_deleted = True
+                for to_delete_report_id in to_delete_report_ids:
+                    logging.warn(self.current_stock.stock_code + " delete report " +
+                                 self.current_category_metadata.report_metadata[to_delete_report_id].announcementTitle)
+                    del self.current_category_metadata.report_metadata[to_delete_report_id]
+
+        if has_deleted:
+            self.serialization_single_stock_data()
 
     def get_un_download_reports(self):
         for category in self.current_stock.report_category:
@@ -409,6 +421,8 @@ if __name__ == '__main__':
     my_props = PropertiesReader.get_properties()
     cninfo_path = my_props['MktDataLoader.Fundamental.cninfo']
     log_path = cninfo_path + "log/log_" + time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) + ".txt"
+    if len(sys.argv) > 1:
+        log_path = cninfo_path + "log/log_" + time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) + sys.argv[1] + ".txt"
     logging.basicConfig(filename=log_path, level=logging.WARN)
     manager = CnInfoManager(cninfo_path)
 
@@ -434,4 +448,4 @@ if __name__ == '__main__':
     print 'argument list:', str(sys.argv)
     manager.do_cmd(cmd_string)
     manager.serialization_stock_data()
-    print 'download class info finished'
+    print cmd_string + ' finished'
