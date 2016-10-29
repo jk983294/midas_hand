@@ -69,6 +69,10 @@ angular.module('formatFilters', []).filter('addPct', function() {
         }
         return result;
     };
+}).filter('newlines', function () {
+    return function(text) {
+        return text.replace(/\n/g, '<br/>');
+    }
 }).filter('scoreList', function() {
     function sortScoreRecord(a, b){
         return b.score - a.score;
@@ -83,6 +87,15 @@ angular.module('formatFilters', []).filter('addPct', function() {
         var result = toHtml(newScores[0]);
         for(var i = 1, len = newScores.length; i < len; ++i ){
             result += (', ' + toHtml(newScores[i]));
+        }
+        return result;
+    };
+}).filter('reportList', function() {
+    return function(reports) {
+        var newReports = reports.slice(); // copy a new array to avoid touch original array for infinite digest loop
+        var result = newReports[0];
+        for(var i = 1, len = newReports.length; i < len; ++i ){
+            result += ('\n' + newReports[i]);
         }
         return result;
     };

@@ -8,9 +8,11 @@ import com.victor.midas.model.vo.StockDayStats;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.TrainResult;
 import com.victor.midas.model.vo.score.StockScoreRecord;
+import com.victor.midas.services.ReportService;
 import com.victor.midas.services.StocksService;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StringPatternAware;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,10 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -33,6 +37,8 @@ public class StocksEndpoint {
 
     @Autowired
     private StocksService stocksService;
+    @Autowired
+    private ReportService reportService;
 	
 	@GET
     @RequestMapping("/{name}")
@@ -137,6 +143,15 @@ public class StocksEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public List<StockDayStats> getStockScoreRecord(@PathVariable("cob") Integer cob) throws MidasException, ParseException {
         return stocksService.queryDayStatsList(cob);
+    }
+
+    @GET
+    @RequestMapping("/reports/{query}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, List<String>> getStockReports(@PathVariable("query") String query)
+            throws MidasException, IOException, org.apache.lucene.queryparser.classic.ParseException {
+        if(StringUtils.isEmpty(query) || query.length() < 2) return new HashMap<>();
+        else return reportService.queryReports(query);
     }
 
 	@GET

@@ -89,7 +89,7 @@
 	 * load user defined  module
 	 * load sequence doesn't matter, all controller just define functions, 
 	 * every controller should register to MidasController in indexController.js
-	 * it is midas.js job to trigger all initializtion by call MidasController's onReady function
+	 * it is midas.js job to trigger all initialization by call MidasController's onReady function
 	 */
     loadJS("app/directives/FormatFilter.js");
     loadJS("app/directives/FlotChart.js");
@@ -110,6 +110,7 @@
     loadJS("app/controllers/scoreController.js");
     loadJS("app/controllers/singleTrainController.js");
     loadJS("app/controllers/bondController.js");
+    loadJS("app/controllers/reportsController.js");
 
 
 })();

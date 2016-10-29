@@ -58,6 +58,10 @@ midasApp.config(['$routeProvider',
                 controller: 'bondController',
                 templateUrl: urlBase + 'bondContent.html'
             })
+            .when('/Reports', {
+                controller: 'reportsController',
+                templateUrl: urlBase + 'reportsContent.html'
+            })
             .otherwise({
                 redirectTo: '/Overview'
             });

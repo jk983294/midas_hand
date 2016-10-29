@@ -91,7 +91,8 @@ utilService.factory('Utils',
         function object2PropArray(object){
             var array = [];
             for (var prop in object) {
-                if(prop && !prop.toString().startsWith("$")){
+                var propStr = prop.toString();
+                if(prop && !(propStr.startsWith("$") || propStr == 'toJSON')){
                     var attr = { name : prop, value : object[prop]};
                     array.push(attr);
                 }

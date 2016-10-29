@@ -5,7 +5,9 @@ import com.victor.midas.model.db.misc.SampleCobDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
 import com.victor.midas.model.train.StockTrain;
 import com.victor.midas.model.vo.StockDayStats;
+import com.victor.midas.model.vo.StockReport;
 import com.victor.midas.model.vo.StockVo;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
 
@@ -60,6 +62,16 @@ public class ModelConvertor {
         Map<String, StockVo> map = new HashMap<>();
         for(StockVo stock : stocks){
             map.put(stock.getStockName(), stock);
+        }
+        return map;
+    }
+
+    public static Map<String, StockReport> toStockReportMap(List<StockReport> reports){
+        Map<String, StockReport> map = new HashMap<>();
+        if(CollectionUtils.isNotEmpty(reports)){
+            for(StockReport report : reports){
+                map.put(report.getStockName(), report);
+            }
         }
         return map;
     }

@@ -19,6 +19,7 @@ public enum CmdType {
     load_score,
     chan,
     reports,
+    lucene,
 
 
     bad_cmd

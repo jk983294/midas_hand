@@ -5,6 +5,7 @@ import com.victor.midas.model.common.CmdType;
 import com.victor.midas.services.worker.common.PipedTask;
 import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.midas.services.worker.task.*;
+import com.victor.midas.services.worker.task.lucene.LuceneTask;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -41,6 +42,7 @@ public class TaskMgr {
             case create : callable = (CreateCollectionTask) context.getBean("createCollectionTask"); break;
             case load : callable = (MktDataTask) context.getBean("mktDataTask"); break;
             case reports : callable = (ParseReportTask) context.getBean("parseReportTask"); break;
+            case lucene :  callable = (LuceneTask) context.getBean("luceneTask");   break;
             case calculate : callable = (CalculateTask) context.getBean("calculateTask"); break;
             case trainSingle :
             case trainStrategy : callable = (TrainTask) context.getBean("trainTask");break;

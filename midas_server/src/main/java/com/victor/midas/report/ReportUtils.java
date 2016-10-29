@@ -37,4 +37,9 @@ public class ReportUtils {
         return results;
     }
 
+    public static String getStockCodeFromFilePath(String path){
+        int idx = path.indexOf("cninfo");
+        return path.substring(idx + 7, idx + 13);
+    }
+
 }

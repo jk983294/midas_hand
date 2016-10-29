@@ -40,6 +40,7 @@ public class MidasConstants {
     public static final String SCORE_COLLECTION_NAME = "StockScore";
     public static final String CONCEPT_SCORE_COLLECTION_NAME = "StockConceptScore";
     public static final String STOCK_DAY_STATS_COLLECTION_NAME = "StockDayStats";
+    public static final String STOCK_REPORTS_COLLECTION_NAME = "StockReports";
 
     /**
      * sequence collection's document id
