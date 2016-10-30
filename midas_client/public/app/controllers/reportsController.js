@@ -21,7 +21,7 @@ midasApp.controller('reportsController', function ($scope, $filter, $routeParams
                         page: 1,                    // show first page
                         count: 10,                  // count per page
                         sorting: {
-                            cob : 'count'           // initial sorting
+                            count : 'desc'          // initial sorting
                         },
                         filter: {
                             desc : ''               // initial filter
