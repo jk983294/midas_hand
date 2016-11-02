@@ -166,7 +166,7 @@ midasApp.controller('bondController', function ($scope, $routeParams, $filter, M
         for(var j = 0, len1 = $scope.bondRaw[0].termName.length; j < len1; j++ ){
             $scope.multipleChoice.available.push('t' +  $scope.bondRaw[0].termName[j]);
         }
-        $scope.multipleChoice.selected = ['t1y'];
+        $scope.multipleChoice.selected = ['t10y', 't5y'];
     }, Utils.errorHandler);
 
     /**

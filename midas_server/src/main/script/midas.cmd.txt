@@ -16,7 +16,10 @@ score score_macd SH603567
 
 loadStock | score score_macd
 
-
+-- load data
+load stock
+load bond
+load fund
 
 -- useful cmds
 load_score score_macd
