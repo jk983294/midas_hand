@@ -6,7 +6,7 @@ midasApp.controller('reportsController', function ($scope, $filter, $routeParams
     $scope.reportSearchText = '';
     
     $scope.reportSearchTextChange = function () {
-        if($scope.reportSearchText.length >= 3){
+        if($scope.reportSearchText.length >= 0){
             $scope.reports = MidasData.getReports($scope.reportSearchText);
 
             $scope.reports.$promise.then(function success(){

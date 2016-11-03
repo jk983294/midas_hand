@@ -150,7 +150,7 @@ public class StocksEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, List<String>> getStockReports(@PathVariable("query") String query)
             throws MidasException, IOException, org.apache.lucene.queryparser.classic.ParseException {
-        if(StringUtils.isEmpty(query) || query.length() < 2) return new HashMap<>();
+        if(StringUtils.isEmpty(query)) return new HashMap<>();
         else return reportService.queryReports(query);
     }
 
