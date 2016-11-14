@@ -3,6 +3,7 @@ package com.victor.utilities.utils;
 import com.victor.utilities.visual.VisualAssist;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.IOException;
  */
 public class CrawlHelperTest {
 
+    @Ignore
     @Test
     public void testCrawl() throws IOException {
         VisualAssist.print(CrawlHelper.crawl("http://ifzq.gtimg.cn/stock/relate/data/plate?code=sh601600&_var=_IFLOAD_2"));
