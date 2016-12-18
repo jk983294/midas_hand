@@ -93,7 +93,6 @@ public class PerfCollector {
 
     /**
      * controlled by quit signal
-     * @param stockScore
      * @throws MidasException
      */
     private void recordStrategyControlledScore(StockScore stockScore) throws MidasException {
@@ -118,7 +117,6 @@ public class PerfCollector {
 
     /**
      * controlled by PerfCollector
-     * @param stockScore
      * @throws MidasException
      */
     private void recordCollectorControlledScore(StockScore stockScore) throws MidasException {

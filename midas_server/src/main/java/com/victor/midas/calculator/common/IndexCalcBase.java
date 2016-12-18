@@ -3,6 +3,7 @@ package com.victor.midas.calculator.common;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.train.common.MidasTrainOptions;
+import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
@@ -36,6 +37,8 @@ public abstract class IndexCalcBase implements ICalculator {
     protected int[] dates;
     protected double[] end, start, max, min, volume, total, changePct;
     protected int len;
+
+    protected PerfCollector perfCollector;
 
     protected IndexCalcBase(CalcParameter parameter) {
         this.parameter = parameter;
@@ -121,4 +124,15 @@ public abstract class IndexCalcBase implements ICalculator {
         MidasTrainOptions options = new MidasTrainOptions();
         return options;
     }
+
+    @Override
+    public void setPerfCollector(PerfCollector perfCollector) {
+        this.perfCollector = perfCollector;
+    }
+
+    @Override
+    public PerfCollector getPerfCollector() {
+        return this.perfCollector;
+    }
+
 }

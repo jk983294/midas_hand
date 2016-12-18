@@ -3,6 +3,7 @@ package com.victor.midas.calculator.common;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.train.common.MidasTrainOptions;
+import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
@@ -27,6 +28,7 @@ public abstract class AggregationCalcBase implements ICalculator {
     protected int[] dates;                        // benchmark time line
     protected int index;                          // benchmark stock's date index
     protected int len;                            // benchmark stock's date len
+    protected PerfCollector perfCollector;
 
 
     protected AggregationCalcBase(CalcParameter parameter) {
@@ -88,4 +90,15 @@ public abstract class AggregationCalcBase implements ICalculator {
     public MidasTrainOptions getTrainOptions() {
         return null;
     }
+
+    @Override
+    public void setPerfCollector(PerfCollector perfCollector) {
+        this.perfCollector = perfCollector;
+    }
+
+    @Override
+    public PerfCollector getPerfCollector() {
+        return this.perfCollector;
+    }
+
 }

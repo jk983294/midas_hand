@@ -107,7 +107,7 @@ public class StockVo {
                 throw new MidasException("index type not compatible");
             }
         }
-        indexName2indexCmp.put(indexName, new ArrayList<String>(indexData.keySet()));
+        indexName2indexCmp.put(indexName, new ArrayList<>(indexData.keySet()));
     }
 
     /**
@@ -179,8 +179,7 @@ public class StockVo {
     }
 
     public boolean isExistCmpIndex(String indexName){
-        if(indexDoubles.containsKey(indexName) || indexInts.containsKey(indexName)) return true;
-        else return false;
+        return indexDoubles.containsKey(indexName) || indexInts.containsKey(indexName);
     }
 
     /**
@@ -233,6 +232,9 @@ public class StockVo {
         throw new MidasException("cannot calculate performance " + stockScore.toString());
     }
 
+    /**
+     * search target cob from internal cobIndex to datesInt.length
+     */
     public int getCobIndex(int targetCob){
         int searchIndex = cobIndex;
         if(searchIndex < datesInt.length && datesInt[searchIndex] <= targetCob){
@@ -379,8 +381,6 @@ public class StockVo {
                 ", end=" + end +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
-//                ", datesInt=" + Arrays.toString(datesInt) +
-//                ", datesDate=" + Arrays.toString(datesDate) +
                 ", stockType=" + stockType +
                 ", indexInts=" + indexInts +
                 ", indexDoubles=" + indexDoubles +

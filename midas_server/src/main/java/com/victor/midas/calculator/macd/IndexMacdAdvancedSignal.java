@@ -39,7 +39,7 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
     private LinkedList<MacdSection> overrideGreenSections;
     private MacdSection lastSection;
     private IndexLines lines;
-    private IndexLine lastLine1, lastLine2, lastLine3;
+
     private MacdSectionUtil macdSectionUtil = new MacdSectionUtil();
 
     public IndexMacdAdvancedSignal(CalcParameter parameter) {
@@ -122,12 +122,7 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
 
     private void updateStats(int i){
         lines.update(i, dif[i]);
-        lastLine1 = lines.getLastLine(1);
-        lastLine2 = lines.getLastLine(2);
-        lastLine3 = lines.getLastLine(3);
     }
-
-
 
     @Override
     protected void initIndex() throws MidasException {

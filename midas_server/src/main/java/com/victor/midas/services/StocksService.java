@@ -3,7 +3,6 @@ package com.victor.midas.services;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -65,27 +64,22 @@ public class StocksService {
         Set<Class<? extends AggregationCalcBase>> aggregationTypes = reflections.getSubTypesOf(AggregationCalcBase.class);
         CalcParameter parameter = IndexFactory.getParameter();
         try {
-            for(Class aggregation : aggregationTypes){
-                Constructor constructor = aggregation.getConstructor(new Class[]{CalcParameter.class});
+            for(Class<? extends AggregationCalcBase> aggregation : aggregationTypes){
+                Constructor constructor = aggregation.getConstructor(CalcParameter.class);
                 ICalculator calculator = (ICalculator)constructor.newInstance(parameter);
                 IndexFactory.addCalculator(calculator.getIndexName(), calculator);
             }
-            for(Class indexCalcBase : subTypes){
-                Constructor constructor = indexCalcBase.getConstructor(new Class[]{CalcParameter.class});
+            for(Class<? extends IndexCalcBase> indexCalcBase : subTypes){
+                Constructor constructor = indexCalcBase.getConstructor(CalcParameter.class);
                 ICalculator calculator = (ICalculator)constructor.newInstance(parameter);
                 IndexFactory.addCalculator(calculator.getIndexName(), calculator);
             }
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            logger.error(e);
         }
         logger.info("finish registering all calculators.");
         TypeAhead.init(IndexFactory.getCalcName2calculator().keySet());
+        logger.info("finish initialize type ahead.");
     }
 
 

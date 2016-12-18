@@ -5,6 +5,7 @@ import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.train.common.TrainOptionApply;
+import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
@@ -36,5 +37,12 @@ public interface ICalculator {
     void applyParameter(CalcParameter parameter);
 
     MidasTrainOptions getTrainOptions();
+
+    /**
+     * allow non-score based index calculator to calculate all available chance performance
+     */
+    void setPerfCollector(PerfCollector perfCollector);
+
+    PerfCollector getPerfCollector();
 
 }

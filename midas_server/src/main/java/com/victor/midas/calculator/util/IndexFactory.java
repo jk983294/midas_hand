@@ -2,6 +2,7 @@ package com.victor.midas.calculator.util;
 
 import com.victor.midas.calculator.common.ICalculator;
 import com.victor.midas.model.vo.CalcParameter;
+import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.datastructures.graph.*;
 import com.victor.utilities.visual.VisualAssist;
@@ -15,39 +16,15 @@ import java.util.*;
  */
 public class IndexFactory {
 
-    private static final HashMap<String, ICalculator> calcName2calculator = new HashMap();
+    private static final HashMap<String, ICalculator> calcName2calculator = new HashMap<>();
 
     public static CalcParameter parameter = new CalcParameter();
-
-    static {
-        /*** prepare all index calculator*/
-        //addCalculator(new IndexChangePct(parameter), true);
-        //addCalculator(new ChartTimeFrame(parameter));
-//        addCalculator(new IndexPriceMA(parameter, new SMA()), true);
-        //addCalculator(new IndexVolumeMa(parameter, new SMA()), true);
-        //addCalculator(new PriceMaTangle(parameter));
-//        addCalculator(new IndexPriceDelta(parameter), true);
-//        addCalculator(new ChartTimeFrameWithVolume(parameter));
-//        addCalculator(new IndexKLine(parameter), true);
-        //addCalculator(new IndexVolumePriceCorr(parameter));
-//        addCalculator(new IndexKLineMa(parameter));
-//        addCalculator(new IndexKState(parameter), true);
-//        addCalculator(new IndexKLineSignals(parameter));
-//        addCalculator(new IndexRebounce(parameter));
-//        addCalculator(new IndexLongGoodTrend(parameter));
-//        addCalculator(new IndexGoodPeriod(parameter));
-//        addCalculator(new IndexSupportResist(parameter), false);
-        //addCalculator(new StockScoreRank(parameter), true);
-
-        /** index calculator for Index*/
-//        indexCalcbasesForIndex.add(new IndexBadState(parameter));
-    }
 
     /**
      * use dependency to get all calculators
      */
     public static List<ICalculator> getAllNeededCalculators(String calc) throws MidasException {
-        Queue<String> toProcessCalcNames = new LinkedList<String>();
+        Queue<String> toProcessCalcNames = new LinkedList<>();
         Set<String> visited = new HashSet<>();
         toProcessCalcNames.add(calc);
 
@@ -77,23 +54,19 @@ public class IndexFactory {
     /**
      * instead of use Factory calculator instances
      * this function will reflect the constructor to create a new version of calculators to avoid training parameter pollution
+     * set one unique PerfCollector for all calculators
      */
     private static List<ICalculator> getCalculatorCopy(List<String> names) throws MidasException {
         List<ICalculator> calculators = new ArrayList<>();
         CalcParameter parameterCopy = new CalcParameter();
+        PerfCollector perfCollector = new PerfCollector();
         for(String name : names){
             try {
-                Constructor constructor = null;
-                constructor = calcName2calculator.get(name).getClass().getConstructor(new Class[]{CalcParameter.class});
+                Constructor constructor = calcName2calculator.get(name).getClass().getConstructor(CalcParameter.class);
                 ICalculator calculator = (ICalculator)constructor.newInstance(parameterCopy);
+                calculator.setPerfCollector(perfCollector);
                 calculators.add(calculator);
-            } catch (NoSuchMethodException e) {
-                throw new MidasException("can not init calculator " + name, e);
-            } catch (InvocationTargetException e) {
-                throw new MidasException("can not init calculator " + name, e);
-            } catch (InstantiationException e) {
-                throw new MidasException("can not init calculator " + name, e);
-            } catch (IllegalAccessException e) {
+            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
                 throw new MidasException("can not init calculator " + name, e);
             }
         }
