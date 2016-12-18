@@ -1,7 +1,7 @@
 package com.victor.midas.calculator;
 
+import com.victor.midas.calculator.stats.VolumeCorr;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.calculator.correlation.VolumeCorr;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
