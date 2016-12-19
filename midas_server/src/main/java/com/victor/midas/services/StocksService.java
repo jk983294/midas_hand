@@ -11,7 +11,6 @@ import com.victor.midas.calculator.common.ICalculator;
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.dao.*;
-import com.victor.midas.model.db.DayFocusDb;
 import com.victor.midas.model.db.StockInfoDb;
 import com.victor.midas.model.db.misc.SampleCobDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
@@ -44,8 +43,6 @@ public class StocksService {
     private MiscDao miscDao;
     @Autowired
     private TrainDao trainDao;
-    @Autowired
-    private DayFocusDao dayFocusDao;
     @Autowired
     private ScoreDao scoreDao;
     @Autowired
@@ -157,15 +154,6 @@ public class StocksService {
         return stockInfoDao.queryAllBasicInfo();
     }
 
-    public List<DayFocusDb> getStockDayFocus() {
-        return dayFocusDao.queryAllDayFocus();
-    }
-
-    public List<DayFocusDb> getStockDayFocus(int n) {
-        return dayFocusDao.queryLastDayFocus(n);
-    }
-
-
     public StockInfoDao getStockInfoDao() {
         return stockInfoDao;
     }
@@ -192,10 +180,6 @@ public class StocksService {
 
     public void setTrainDao(TrainDao trainDao) {
         this.trainDao = trainDao;
-    }
-
-    public DayFocusDao getDayFocusDao() {
-        return dayFocusDao;
     }
 
     public ScoreDao getScoreDao() {

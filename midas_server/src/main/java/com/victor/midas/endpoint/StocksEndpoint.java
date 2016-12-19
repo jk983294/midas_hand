@@ -1,6 +1,5 @@
 package com.victor.midas.endpoint;
 
-import com.victor.midas.model.db.DayFocusDb;
 import com.victor.midas.model.db.StockInfoDb;
 import com.victor.midas.model.train.SingleParameterTrainResults;
 import com.victor.midas.model.vo.MidasBond;
@@ -86,15 +85,6 @@ public class StocksEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public List<StockInfoDb> getStockBasicInfo() {
         return stocksService.getStockBasicInfo();
-    }
-
-    @GET
-    @RequestMapping("/plan/focus")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<DayFocusDb> getFocusDb() {
-        int n = 5;
-        logger.info("fetch "+ n + " plan result ...");
-        return stocksService.getStockDayFocus(n);
     }
 
     @GET

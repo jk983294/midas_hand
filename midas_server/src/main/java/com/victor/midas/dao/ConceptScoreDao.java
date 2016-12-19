@@ -20,7 +20,7 @@ import java.util.List;
 public class ConceptScoreDao {
     private final String COLLECTION_NAME = MidasConstants.CONCEPT_SCORE_COLLECTION_NAME;
 
-    private static final Logger logger = Logger.getLogger(DayFocusDao.class);
+    private static final Logger logger = Logger.getLogger(ConceptScoreDao.class);
 
     @Autowired
     MongoTemplate mongoTemplate;

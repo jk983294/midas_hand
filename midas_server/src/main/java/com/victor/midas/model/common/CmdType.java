@@ -13,7 +13,6 @@ public enum CmdType {
     trainStrategy,
     task,
     test,
-    plan,
     score,
     crawl,
     load_score,

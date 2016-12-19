@@ -93,7 +93,7 @@ utilService.factory('StockUtils',
         /**
          * calculate the change percentage class
          */
-        var levels = new Array("danger", "success");
+        var levels = ["danger", "success"];
         function calcChangePctLevel(stockinfos){
             for(var i = 0, len = stockinfos.length; i < len; i++ ){
                 if( stockinfos[i].change <= 0.0  ) stockinfos[i].level = levels[0];
@@ -108,7 +108,7 @@ utilService.factory('StockUtils',
          */
         function calcYaxisSets(data){
             if(Utils.isNull(data)) return null;
-            var sets = new Array();
+            var sets = [];
             var isFindSet = false;
             for(var i = 0, len = data.length; i < len; ++i){
                 var sampleValue = data[i].data[0][1];       // get y axis value

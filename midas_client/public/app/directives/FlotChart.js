@@ -125,7 +125,7 @@ flotang.factory('chartService', ['Utils', 'StockUtils',
                 var stock = stocks[i];
                 data = data.concat(StockUtils.getDataByTwoVaildDate(stock, startDay, endDay, showIndexes));
             }
-            console.log(data);
+
             // calculate how many y axis needed, based on y data range, same range could share y axis
             var sets = StockUtils.calcYaxisSets(data);
             if(Utils.isNull(sets) || (sets.length == 1)){

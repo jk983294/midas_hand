@@ -106,7 +106,6 @@
     loadJS("app/controllers/TypeaheadCtrl.js");
     loadJS("app/controllers/AlertCtrl.js");
     loadJS("app/controllers/trainResultController.js");
-    loadJS("app/controllers/planController.js");
     loadJS("app/controllers/scoreController.js");
     loadJS("app/controllers/singleTrainController.js");
     loadJS("app/controllers/bondController.js");

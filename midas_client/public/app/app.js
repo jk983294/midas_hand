@@ -38,10 +38,6 @@ midasApp.config(['$routeProvider',
                 controller: 'taskController',
                 templateUrl: urlBase + 'taskContent.html'
             })
-            .when('/Plan', {
-                controller: 'planController',
-                templateUrl: urlBase + 'planContent.html'
-            })
             .when('/Score', {
                 controller: 'scoreController',
                 templateUrl: urlBase + 'scoreContent.html'
