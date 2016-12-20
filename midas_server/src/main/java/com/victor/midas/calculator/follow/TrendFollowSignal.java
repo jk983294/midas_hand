@@ -1,14 +1,12 @@
 package com.victor.midas.calculator.follow;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
-import com.victor.midas.calculator.divergence.IndexBadDepth;
 import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.indicator.kline.IndexKLine;
 import com.victor.midas.calculator.macd.IndexMACD;
 import com.victor.midas.calculator.macd.model.MacdSection;
-import com.victor.midas.calculator.macd.model.MacdSectionStatus;
-import com.victor.midas.calculator.macd.model.MacdSectionType;
 import com.victor.midas.calculator.macd.model.MacdSectionUtil;
+import com.victor.midas.calculator.stats.IndexBadDepth;
 import com.victor.midas.calculator.util.LineBreakoutUtil;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.calculator.util.MaxMinUtil;
@@ -17,7 +15,6 @@ import com.victor.midas.calculator.util.model.LineCrossSection;
 import com.victor.midas.model.common.StockState;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.common.MidasTrainOptions;
-import com.victor.midas.train.perf.DayStatistics;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.math.stats.ma.MaBase;
 import com.victor.utilities.math.stats.ma.SMA;
@@ -25,7 +22,6 @@ import com.victor.utilities.utils.MathHelper;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

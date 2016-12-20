@@ -44,8 +44,7 @@ public class TaskMgr {
             case reports : callable = (ParseReportTask) context.getBean("parseReportTask"); break;
             case lucene :  callable = (LuceneTask) context.getBean("luceneTask");   break;
             case calculate : callable = (CalculateTask) context.getBean("calculateTask"); break;
-            case trainSingle :
-            case trainStrategy : callable = (TrainTask) context.getBean("trainTask");break;
+            case trainSingle : callable = (TrainTask) context.getBean("trainTask");break;
             case score :
                 callable = (ScoreTask) context.getBean("scoreTask");
                 ((ScoreTask)callable).init(false, true);

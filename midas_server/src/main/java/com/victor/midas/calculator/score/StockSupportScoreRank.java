@@ -1,18 +1,10 @@
 package com.victor.midas.calculator.score;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
-import com.victor.midas.calculator.divergence.IndexBadDepth;
 import com.victor.midas.calculator.indicator.IndexChangePct;
-import com.victor.midas.calculator.indicator.kline.IndexKLine;
-import com.victor.midas.calculator.util.MathStockUtil;
-import com.victor.midas.calculator.util.MaxMinUtil;
+import com.victor.midas.calculator.stats.IndexBadDepth;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
-import com.victor.utilities.math.function.SectionalFunction;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
-import java.util.HashMap;
 
 public class StockSupportScoreRank extends IndexCalcBase {
 

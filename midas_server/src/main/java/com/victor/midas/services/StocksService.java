@@ -42,8 +42,6 @@ public class StocksService {
     @Autowired
     private MiscDao miscDao;
     @Autowired
-    private TrainDao trainDao;
-    @Autowired
     private ScoreDao scoreDao;
     @Autowired
     private ConceptScoreDao conceptScoreDao;
@@ -106,14 +104,6 @@ public class StocksService {
         return stockDayStatsDao.queryByCob(twoMonthAgo, cob);
     }
 
-    public TrainResult queryTrainResult(Long trainId){
-        return trainDao.queryTrainResult(trainId);
-    }
-
-    public TrainResult queryLastTrainResult() throws MidasException {
-        return trainDao.queryLastTrainResult();
-    }
-
     public StockVo queryStock(String stockName){
         return stockDao.queryStock(stockName);
     }
@@ -172,14 +162,6 @@ public class StocksService {
 
     public TypeAhead getTypeAhead() {
         return typeAhead;
-    }
-
-    public TrainDao getTrainDao() {
-        return trainDao;
-    }
-
-    public void setTrainDao(TrainDao trainDao) {
-        this.trainDao = trainDao;
     }
 
     public ScoreDao getScoreDao() {

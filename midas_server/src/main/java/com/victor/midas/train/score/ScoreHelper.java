@@ -20,6 +20,10 @@ public class ScoreHelper {
         perfCollector.addRecord(stockScoreRecord);
     }
 
+    /**
+     * no matter what severity is that cob, StockScoreRecord will always be recorded,
+     * but only those normal cob's data will be performance collected
+     */
     public static void perfCollect(List<StockScore> stockScores, int cob, PerfCollector perfCollector,
                                    List<StockScoreRecord> scoreRecords, StockSeverity severity) throws MidasException {
         StockScoreRecord stockScoreRecord = new StockScoreRecord(cob, stockScores);

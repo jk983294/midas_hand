@@ -26,10 +26,6 @@ midasApp.config(['$routeProvider',
                 controller: 'indexController',
                 templateUrl: urlBase + 'indexContent.html'
             })
-            .when('/TrainResult/:trainId', {
-                controller: 'trainResultController',
-                templateUrl: urlBase + 'trainResultContent.html'
-            })
             .when('/Comparison/:stockCodes', {
                 controller: 'cmpController',
                 templateUrl: urlBase + 'comparisonContent.html'

@@ -31,7 +31,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
 
     private static final Logger logger = Logger.getLogger(GeneralScoreManager.class);
 
-    private String indexName;
+    private String targetIndexName;
     private IndexCalculator calculator;
     private List<StockVo> stocks;
     private List<StockVo> tradableStocks;
@@ -42,12 +42,12 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
 
     private List<StockScoreRecord> scoreRecords;
     private PerfCollector perfCollector;
-    public boolean isBigDataSet, isInTrain = false, useQuitSignal = false;
+    public boolean isBigDataSet, isInTrain = false, useSignal = false;
     public MidasTrainOptions options;
 
-    public GeneralScoreManager(List<StockVo> stocks, String indexName) throws Exception {
+    public GeneralScoreManager(List<StockVo> stocks, String targetIndexName) throws Exception {
         this.stocks = stocks;
-        this.indexName = indexName;
+        this.targetIndexName = targetIndexName;
         initStocks();
     }
 
@@ -65,9 +65,9 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
                 StockVo stock = tradableStocks.get(j);
                 index = stock.getCobIndex();
                 if(stock.isSameDayWithIndex(cob)){
-                    scores = (double[])stock.queryCmpIndex(indexName);
+                    scores = (double[])stock.queryCmpIndex(targetIndexName);
                     if(!Double.isNaN(scores[index])){
-                        if(useQuitSignal){
+                        if(useSignal){
                             if(scores[index] > 1d){ // buy signal
                                 StockScore score = new StockScore(stock.getStockName(), scores[index], cob);
                                 score.applyOptions(options);
@@ -122,7 +122,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
      * this is differ from initForTrain, everything in initStocks will be initialized once
      */
     private void initStocks() throws MidasException, IOException {
-        calculator = new IndexCalculator(stocks, indexName);
+        calculator = new IndexCalculator(stocks, targetIndexName);
         applyOptions(calculator.options);
         options = calculator.options;
         calculator.calculate();
@@ -183,7 +183,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
     @Override
     public void applyOptions(MidasTrainOptions options) {
         if(options != null){
-            this.useQuitSignal = options.useSignal;
+            this.useSignal = options.useSignal;
         }
     }
 }

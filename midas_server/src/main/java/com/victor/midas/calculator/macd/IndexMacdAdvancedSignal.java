@@ -1,15 +1,14 @@
 package com.victor.midas.calculator.macd;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
-import com.victor.midas.calculator.common.model.IndexLine;
 import com.victor.midas.calculator.common.model.IndexLines;
 import com.victor.midas.calculator.common.model.SignalType;
-import com.victor.midas.calculator.divergence.IndexBadDepth;
 import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.macd.model.MacdSection;
 import com.victor.midas.calculator.macd.model.MacdSectionStatus;
 import com.victor.midas.calculator.macd.model.MacdSectionType;
 import com.victor.midas.calculator.macd.model.MacdSectionUtil;
+import com.victor.midas.calculator.stats.IndexBadDepth;
 import com.victor.midas.model.common.StockState;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.common.MidasTrainOptions;
@@ -114,6 +113,7 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
             } else if(state == StockState.HoldStock && lastSection.shouldSellByStatus()){
                 score[i] = -5d;
                 state = StockState.HoldMoney;
+
             }
 //            score[i] = lastSection.status1.ordinal();
         }

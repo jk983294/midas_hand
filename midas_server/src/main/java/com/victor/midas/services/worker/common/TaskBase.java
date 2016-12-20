@@ -34,8 +34,6 @@ public abstract class TaskBase implements Callable<Integer> {
     public MiscDao miscDao;
     @Autowired
     public Environment environment;
-    @Autowired
-    public TrainDao trainDao;
 
 	
 	private static final Logger logger = Logger.getLogger(TaskBase.class);

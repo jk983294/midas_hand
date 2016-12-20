@@ -5,7 +5,6 @@ import com.victor.midas.model.train.SingleParameterTrainResults;
 import com.victor.midas.model.vo.MidasBond;
 import com.victor.midas.model.vo.StockDayStats;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.model.vo.TrainResult;
 import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.services.ReportService;
 import com.victor.midas.services.StocksService;
@@ -60,16 +59,6 @@ public class StocksEndpoint {
             }
         }
         return array;
-    }
-
-
-    @GET
-    @RequestMapping("/trainResult/{trainId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public TrainResult getTrainResult(@PathVariable("trainId") Long trainId) throws MidasException {
-        logger.info("fetch train result for trainId : " + trainId);
-        if(trainId == null || trainId < 0) return stocksService.queryLastTrainResult();
-        else return stocksService.queryTrainResult(trainId);
     }
 
     @GET

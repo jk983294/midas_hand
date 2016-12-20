@@ -1,18 +1,11 @@
 package com.victor.midas.services.worker.task;
 
 import com.victor.midas.model.common.CmdParameter;
-import com.victor.midas.model.common.CmdType;
-import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.dao.TaskDao;
-import com.victor.midas.dao.TrainDao;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.services.StocksService;
 import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.midas.train.SingleParameterTrainer;
-import com.victor.midas.train.TrainManager;
 import com.victor.midas.train.common.Trainee;
 import com.victor.midas.train.score.GeneralScoreManager;
-import com.victor.midas.train.strategy.single.SrStrategyS;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.utils.JsonHelper;
 import com.victor.utilities.utils.PerformanceUtil;
@@ -35,7 +28,6 @@ public class TrainTask extends TaskBase {
 	@Override
 	public void doTask() throws Exception {
         switch (cmdType){
-            case trainStrategy: trainStrategy(); break;
             case trainSingle: trainSingle(); break;
             default: throw new MidasException("this cmd type is not support in train task.");
         }
@@ -67,26 +59,6 @@ public class TrainTask extends TaskBase {
             throw new MidasException("training parameter not correct");
         }
 
-    }
-
-    private void trainStrategy() throws Exception {
-        List<StockVo> stocks = stocksService.queryAllStock();
-        CalcParameter parameter = new CalcParameter();
-        // KLineStrategyS LgtStrategyS GpStrategyS
-        String strategyName = SrStrategyS.STRATEGY_NAME;
-
-        TrainManager manager = new TrainManager(parameter, stocks, strategyName);
-
-        logger.info( "start train ...");
-        manager.process();
-
-        logger.info( "start save results ...");
-        if(!manager.isBigDataSet()){
-            stocksService.saveStocks(stocks);               // maybe train strategy has generate new data
-        }
-        trainDao.saveTrainResult(manager.getTrainResult());
-
-        PerformanceUtil.manuallyGC(stocks);
     }
 
     @Override

@@ -162,7 +162,7 @@ midasApp.controller('bondController', function ($scope, $routeParams, $filter, M
 
         $scope.datepicker.dt1 = $scope.datepicker.minDay = Utils.toTime(Math.min(results[0].cob, results[results.length - 1].cob));
         $scope.datepicker.dt2 = $scope.datepicker.maxDay = Utils.toTime(Math.max(results[0].cob, results[results.length - 1].cob));
-        console.log($scope.multipleChoice.available);
+
         for(var j = 0, len1 = $scope.bondRaw[0].termName.length; j < len1; j++ ){
             $scope.multipleChoice.available.push('t' +  $scope.bondRaw[0].termName[j]);
         }
@@ -183,11 +183,10 @@ midasApp.controller('bondController', function ($scope, $routeParams, $filter, M
             series.push(Utils.extractTimeSeries(bonds, 'time', $scope.multipleChoice.selected[i],
                 'cob', Utils.date2int($scope.datepicker.dt1), Utils.date2int($scope.datepicker.dt2)));
         }
-        console.log(stockData, Utils.date2int($scope.datepicker.dt1), Utils.date2int($scope.datepicker.dt2));
+
         if(stockData && stockData.$resolved){
             var x = StockUtils.getDataByTwoVaildDate(stockData, $scope.datepicker.dt1, $scope.datepicker.dt2, ['end']);
             series = series.concat(x);
-            console.log(series, x);
         }
         return {
             series : series

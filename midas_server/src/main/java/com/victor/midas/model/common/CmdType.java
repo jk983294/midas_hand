@@ -10,7 +10,6 @@ public enum CmdType {
     create,
     calculate,
     trainSingle,
-    trainStrategy,
     task,
     test,
     score,

@@ -4,13 +4,12 @@ import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.common.model.DirectionType;
 import com.victor.midas.calculator.common.model.FractalType;
 import com.victor.midas.calculator.common.model.TippingPoint;
-import com.victor.midas.calculator.divergence.IndexBadDepth;
 import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.stats.IndexBadDepth;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.calculator.util.MaxMinUtil;
 import com.victor.midas.model.common.StockType;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.math.function.SectionalFunction;
 import com.victor.utilities.math.stats.ma.MaBase;
@@ -18,7 +17,6 @@ import com.victor.utilities.math.stats.ma.SMA;
 import com.victor.utilities.utils.MathHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**

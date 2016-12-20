@@ -1,6 +1,5 @@
 package com.victor.midas.calculator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.victor.midas.calculator.common.ICalculator;
@@ -25,25 +24,10 @@ public class IndexCalculator {
     private List<StockVo> stocks;
     private CalcParameter parameter;
     private StockFilterUtil filterUtil;
-    private int calculatorCnt, lastAggregationIndex = -1;
+    private int calculatorCnt;
 
 
     public IndexCalculator(List<StockVo> stocks, String calcName) throws MidasException {
-        ctor(stocks, calcName);
-    }
-
-    /**
-     * because some calculator need market Index, so reuse IndexCalculator(List<StockVo> stocks, String calcName)
-     * List<StockVo> stocks contain stock and market Index
-     */
-    @Deprecated
-    public IndexCalculator(StockVo stock, String calcName) throws MidasException {
-        List<StockVo> stocks = new ArrayList<>();
-        stocks.add(stock);
-        ctor(stocks, calcName);
-    }
-
-    private void ctor(List<StockVo> stocks, String calcName) throws MidasException {
         this.stocks = stocks;
         this.parameter = IndexFactory.parameter;
         calculators = IndexFactory.getAllNeededCalculators(calcName);
@@ -59,14 +43,8 @@ public class IndexCalculator {
 
     public void calculate() throws MidasException {
         logger.info("calculation index start...");
-        if(isBigDataSet && lastAggregationIndex >= 0){
-            for(int i = 0; i <= lastAggregationIndex; i++){
-                calculate(calculators.get(i));
-            }
-        } else {
-            for (ICalculator calculator : calculators){
-                calculate(calculator);
-            }
+        for (ICalculator calculator : calculators){
+            calculate(calculator);
         }
         logger.info("calculation index finish... ");
 	}
@@ -109,26 +87,6 @@ public class IndexCalculator {
         for(int i = 0; i < calculatorCnt; i++){
             ICalculator calculator = calculators.get(i);
             calculator.init_aggregation(filterUtil);
-            if(calculator.getCalculatorType() == MidasConstants.CalculatorType.Aggregation){
-                lastAggregationIndex = i;
-            }
-        }
-    }
-
-    /**
-     * when calculate for one stock, use all calculator after last aggregation calculator
-     * @param stockVo
-     * @throws MidasException
-     */
-    public void calculate(StockVo stockVo) throws MidasException {
-        try {
-            for(int i = lastAggregationIndex + 1; i < calculatorCnt; i++){
-                ICalculator calculator = calculators.get(i);
-                calculator.calculate(stockVo);
-            }
-        } catch (Exception e){
-            logger.error(e);
-            throw new MidasException("problem meet when calculate index for " + stockVo, e);
         }
     }
 

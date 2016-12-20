@@ -1,18 +1,12 @@
 package com.victor.midas.calculator.macd;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
-import com.victor.midas.calculator.divergence.IndexBadDepth;
 import com.victor.midas.calculator.indicator.IndexChangePct;
+import com.victor.midas.calculator.stats.IndexBadDepth;
 import com.victor.midas.model.common.StockState;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.common.MidasTrainOptions;
-import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
-import com.victor.utilities.math.stats.ma.EMA;
-import com.victor.utilities.math.stats.ma.MaBase;
-import com.victor.utilities.utils.MathHelper;
-
-import java.util.HashMap;
 
 /**
  * calculate MACD

@@ -14,7 +14,6 @@ var serviceUrls = (function(){
     var typeAheadTipsUrl = isRemote ? urlBase + 'typeahead/:queryStr' : 'app/data/Tips.json';
     var typeAheadActionUrl = isRemote ? urlBase + 'typeahead/action/:queryStr' : 'app/data/Action.json';
     var taskUrl = isRemote ? urlBase + 'task/alltasks' : 'app/data/task.json';
-    var trainResultUrl = isRemote ? urlBase + 'stocks/trainResult/:trainId' : 'app/data/trainResult:trainId.json';
     var scoreUrl = isRemote ? urlBase + 'stocks/score' : 'app/data/score.json';
     var nationalDebtUrl = isRemote ? urlBase + 'stocks/national-debt' : 'app/data/nationalDebt.json';
     var scoreRangeUrl = isRemote ? urlBase + 'stocks/score/:cobFrom/:cobTo' : 'app/data/score.json';
@@ -31,7 +30,6 @@ var serviceUrls = (function(){
         typeAheadTipsUrl : typeAheadTipsUrl,
         typeAheadActionUrl : typeAheadActionUrl,
         taskUrl : taskUrl,
-        trainResultUrl : trainResultUrl,
         scoreUrl : scoreUrl,
         nationalDebtUrl : nationalDebtUrl,
         scoreRangeUrl : scoreRangeUrl,
@@ -58,16 +56,6 @@ dataService.factory('StockDetail', ['$resource',
         return $resource(
             serviceUrls.stockDetailUrl,
             { stockCode:'IDX999999' }, // Query parameters
-            {'query': { method: 'GET'}}
-        );
-    }
-]);
-
-dataService.factory('TrainResult', ['$resource',
-    function($resource){
-        return $resource(
-            serviceUrls.trainResultUrl,
-            { trainId:'-1' }, // Query parameters
             {'query': { method: 'GET'}}
         );
     }
@@ -204,12 +192,12 @@ dataService.factory('ReportsQuery', ['$resource',
 ]);
 
 dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'StocksCmp',
-    'TypeAheadTips', 'TypeAheadAction', 'TaskQuery', 'TrainResult',
+    'TypeAheadTips', 'TypeAheadAction', 'TaskQuery',
     'ScoreQuery', 'NationalDebtQuery', 'ScoreRangeQuery', 'ConceptScoreQuery',
     'ConceptScoreRangeQuery', 'singleTrainResultQuery', 'DayStatsRangeQuery',
     'ReportsQuery',
     function($resource, StockInfos, StockDetail, StocksCmp,
-             TypeAheadTips, TypeAheadAction, TaskQuery, TrainResult,
+             TypeAheadTips, TypeAheadAction, TaskQuery,
              ScoreQuery, NationalDebtQuery, ScoreRangeQuery, ConceptScoreQuery,
              ConceptScoreRangeQuery, singleTrainResultQuery, DayStatsRangeQuery,
              ReportsQuery){
@@ -224,10 +212,6 @@ dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'Stoc
         }
         function getStockDetail(newStockCode){
             return StockDetail.get({stockCode: newStockCode});
-        }
-
-        function getTrainResult(newTrainId){
-            return TrainResult.get({trainId: newTrainId});
         }
 
         function getStocksCmp(stockCodes){
@@ -298,7 +282,6 @@ dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'Stoc
         return {
             getStockInfos : getStockInfos,
             getStockDetail : getStockDetail,
-            getTrainResult : getTrainResult,
             getStocksCmp : getStocksCmp,
             getTips : getTips,
             getAction : getAction,
