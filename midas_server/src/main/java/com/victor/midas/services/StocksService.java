@@ -9,6 +9,7 @@ import java.util.Set;
 import com.victor.midas.calculator.common.AggregationCalcBase;
 import com.victor.midas.calculator.common.ICalculator;
 import com.victor.midas.calculator.common.IndexCalcBase;
+import com.victor.midas.calculator.common.MarketIndexAggregationCalcBase;
 import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.dao.*;
 import com.victor.midas.model.db.StockInfoDb;
@@ -57,6 +58,7 @@ public class StocksService {
         Reflections reflections = new Reflections("com.victor.midas.calculator");
         Set<Class<? extends IndexCalcBase>> subTypes = reflections.getSubTypesOf(IndexCalcBase.class);
         Set<Class<? extends AggregationCalcBase>> aggregationTypes = reflections.getSubTypesOf(AggregationCalcBase.class);
+        Set<Class<? extends MarketIndexAggregationCalcBase>> marketAggregationTypes = reflections.getSubTypesOf(MarketIndexAggregationCalcBase.class);
         CalcParameter parameter = IndexFactory.getParameter();
         try {
             for(Class<? extends AggregationCalcBase> aggregation : aggregationTypes){
@@ -68,6 +70,12 @@ public class StocksService {
                 Constructor constructor = indexCalcBase.getConstructor(CalcParameter.class);
                 ICalculator calculator = (ICalculator)constructor.newInstance(parameter);
                 IndexFactory.addCalculator(calculator.getIndexName(), calculator);
+            }
+            for(Class<? extends MarketIndexAggregationCalcBase> indexCalcBase : marketAggregationTypes){
+                Constructor constructor = indexCalcBase.getConstructor(CalcParameter.class);
+                ICalculator calculator = (ICalculator)constructor.newInstance(parameter);
+                IndexFactory.addCalculator(calculator.getIndexName(), calculator);
+                IndexFactory.addMarketCalculator(calculator.getIndexName());
             }
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             logger.error(e);

@@ -3,7 +3,6 @@ package com.victor.midas.calculator.score;
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.indicator.kline.IndexKLine;
-import com.victor.midas.calculator.stats.IndexBadDepth;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.calculator.util.MaxMinUtil;
 import com.victor.midas.model.vo.CalcParameter;
@@ -16,7 +15,7 @@ public class StockRevertScoreRank extends IndexCalcBase {
 
     public final static String INDEX_NAME = "score_revert";
 
-    private double[] upShadowPct, downShadowPct, middleShadowPct, badDepth;
+    private double[] upShadowPct, downShadowPct, middleShadowPct;
     private double[] scores;
 
     private MaxMinUtil mmPriceUtil90, mmPriceUtil5;
@@ -40,7 +39,6 @@ public class StockRevertScoreRank extends IndexCalcBase {
     public void setRequiredCalculators() {
         requiredCalculators.add(IndexChangePct.INDEX_NAME);
         requiredCalculators.add(IndexKLine.INDEX_NAME);
-        requiredCalculators.add(IndexBadDepth.INDEX_NAME);
     }
 
     @Override
@@ -72,8 +70,6 @@ public class StockRevertScoreRank extends IndexCalcBase {
                 //score += positionInHistoryMinMaxPriceScore(i);
             }
             scores[i] = score;
-            // badDepth override
-            if(badDepth[i] < -1d) scores[i] = badDepth[i];
         }
     }
 
@@ -260,7 +256,6 @@ public class StockRevertScoreRank extends IndexCalcBase {
         upShadowPct = (double[])stock.queryCmpIndex("k_u");
         downShadowPct = (double[])stock.queryCmpIndex("k_d");
         middleShadowPct = (double[])stock.queryCmpIndex("k_m");
-        badDepth = (double[])stock.queryCmpIndex("badDepth");
 
         mmPriceUtil90 = new MaxMinUtil(stock, true);
         mmPriceUtil90.calcMaxMinIndex(90);

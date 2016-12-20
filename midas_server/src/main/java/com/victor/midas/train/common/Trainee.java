@@ -8,6 +8,9 @@ public interface Trainee {
 
     public SingleParameterTrainResult getPerformance();
 
+    /**
+     * apply this parameter to all calculator, then re-calculate all index
+     */
     public void apply(CalcParameter parameter) throws Exception;
 
     public void setIsInTrain(boolean isInTrain);

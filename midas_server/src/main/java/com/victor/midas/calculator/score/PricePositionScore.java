@@ -5,7 +5,6 @@ import com.victor.midas.calculator.common.model.DirectionType;
 import com.victor.midas.calculator.common.model.FractalType;
 import com.victor.midas.calculator.common.model.TippingPoint;
 import com.victor.midas.calculator.indicator.IndexChangePct;
-import com.victor.midas.calculator.stats.IndexBadDepth;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.calculator.util.MaxMinUtil;
 import com.victor.midas.model.common.StockType;
@@ -30,7 +29,6 @@ public class PricePositionScore extends IndexCalcBase {
 
     private double[] pricePositionScore;
 
-    private double[] badDepth;
     private DirectionType direction = DirectionType.Chaos;
     private final static int[] timeFrames = new int[]{5, 10, 20, 30, 60};
     private final static int timeFrameCnt = timeFrames.length;
@@ -54,7 +52,6 @@ public class PricePositionScore extends IndexCalcBase {
     @Override
     public void setRequiredCalculators() {
         requiredCalculators.add(IndexChangePct.INDEX_NAME);
-        requiredCalculators.add(IndexBadDepth.INDEX_NAME);
     }
 
     @Override
@@ -107,7 +104,6 @@ public class PricePositionScore extends IndexCalcBase {
                     pricePositionScore[i] = toTopScore;
                 }
                 pricePositionScore[i] = toBottomScore + toTopScore;
-                if(badDepth[i] < -1.5d) pricePositionScore[i] = badDepth[i];
 //              pricePositionScore[i] = direction.ordinal();
             }
         }
@@ -286,7 +282,6 @@ public class PricePositionScore extends IndexCalcBase {
 
     @Override
     protected void initIndex() throws MidasException {
-        badDepth = (double[])stock.queryCmpIndex(IndexBadDepth.INDEX_NAME);
         maxMinUtils = new MaxMinUtil[timeFrameCnt];
         for (int i = 0; i < timeFrameCnt; i++) {
             maxMinUtils[i] = new MaxMinUtil(stock, false);

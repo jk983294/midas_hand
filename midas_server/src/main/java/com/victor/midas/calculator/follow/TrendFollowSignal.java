@@ -6,7 +6,6 @@ import com.victor.midas.calculator.indicator.kline.IndexKLine;
 import com.victor.midas.calculator.macd.IndexMACD;
 import com.victor.midas.calculator.macd.model.MacdSection;
 import com.victor.midas.calculator.macd.model.MacdSectionUtil;
-import com.victor.midas.calculator.stats.IndexBadDepth;
 import com.victor.midas.calculator.util.LineBreakoutUtil;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.calculator.util.MaxMinUtil;
@@ -53,7 +52,6 @@ public class TrendFollowSignal extends IndexCalcBase {
     public void setRequiredCalculators() {
         requiredCalculators.add(IndexChangePct.INDEX_NAME);
         requiredCalculators.add(IndexKLine.INDEX_NAME);
-        requiredCalculators.add(IndexBadDepth.INDEX_NAME);
         requiredCalculators.add(IndexMACD.INDEX_NAME);
     }
 

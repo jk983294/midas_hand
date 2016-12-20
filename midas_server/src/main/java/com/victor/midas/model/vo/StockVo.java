@@ -233,10 +233,10 @@ public class StockVo {
     }
 
     /**
-     * search target cob from internal cobIndex to datesInt.length
+     * search target cob from 0 to datesInt.length
      */
     public int getCobIndex(int targetCob){
-        int searchIndex = cobIndex;
+        int searchIndex = 0;
         if(searchIndex < datesInt.length && datesInt[searchIndex] <= targetCob){
             if(datesInt[searchIndex] == targetCob) return searchIndex;
             int idx1 = searchIndex, len = datesInt.length, step = 1;

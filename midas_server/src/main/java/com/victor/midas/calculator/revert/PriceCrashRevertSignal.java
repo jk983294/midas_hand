@@ -4,7 +4,6 @@ import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.indicator.kline.IndexKLine;
 import com.victor.midas.calculator.macd.IndexMACD;
-import com.victor.midas.calculator.stats.IndexBadDepth;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.calculator.util.MaxMinUtil;
 import com.victor.midas.model.common.StockState;
@@ -39,7 +38,6 @@ public class PriceCrashRevertSignal extends IndexCalcBase {
     public void setRequiredCalculators() {
         requiredCalculators.add(IndexChangePct.INDEX_NAME);
         requiredCalculators.add(IndexKLine.INDEX_NAME);
-        requiredCalculators.add(IndexBadDepth.INDEX_NAME);
         requiredCalculators.add(IndexMACD.INDEX_NAME);
     }
 

@@ -7,7 +7,6 @@ import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
-import com.victor.utilities.algorithm.search.BinarySearch;
 import com.victor.utilities.utils.ArrayHelper;
 import com.victor.utilities.utils.StringHelper;
 import org.apache.commons.collections.CollectionUtils;
@@ -23,6 +22,7 @@ public class PerfCollector {
     private Map<String, StockVo> name2stock;    // stock name map to date index
     private StockVo marketIndex;
     private int index;                          // benchmark stock's date index
+    private int dateCnt;                        // benchmark stock's cob length
     private boolean isInTrain = false;
     /**
      * buyTiming = 1 holdHalfDays = 1 means buy at 1st day's close, sell at 2nd day's open
@@ -35,7 +35,7 @@ public class PerfCollector {
     private boolean isSellAtOpen = false;
     private boolean isBuyAtOpen = true;
 
-    private int cobRangeFrom, cobRangeTo, dateCnt;
+    private int cobRangeFrom, cobRangeTo;
     private double[] changePct, end, start, max, min;
     private int[] stockDates;
 
@@ -77,7 +77,7 @@ public class PerfCollector {
         recordByName(record);
         if(record.getCob() >= cobRangeFrom && record.getCob() <= cobRangeTo){
             for(StockScore stockScore : record.getRecords()){
-                if(stockScore.getScore() <= 0.5 || stockScore.sellIndex <= 0) continue;
+                if(stockScore.getScore() <= 0.5 || (stockScore.holdingPeriod >= 0 && stockScore.sellIndex <= 0)) continue;
                 initState(stockScore.getStockCode());
                 recordBuySellDayStatistics();
                 if(index < dateCnt){
@@ -116,7 +116,10 @@ public class PerfCollector {
     }
 
     /**
-     * controlled by PerfCollector
+     * controlled by PerfCollector, for those like score_ma strategy, it only select top K stocks to buy
+     * however this kind of strategy doesn't have elegant quit mechanism,
+     * so we assume this kind of strategy only hold stock for one day as China market is T + 1 market
+     * so sell at next day's close price
      * @throws MidasException
      */
     private void recordCollectorControlledScore(StockScore stockScore) throws MidasException {
@@ -160,6 +163,7 @@ public class PerfCollector {
 
     private void initState(String stockCode) throws MidasException {
         StockVo stock = name2stock.get(stockCode);
+        // in ScoreManager already advanced by 1. so this index of cob is the next day of signal
         index = stock.getCobIndex();
         changePct = (double[])stock.queryCmpIndex("changePct");
         end = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_END);

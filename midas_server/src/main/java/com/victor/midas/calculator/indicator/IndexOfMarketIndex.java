@@ -3,10 +3,8 @@ package com.victor.midas.calculator.indicator;
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.model.common.StockType;
 import com.victor.midas.model.vo.CalcParameter;
-import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 
-import java.util.HashMap;
 
 /**
  * tradable stock intersection days of market index

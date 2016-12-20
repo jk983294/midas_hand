@@ -1,6 +1,7 @@
 package com.victor.midas.calculator.util;
 
 import com.victor.midas.calculator.common.ICalculator;
+import com.victor.midas.calculator.common.MarketIndexAggregationCalcBase;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasException;
@@ -18,15 +19,17 @@ public class IndexFactory {
 
     private static final HashMap<String, ICalculator> calcName2calculator = new HashMap<>();
 
+    private static final HashSet<String> marketCalculators = new HashSet<>();
+
     public static CalcParameter parameter = new CalcParameter();
 
     /**
      * use dependency to get all calculators
      */
-    public static List<ICalculator> getAllNeededCalculators(String calc) throws MidasException {
+    public static List<ICalculator> getAllNeededCalculators(String targetCalculatorName) throws MidasException {
         Queue<String> toProcessCalcNames = new LinkedList<>();
         Set<String> visited = new HashSet<>();
-        toProcessCalcNames.add(calc);
+        toProcessCalcNames.add(targetCalculatorName);
 
         Graph<String> dependency = new Graph<>(GraphType.DIRECTED);
 
@@ -42,12 +45,22 @@ public class IndexFactory {
                         toProcessCalcNames.add(need);
                     }
                 }
+
+                // if targetCalculatorName is normal calculator, then add all MarketIndexAggregation calculators
+                if(calcName.equals(targetCalculatorName) && !(current instanceof MarketIndexAggregationCalcBase)){
+                    for(String need : marketCalculators){
+                        dependency.addEdge(targetCalculatorName, need);
+                        if(!visited.contains(need)){
+                            toProcessCalcNames.add(need);
+                        }
+                    }
+                }
             }
         }
 
         List<String> names = TopologicalSort.sortThenGetRawData(dependency);
         VisualAssist.print("all calculators needed: ", names);
-        if(names.size() == 0) names.add(calc);
+        if(names.size() == 0) names.add(targetCalculatorName);
         return getCalculatorCopy(names);
     }
 
@@ -93,5 +106,9 @@ public class IndexFactory {
 
     public static HashMap<String, ICalculator> getCalcName2calculator() {
         return calcName2calculator;
+    }
+
+    public static void addMarketCalculator(String name){
+        marketCalculators.add(name);
     }
 }

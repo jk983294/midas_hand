@@ -8,7 +8,6 @@ import com.victor.midas.calculator.macd.model.MacdSection;
 import com.victor.midas.calculator.macd.model.MacdSectionStatus;
 import com.victor.midas.calculator.macd.model.MacdSectionType;
 import com.victor.midas.calculator.macd.model.MacdSectionUtil;
-import com.victor.midas.calculator.stats.IndexBadDepth;
 import com.victor.midas.model.common.StockState;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.common.MidasTrainOptions;
@@ -48,7 +47,6 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
     @Override
     public void setRequiredCalculators() {
         requiredCalculators.add(IndexChangePct.INDEX_NAME);
-        requiredCalculators.add(IndexBadDepth.INDEX_NAME);
         requiredCalculators.add(IndexMACD.INDEX_NAME);
     }
 

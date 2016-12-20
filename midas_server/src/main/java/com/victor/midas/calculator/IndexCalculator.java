@@ -21,14 +21,11 @@ public class IndexCalculator {
     public MidasTrainOptions options;
 
     private boolean isBigDataSet;
-    private List<StockVo> stocks;
     private CalcParameter parameter;
     private StockFilterUtil filterUtil;
-    private int calculatorCnt;
 
 
     public IndexCalculator(List<StockVo> stocks, String calcName) throws MidasException {
-        this.stocks = stocks;
         this.parameter = IndexFactory.parameter;
         calculators = IndexFactory.getAllNeededCalculators(calcName);
         if(CollectionUtils.isNotEmpty(calculators) ){
@@ -36,7 +33,7 @@ public class IndexCalculator {
             options = targetCalculator.getTrainOptions();
         }
         isBigDataSet = stocks.size() > 100;
-        filterUtil = new StockFilterUtil(this.stocks);
+        filterUtil = new StockFilterUtil(stocks);
         filterUtil.filter();
         initCalculator();
     }
@@ -83,9 +80,7 @@ public class IndexCalculator {
     }
 
     private void initCalculator(){
-        calculatorCnt = calculators.size();
-        for(int i = 0; i < calculatorCnt; i++){
-            ICalculator calculator = calculators.get(i);
+        for (ICalculator calculator : calculators){
             calculator.init_aggregation(filterUtil);
         }
     }

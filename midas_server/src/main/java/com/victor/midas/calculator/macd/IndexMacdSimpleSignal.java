@@ -2,7 +2,6 @@ package com.victor.midas.calculator.macd;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
 import com.victor.midas.calculator.indicator.IndexChangePct;
-import com.victor.midas.calculator.stats.IndexBadDepth;
 import com.victor.midas.model.common.StockState;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.common.MidasTrainOptions;
@@ -25,7 +24,6 @@ public class IndexMacdSimpleSignal extends IndexCalcBase {
     @Override
     public void setRequiredCalculators() {
         requiredCalculators.add(IndexChangePct.INDEX_NAME);
-        requiredCalculators.add(IndexBadDepth.INDEX_NAME);
         requiredCalculators.add(IndexMACD.INDEX_NAME);
     }
 

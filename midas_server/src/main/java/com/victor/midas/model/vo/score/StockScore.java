@@ -18,7 +18,6 @@ public class StockScore implements Comparable<StockScore>, TrainOptionApply {
 
     private int cob;        // prediction day cob
     public int holdingPeriod = -1;      // if negative means no override, let PerfCollector decide when to sell
-    public int holdHalfPeriod = -1;
 
     public int buyCob, sellCob;
     public int buyIndex, sellIndex;

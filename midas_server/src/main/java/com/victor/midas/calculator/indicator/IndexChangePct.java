@@ -24,7 +24,6 @@ public class IndexChangePct extends IndexCalcBase {
 
     @Override
     public void setRequiredCalculators() {
-        requiredCalculators.add(IndexOfMarketIndex.INDEX_NAME);
     }
 
     @Override
