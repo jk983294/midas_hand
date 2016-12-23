@@ -57,8 +57,8 @@ public class IndexLongGoodTrend extends IndexCalcBase {
 
     @Override
     public void calculate() throws MidasException {
-        for (int i = 1; i < len; i++) {
-            lgt[i] = calcLgt(i);
+        for (itr = 1; itr < len; itr++) {
+            lgt[itr] = calcLgt(itr);
         }
 
         addIndexData(INDEX_NAME, lgt);

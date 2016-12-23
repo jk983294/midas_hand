@@ -16,12 +16,18 @@ public class StockScore implements Comparable<StockScore>, TrainOptionApply {
 
     private double score, perf;
 
-    private int cob;        // prediction day cob
+    private int cob;                    // signal day cob
+    /**
+     * buyTiming = 1 holdHalfDays = 1 means buy at 1st day's close, sell at 2nd day's open
+     * buyTiming = 0 holdHalfDays = 2 means buy at 1st day's open, sell at 2nd day's open
+     * buyTiming = 0 holdHalfDays = 3 means buy at 1st day's open, sell at 2nd day's close
+     */
     public int holdingPeriod = -1;      // if negative means no override, let PerfCollector decide when to sell
 
     public int buyCob, sellCob;
     public int buyIndex, sellIndex;
-    public int buyTiming, sellTiming;
+
+    public int buyTiming, sellTiming;   // 0 open 1 close
     public double marketPerf;
     public double dailyExcessReturn;
 

@@ -35,9 +35,9 @@ public class StockSupportScoreRank extends IndexCalcBase {
 
     private void calculateScore(){
         double score;
-        for (int i = 5; i < len; i++) {
+        for (itr = 5; itr < len; itr++) {
             score = 0d;
-            scores[i] = pricePositionScore[i];
+            scores[itr] = pricePositionScore[itr];
         }
     }
 

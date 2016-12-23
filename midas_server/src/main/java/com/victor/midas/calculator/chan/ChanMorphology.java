@@ -51,8 +51,8 @@ public class ChanMorphology extends IndexCalcBase {
         mergedKLines = new ArrayList<>();
         fractalKeyPoints = new ArrayList<>();
         strokes = new ArrayList<>();
-        for (int i = 0; i < len; i++) {
-            mergeKLine(i);
+        for (itr = 0; itr < len; itr++) {
+            mergeKLine(itr);
             decideFractalType();
         }
 

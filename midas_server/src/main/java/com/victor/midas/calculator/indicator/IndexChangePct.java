@@ -33,8 +33,8 @@ public class IndexChangePct extends IndexCalcBase {
 
     @Override
     public void calculate() throws MidasException {
-        for (int i = 1; i < len; i++) {
-            changePct[i] = MathStockUtil.calculateChangePct(end[i - 1], end[i]);
+        for (itr = 1; itr < len; itr++) {
+            changePct[itr] = MathStockUtil.calculateChangePct(end[itr - 1], end[itr]);
         }
         addIndexData(INDEX_NAME, changePct);
     }

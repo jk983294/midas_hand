@@ -50,26 +50,26 @@ public class StockRevertScoreRank extends IndexCalcBase {
     private void calculateScore(){
         double score;
         changePctStats.clear();
-        for (int i = 5; i < len; i++) {
+        for (itr = 5; itr < len; itr++) {
             score = 0d;
-            if((changePct[i] < 0d || (middleShadowPct[i] < 0d && changePct[i] < 0.01)
-                    || (changePct[i] < 0.01d && Math.abs(middleShadowPct[i]) < 0.01d))){
-                changePctStats.addValue(changePct[i]);
+            if((changePct[itr] < 0d || (middleShadowPct[itr] < 0d && changePct[itr] < 0.01)
+                    || (changePct[itr] < 0.01d && Math.abs(middleShadowPct[itr]) < 0.01d))){
+                changePctStats.addValue(changePct[itr]);
             } else {
                 changePctStats.clear();
             }
 
             fallDays = (int)changePctStats.getN();
             if(fallDays > 1){
-                findMaxVolume(i);
-                score += fallHeightScore(i);
-                score += volumeScore(i);
-                score += priceVolumeDivergenceScore(i);
-                score += shadowScore(i);
-                score += trapScore(i);
+                findMaxVolume(itr);
+                score += fallHeightScore(itr);
+                score += volumeScore(itr);
+                score += priceVolumeDivergenceScore(itr);
+                score += shadowScore(itr);
+                score += trapScore(itr);
                 //score += positionInHistoryMinMaxPriceScore(i);
             }
-            scores[i] = score;
+            scores[itr] = score;
         }
     }
 

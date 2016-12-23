@@ -28,7 +28,6 @@ public class PriceCrashRevertSignal extends IndexCalcBase {
     private double[] middleShadowPct, upShadowPct, downShadowPct;
     private MaxMinUtil mmPriceUtil5;
     private int sellIndex;
-    private StockState state;
 
     public PriceCrashRevertSignal(CalcParameter parameter) {
         super(parameter);
@@ -56,59 +55,59 @@ public class PriceCrashRevertSignal extends IndexCalcBase {
 
         sellIndex = -1;
         state = StockState.HoldMoney;
-        for (int i = 5; i < len; i++) {
+        for (itr = 5; itr < len; itr++) {
 //            if(dates[i] == 20160411){
 //                System.out.println("wow");
 //            }
 
             if(state == StockState.HoldMoney) {
-                if (changePct[i] < 0 && changePct[i - 1] < 0 && changePct[i - 2] > 0
-                        && end[i] <= start[i] && end[i - 1] <= start[i - 1] && end[i - 2] >= start[i - 2]
-                        && max[i] > min[i - 1]
-                        && total[i] < total[i - 1] * 1.5
-                        //&& (i + 1 < len && start[i + 1] < end[i])   // this condition need to remove in real, you cannot know tomorrow's open
-                        && macdBar[i] >= 0
-                        && MathStockUtil.calculateChangePct(min[i], end[i]) < 0.01
-                        && howManyMaUp(i) >= 3) {
-                    int maxIndex = mmPriceUtil5.getMaxIndex(i);
+                if (changePct[itr] < 0 && changePct[itr - 1] < 0 && changePct[itr - 2] > 0
+                        && end[itr] <= start[itr] && end[itr - 1] <= start[itr - 1] && end[itr - 2] >= start[itr - 2]
+                        && max[itr] > min[itr - 1]
+                        && total[itr] < total[itr - 1] * 1.5
+                        && macdBar[itr] >= 0
+                        && MathStockUtil.calculateChangePct(min[itr], end[itr]) < 0.01
+                        && howManyMaUp(itr) >= 3) {
+                    int maxIndex = mmPriceUtil5.getMaxIndex(itr);
                     int minIndex = mmPriceUtil5.getMinIndex(maxIndex);
                     double maxPrice = mmPriceUtil5.getMaxPrice(maxIndex);
                     double minPrice = mmPriceUtil5.getMinPrice(minIndex);
-                    if(MathHelper.isMoreAbs(maxPrice - end[i], maxPrice - minPrice, 0.61)){
-                        setBuy(4.6d, i);
+                    if(MathHelper.isMoreAbs(maxPrice - end[itr], maxPrice - minPrice, 0.61)){
+                        setBuy(4.6d, itr);
                     }
                 }
-                if(changePct[i] < 0 && macdBar[i] >= 0 && isMaBullForm(i - 1)){
-                    if((MathHelper.isLessAbs(MathStockUtil.calculateChangePct(pMa20[i], min[i]), 0.01)
-                            || MathHelper.isLessAbs(MathStockUtil.calculateChangePct(pMa20[i], end[i]), 0.01))
-                            && changePct[i] > -0.097d
-                            && Math.abs(middleShadowPct[i]) < 0.049
-                            && Math.abs(upShadowPct[i]) > Math.abs(downShadowPct[i])
-                            && MathHelper.isInRange(end[i], pMa20[i], pMa10[i])
-                            && MathHelper.isLessAbs(macdBar[i - 1], macdBar[i], 3.2)
-                            && min[i] < min[i - 1]
+                if(changePct[itr] < 0 && macdBar[itr] >= 0 && isMaBullForm(itr - 1)){
+                    if((MathHelper.isLessAbs(MathStockUtil.calculateChangePct(pMa20[itr], min[itr]), 0.01)
+                            || MathHelper.isLessAbs(MathStockUtil.calculateChangePct(pMa20[itr], end[itr]), 0.01))
+                            && changePct[itr] > -0.097d
+                            && Math.abs(middleShadowPct[itr]) < 0.049
+                            && Math.abs(upShadowPct[itr]) > Math.abs(downShadowPct[itr])
+                            && MathHelper.isInRange(end[itr], pMa20[itr], pMa10[itr])
+                            && MathHelper.isLessAbs(macdBar[itr - 1], macdBar[itr], 3.2)
+                            && min[itr] < min[itr - 1]
                             ){
-                        int maxIndex = mmPriceUtil5.getMaxIndex(i);
+                        int maxIndex = mmPriceUtil5.getMaxIndex(itr);
                         double maxPrice = mmPriceUtil5.getMaxPrice(maxIndex);
-                        if(MathStockUtil.calculateChangePct(max[i], maxPrice) > 0.01d){
-                            setBuy(4.3d, i);
+                        if(MathStockUtil.calculateChangePct(max[itr], maxPrice) > 0.01d){
+                            setBuy(4.3d, itr);
                         }
                     }
                 }
-            } else if(state == StockState.HoldStock && i == sellIndex){
-                score[i] = -5d;
-                state = StockState.HoldMoney;
+            } else if(state == StockState.HoldStock && itr == sellIndex){
+                score[itr] = -5d;
+                setStateHoldMoney();
                 sellIndex = -1;
             }
 //            score[i] = lastSection.status1.ordinal();
         }
+        setStateHoldMoney();
         addIndexData(INDEX_NAME, score);
     }
 
     private void setBuy(double currentScore, int idx){
         if(currentScore > score[idx]){
             score[idx] = currentScore;
-            state = StockState.HoldStock;
+            setStateHoldStock(currentScore);
             sellIndex = idx + 2;
         }
     }

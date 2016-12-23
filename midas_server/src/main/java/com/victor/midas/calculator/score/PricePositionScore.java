@@ -68,15 +68,15 @@ public class PricePositionScore extends IndexCalcBase {
 
         double[] vMa = maMethod.calculate(total, 5);
 
-        for(int i = 5; i < len; i++) {
+        for(itr = 5; itr < len; itr++) {
 //            if(dates[i] == 20140605){
 //                System.out.println("wow");
 //            }
 
-            findTopsBottoms(i);
-            calculateTimeElapse(i);
-            filterTopBottom(i);
-            decideCurrentDirection(i);
+            findTopsBottoms(itr);
+            calculateTimeElapse(itr);
+            filterTopBottom(itr);
+            decideCurrentDirection(itr);
             if(all.size() >= 2 && direction != DirectionType.Chaos){
                 SectionalFunction function = direction == DirectionType.Up ? resistFunction : supportFunction;
 
@@ -85,13 +85,13 @@ public class PricePositionScore extends IndexCalcBase {
                 if(topsFiltered.size() > 1 ){
                     for (int j = 0; j < topsFiltered.size(); j++) {
                         // when it touch previous top, it tends to decline
-                        toTopScore += MathHelper.log(11, 11 + topsFiltered.get(j).averageTimeElapse) * function.calculate(MathStockUtil.calculateChangePct(topsFiltered.get(j).price, maxMinUtils[0].getMaxPrice(i)));
+                        toTopScore += MathHelper.log(11, 11 + topsFiltered.get(j).averageTimeElapse) * function.calculate(MathStockUtil.calculateChangePct(topsFiltered.get(j).price, maxMinUtils[0].getMaxPrice(itr)));
                     }
                 }
                 if(bottomsFiltered.size() > 1){
                     for (int j = 0; j < bottomsFiltered.size(); j++) {
                         // don't use today's min, should use end price, it may have just touch the bottom, then bounce too high to get into trade
-                        toBottomScore += MathHelper.log(11, 11 + bottomsFiltered.get(j).averageTimeElapse) * function.calculate(MathStockUtil.calculateChangePct(bottomsFiltered.get(j).price, end[i]));
+                        toBottomScore += MathHelper.log(11, 11 + bottomsFiltered.get(j).averageTimeElapse) * function.calculate(MathStockUtil.calculateChangePct(bottomsFiltered.get(j).price, end[itr]));
                     }
                 }
 //                if(MathStockUtil.calculateChangePct(bottoms.get(0).price, end[i]) > 0.2){
@@ -99,11 +99,11 @@ public class PricePositionScore extends IndexCalcBase {
 //                }
 
                 if(DirectionType.Down == direction){
-                    pricePositionScore[i] = toBottomScore;
+                    pricePositionScore[itr] = toBottomScore;
                 } else if(DirectionType.Up == direction){
-                    pricePositionScore[i] = toTopScore;
+                    pricePositionScore[itr] = toTopScore;
                 }
-                pricePositionScore[i] = toBottomScore + toTopScore;
+                pricePositionScore[itr] = toBottomScore + toTopScore;
 //              pricePositionScore[i] = direction.ordinal();
             }
         }

@@ -1,7 +1,10 @@
 package com.victor.midas.calculator.common;
 
+import com.victor.midas.model.common.StockState;
+import com.victor.midas.model.common.StockType;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
+import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasConstants;
@@ -9,10 +12,7 @@ import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
 import org.apache.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * interface for index calculation
@@ -37,8 +37,11 @@ public abstract class IndexCalcBase implements ICalculator {
     protected int[] dates;
     protected double[] end, start, max, min, volume, total, changePct;
     protected int len;
+    protected int itr;                              // iterator index
 
     protected PerfCollector perfCollector;
+    protected StockState state;
+    private StockScore _stockScore;
 
     protected IndexCalcBase(CalcParameter parameter) {
         this.parameter = parameter;
@@ -66,6 +69,7 @@ public abstract class IndexCalcBase implements ICalculator {
         dates = stock.getDatesInt();
         len = end.length;
         cmpIndexName2Index = new HashMap<>();
+        state = StockState.HoldMoney;
 
         initIndex();
     }
@@ -135,4 +139,76 @@ public abstract class IndexCalcBase implements ICalculator {
         return this.perfCollector;
     }
 
+    /**
+     * default non-signal score strategy, buy next signal day's start, sell T + 1's end
+     */
+    protected void addStockScore(int signalCobIndex, double score){
+        if(stock.getStockType() == StockType.Index) return;
+        if(signalCobIndex + 1 < len){
+            _stockScore = new StockScore(stock.getStockName(), score, dates[signalCobIndex]);
+            _stockScore.buyIndex = signalCobIndex + 1;
+            _stockScore.buyCob = dates[signalCobIndex + 1];
+            _stockScore.buyTiming = 0;
+            _stockScore.sellTiming = 1;
+
+            if(signalCobIndex + 2 < len){
+                _stockScore.sellIndex = signalCobIndex + 2;
+                _stockScore.sellCob = dates[signalCobIndex + 2];
+            } else {
+                _stockScore.sellIndex = signalCobIndex + 1;
+                _stockScore.sellCob = dates[signalCobIndex + 1];
+            }
+
+            _stockScore.holdingPeriod = _stockScore.sellIndex - _stockScore.buyIndex + 1;
+
+            addScore2PerformanceCollector();
+            _stockScore = null;
+        }
+    }
+
+    public void setStateHoldStock(double score) {
+        if(stock.getStockType() == StockType.Index) return;
+        this.state = StockState.HoldStock;
+        if(itr + 1 < len){
+            _stockScore = new StockScore(stock.getStockName(), score, dates[itr]);
+            _stockScore.buyIndex = itr + 1;
+            _stockScore.buyCob = dates[itr + 1];
+            _stockScore.buyTiming = 0;
+        }
+    }
+
+    public void setStateHoldMoney() {
+        if(stock.getStockType() == StockType.Index) return;
+        this.state = StockState.HoldMoney;
+        if(_stockScore != null){
+            if(itr < len){
+                _stockScore.sellIndex = itr;
+                _stockScore.sellCob = dates[itr];
+                _stockScore.sellTiming = 1;
+
+                // T + 1, sell the T + 1 day open
+                if(_stockScore.buyCob == _stockScore.sellCob && itr + 1 < len){
+                    _stockScore.sellIndex = itr + 1;
+                    _stockScore.sellCob = dates[itr + 1];
+                    _stockScore.sellTiming = 0;
+                }
+
+                addScore2PerformanceCollector();
+            } else if(len > 0){         // sell the last day's close
+                _stockScore.sellIndex = len - 1;
+                _stockScore.sellCob = dates[len - 1];
+                _stockScore.sellTiming = 1;
+                addScore2PerformanceCollector();
+            }
+        }
+        _stockScore = null;
+    }
+
+    private void addScore2PerformanceCollector(){
+        if(perfCollector.options.useSignal){
+            perfCollector.cob2scoreList.get(_stockScore.getCob()).add(_stockScore);
+        } else {
+            perfCollector.cob2topK.get(_stockScore.getCob()).add(_stockScore);
+        }
+    }
 }

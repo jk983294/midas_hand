@@ -47,8 +47,8 @@ public class IndexKLineSignals extends IndexCalcBase {
 
     @Override
     public void calculate() throws MidasException {
-        for (int i = 1; i < len; i++) {
-            signals[i] = backInduction(i);
+        for (itr = 1; itr < len; itr++) {
+            signals[itr] = backInduction(itr);
         }
 
         addIndexData(INDEX_NAME, signals);

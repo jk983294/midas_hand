@@ -55,10 +55,10 @@ public class ChanMorphologyExtend extends IndexCalcBase {
         fractalKeyPoints = new ArrayList<>();
         strokes = new ArrayList<>();
         supportResistLines = new SupportResistLines();
-        for (int i = 0; i < len; i++) {
-            mergeKLine(i);
+        for (itr = 0; itr < len; itr++) {
+            mergeKLine(itr);
             decideFractalType();
-            scores[i] = supportResistLines.getScore(i, end[i]);
+            scores[itr] = supportResistLines.getScore(itr, end[itr]);
         }
 
         addIndexData(INDEX_NAME, scores);

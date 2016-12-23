@@ -47,31 +47,31 @@ public class DayStatsScore extends IndexCalcBase {
 
     private void calculateScore(){
         int minIdx, maxIdx;
-        for (int i = 5; i < len; i++) {
+        for (itr = 5; itr < len; itr++) {
 //            if(dates[i] == 20160914){
 //                System.out.println("wow");
 //            }
-            longTermUpPct[i] = MathStockUtil.calculateChangePct(
-                    mmPriceUtil60.getMinPrice(mmPriceUtil60.getMinIndexInUpTrend(i)), end[i]);
-            longTermDownPct[i] = MathStockUtil.calculateChangePct(
-                    end[i], mmPriceUtil60.getMaxPrice(mmPriceUtil60.getMaxIndexInDownTrend(i)));
-            shortTermUpPct[i] = MathStockUtil.calculateChangePct(
-                    mmPriceUtil60.getMinPrice(mmPriceUtil10.getMinIndexInUpTrend(i)), end[i]);
-            shortTermDownPct[i] = MathStockUtil.calculateChangePct(
-                    end[i], mmPriceUtil60.getMaxPrice(mmPriceUtil10.getMaxIndexInDownTrend(i)));
+            longTermUpPct[itr] = MathStockUtil.calculateChangePct(
+                    mmPriceUtil60.getMinPrice(mmPriceUtil60.getMinIndexInUpTrend(itr)), end[itr]);
+            longTermDownPct[itr] = MathStockUtil.calculateChangePct(
+                    end[itr], mmPriceUtil60.getMaxPrice(mmPriceUtil60.getMaxIndexInDownTrend(itr)));
+            shortTermUpPct[itr] = MathStockUtil.calculateChangePct(
+                    mmPriceUtil60.getMinPrice(mmPriceUtil10.getMinIndexInUpTrend(itr)), end[itr]);
+            shortTermDownPct[itr] = MathStockUtil.calculateChangePct(
+                    end[itr], mmPriceUtil60.getMaxPrice(mmPriceUtil10.getMaxIndexInDownTrend(itr)));
 
             /**
              * bottom fishing, if stock suffer a long term down trend, and go up very slow
              */
-            upSlow[i] = longTermDownPct[i] * ((double)(i - mmPriceUtil10.getMinIndexInUpTrend(i))) / (0.01 + shortTermUpPct[i]);
+            upSlow[itr] = longTermDownPct[itr] * ((double)(itr - mmPriceUtil10.getMinIndexInUpTrend(itr))) / (0.01 + shortTermUpPct[itr]);
 
             /**
              * bottom fishing, if stock suffer a long term down trend, and then accelerate to drop
              */
-            if(i - mmPriceUtil10.getMaxIndexInDownTrend(i) > 4){
-                downFast[i] = 1000d * longTermDownPct[i] * shortTermDownPct[i] / ((double)(i - mmPriceUtil10.getMaxIndexInDownTrend(i) + 1));
+            if(itr - mmPriceUtil10.getMaxIndexInDownTrend(itr) > 4){
+                downFast[itr] = 1000d * longTermDownPct[itr] * shortTermDownPct[itr] / ((double)(itr - mmPriceUtil10.getMaxIndexInDownTrend(itr) + 1));
             } else {
-                downFast[i] = 0d;
+                downFast[itr] = 0d;
             }
 
         }

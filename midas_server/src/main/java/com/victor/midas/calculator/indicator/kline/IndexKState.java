@@ -47,8 +47,8 @@ public class IndexKState extends IndexCalcBase {
 
     @Override
     public void calculate() throws MidasException {
-        for (int i = 1; i < len; i++) {
-            signals[i] = KState.signal(calcKState(i));
+        for (itr = 1; itr < len; itr++) {
+            signals[itr] = KState.signal(calcKState(itr));
         }
 
         addIndexData(INDEX_NAME, signals);

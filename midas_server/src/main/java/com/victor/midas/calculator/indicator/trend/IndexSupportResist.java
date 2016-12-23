@@ -101,24 +101,24 @@ public class IndexSupportResist extends IndexCalcBase {
         hasTarget = hasCloseEnough = false;
         targetIndex = 0;
         prepareReason = 0;
-        for (int i = 30; i < len; i++) {
+        for (itr = 30; itr < len; itr++) {
             // calculate trend percentage
-            if(middleShadowPct[i] > 0){
+            if(middleShadowPct[itr] > 0){
                 ++upSerialCnt;
-                upPctAccum += (upSerialCnt == 1 ? middleShadowPct[i] : changePct[i]);
+                upPctAccum += (upSerialCnt == 1 ? middleShadowPct[itr] : changePct[itr]);
                 prevDownPctAccum = downPctAccum;
                 downSerialCnt = 0;
                 downPctAccum = 0;
             } else {
                 ++downSerialCnt;
-                downPctAccum += (downSerialCnt == 1 ? middleShadowPct[i] : changePct[i]);
+                downPctAccum += (downSerialCnt == 1 ? middleShadowPct[itr] : changePct[itr]);
                 prevUpPctAccum = upPctAccum;
                 upSerialCnt = 0;
                 upPctAccum = 0;
             }
             /** check if PREPARE_STEADY_UP */
-            if(isNewHighsNoCrazy(i)){
-                recordPrepareSupportMax(i, PREPARE_STEADY_UP);
+            if(isNewHighsNoCrazy(itr)){
+                recordPrepareSupportMax(itr, PREPARE_STEADY_UP);
             }
 //            /** check if new high, then prepare for retreat */
 //            if(maxIndexLong[i] == i && maxIndexLong[i-1] != i-1 && i - maxIndexLong[i-1] > 5
@@ -139,65 +139,65 @@ public class IndexSupportResist extends IndexCalcBase {
 //            }
             /** if in prepare state, then wait retreat */
             if(hasTarget){
-                if(isBad[i] == 1){
+                if(isBad[itr] == 1){
                     // nothing happen, don't buy at bad state, but never lose the opportunity of big fall
                 } else
                 /** check if too many days passed, or something bad happened among those waiting days */
-                if(i - targetIndex > 7 || KState.isSellDecisionStrong(k_state[i])){
+                if(itr - targetIndex > 7 || KState.isSellDecisionStrong(k_state[itr])){
                     hasTarget = false;
-                    sr_sig[i] = NOTHING;
+                    sr_sig[itr] = NOTHING;
                 } else {
-                    newHighPrice = maxMinUtil.getMaxPrice(maxIndexShort[i]);   // get current few days new high
-                    newLowPrice = maxMinUtil.getMinPrice(minIndexShort[i]);    // get current few days new low
-                    sr_sig[i] = prepareReason;
+                    newHighPrice = maxMinUtil.getMaxPrice(maxIndexShort[itr]);   // get current few days new high
+                    newLowPrice = maxMinUtil.getMinPrice(minIndexShort[itr]);    // get current few days new low
+                    sr_sig[itr] = prepareReason;
                     /** check if PREPARE_STEADY_UP retreat */
                     if(prepareReason == PREPARE_STEADY_UP){
                         if(//sr_sig[i - 1] == PREPARE_STEADY_UP &&
-                                middleShadowPct[i] < 0 && calcUtil.isVolumeDownEnough(i)){
-                            sr_sig[i] = WILLBUY;
+                                middleShadowPct[itr] < 0 && calcUtil.isVolumeDownEnough(itr)){
+                            sr_sig[itr] = WILLBUY;
                         } //else sr_sig[i] = NOTHING;
                     } else if(prepareReason == PREPARE_NEW_HIGH && MathStockUtil.calculateChangePct(supportLine, newHighPrice) > 0.02){
                         /** check if PREPARE_NEW_HIGH retreat */
                         if(MathStockUtil.calculateChangePct(supportLine, newHighPrice) > 0.04
-                                && Math.abs(MathStockUtil.calculateChangePct(supportLine, end[i])) < 0.01){
-                            sr_sig[i] = WILLBUY;
+                                && Math.abs(MathStockUtil.calculateChangePct(supportLine, end[itr])) < 0.01){
+                            sr_sig[itr] = WILLBUY;
                         } else if(downSerialCnt > 0 && downPctAccum < -0.01
-                                && calcUtil.isVolumeDownEnough(i)
+                                && calcUtil.isVolumeDownEnough(itr)
                             //&& MathHelper.isInRange(MathStockUtil.calculateChangePct(supportLine, end[i]), -0.05, 0.04)
                                 ){
-                            sr_sig[i] = WILLBUY;
+                            sr_sig[itr] = WILLBUY;
                         }
                     } else if(prepareReason == PREPARE_MIN_SUPPORT_REVERSE){
                         /** not create new low, already reverse*/
-                        if(changePct[i] > 0 && MathStockUtil.calculateChangePct(supportLine, newLowPrice) > 0.01
-                                && calcUtil.isVolumeDownEnough(i)){
-                            sr_sig[i] = WILLBUY;
+                        if(changePct[itr] > 0 && MathStockUtil.calculateChangePct(supportLine, newLowPrice) > 0.01
+                                && calcUtil.isVolumeDownEnough(itr)){
+                            sr_sig[itr] = WILLBUY;
                         } else if(MathStockUtil.calculateChangePct(supportLine, newLowPrice) < -0.03
-                                && changePct[i] > 0
+                                && changePct[itr] > 0
                                 // TODO add volume constrain, not too little
                                 //&& !calcUtil.isVolumeDownEnough(i)
                                 ){
                             /** create new low, evolve to short trap */
-                            sr_sig[i] = WILLBUY;
+                            sr_sig[itr] = WILLBUY;
                         }
                     } else if(prepareReason == PREPARE_MA_SUPPORT_REVERSE){
-                        hasCloseEnough = checkIfCloseEnough(i, true);
+                        hasCloseEnough = checkIfCloseEnough(itr, true);
                         if(!hasCloseEnough) continue;   // if not close, don't decide
-                        if(middleShadowPct[i] < 0 && calcUtil.isVolumeUpEnough(i)){
-                            clearTarget(i);
+                        if(middleShadowPct[itr] < 0 && calcUtil.isVolumeUpEnough(itr)){
+                            clearTarget(itr);
                         } else
                         /** not create new low, already reverse*/
-                        if(changePct[i] > 0
-                                && MathStockUtil.calculateChangePct(pMaLong[i], newLowPrice) > 0
-                                && calcUtil.isVolumeDownEnough(i)){
-                            sr_sig[i] = WILLBUY;
-                        } else if(MathStockUtil.calculateChangePct(pMaLong[i], newLowPrice) < -0.03
-                                && end[i] > pMaLong[i]
+                        if(changePct[itr] > 0
+                                && MathStockUtil.calculateChangePct(pMaLong[itr], newLowPrice) > 0
+                                && calcUtil.isVolumeDownEnough(itr)){
+                            sr_sig[itr] = WILLBUY;
+                        } else if(MathStockUtil.calculateChangePct(pMaLong[itr], newLowPrice) < -0.03
+                                && end[itr] > pMaLong[itr]
                             // TODO add volume constrain, not too little
                             //&& !calcUtil.isVolumeDownEnough(i)
                                 ){
                             /** create new low, evolve to short trap */
-                            sr_sig[i] = WILLBUY;
+                            sr_sig[itr] = WILLBUY;
                         }
                     }
                 }

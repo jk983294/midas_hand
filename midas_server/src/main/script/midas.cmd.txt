@@ -11,10 +11,12 @@ calculate IDX999999 badDepth
 calculate score_revert
 calculate
 
-score score_macd
-score score_macd SH603567
+score pcrs
+score ssr
+score macd_advanced
+score macd_advanced SH603567
 
-loadStock | score score_macd
+loadStock | score macd_advanced
 
 -- load data
 load stock
@@ -22,8 +24,8 @@ load bond
 load fund
 
 -- useful cmds
-load_score score_macd
-score score_pcrs
-score score_macd
+load_score macd_advanced
+score pcrs
+score macd_advanced
 calculate dsa
 reports

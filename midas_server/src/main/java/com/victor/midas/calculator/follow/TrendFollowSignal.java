@@ -37,7 +37,6 @@ public class TrendFollowSignal extends IndexCalcBase {
     private double[] middleShadowPct, upShadowPct, downShadowPct;
     private MaxMinUtil mmPriceUtil5;
     private int sellIndex, buyIndex;
-    private StockState state;
     private PriceLimitUtil priceLimitUtil = new PriceLimitUtil(8);
     private LineBreakoutUtil lineBreakoutUtil = new LineBreakoutUtil();
     private MacdSectionUtil macdSectionUtil = new MacdSectionUtil();
@@ -85,37 +84,37 @@ public class TrendFollowSignal extends IndexCalcBase {
 
         sellIndex = -1;
         state = StockState.HoldMoney;
-        for (int i = 5; i < len; i++) {
+        for (itr = 5; itr < len; itr++) {
 //            if(dates[i] == 20150703){
 //                System.out.println("wow");
 //            }
-            priceLimitUtil.updateStats(i);
-            lineBreakoutUtil.update(i);
-            macdSectionUtil.update(i);
+            priceLimitUtil.updateStats(itr);
+            lineBreakoutUtil.update(itr);
+            macdSectionUtil.update(itr);
             lastSection = macdSectionUtil.lastSection;
             currentSection = lineBreakoutUtil.currentSection;
             previousSection = lineBreakoutUtil.previousSection;
 
-            if(start[i - 1] + end[i - 1] < pMa5[i - 1] * 2 && end[i] + start[i] > pMa5[i] * 2  && end[i] > pMa5[i]){
+            if(start[itr - 1] + end[itr - 1] < pMa5[itr - 1] * 2 && end[itr] + start[itr] > pMa5[itr] * 2  && end[itr] > pMa5[itr]){
                 isBreakout = true;
-                breakoutIndex = i;
+                breakoutIndex = itr;
                 currentSection.breakoutIndexes.add(breakoutIndex);
                 underMa5Cnt = underMa5.getN();
                 avgChangePctUnderMa5 = underMa5.getMean();
             }
-            if(isBreakout && i - breakoutIndex > 4) isBreakout = false;
-            if(end[i] + start[i] < pMa5[i] * 2){
-                underMa5.addValue(changePct[i]);
+            if(isBreakout && itr - breakoutIndex > 4) isBreakout = false;
+            if(end[itr] + start[itr] < pMa5[itr] * 2){
+                underMa5.addValue(changePct[itr]);
             } else {
                 underMa5.clear();
             }
 
-            if(startIndex == mmPriceUtil5.getMinIndexRecursive(i)){
-                regression.addData(i - startIndex, end[i] / startPrice);
-                changePctStats.addValue(Math.abs(changePct[i]));
-            } else if(end[i] > 0.1d){
-                startIndex = mmPriceUtil5.getMinIndexRecursive(i);
-                startPrice = end[i];
+            if(startIndex == mmPriceUtil5.getMinIndexRecursive(itr)){
+                regression.addData(itr - startIndex, end[itr] / startPrice);
+                changePctStats.addValue(Math.abs(changePct[itr]));
+            } else if(end[itr] > 0.1d){
+                startIndex = mmPriceUtil5.getMinIndexRecursive(itr);
+                startPrice = end[itr];
                 regression.clear();
                 regression.addData(0d, 1d);
                 changePctStats.clear();
@@ -126,14 +125,14 @@ public class TrendFollowSignal extends IndexCalcBase {
             if(state == StockState.HoldMoney) {
                 if(startIndex > 0 && regression.getN() > 3 && regression.getN() < 10
                         && regression.getSlope() > 0.016
-                        && changePct[i - 1] < -0.02d && MathStockUtil.calculateChangePct(pMa5[i - 1], end[i - 1]) < -0.01d
-                        && changePct[i] > 0d && end[i] * 2 > start[i - 1] + end[i - 1]
-                        && MathHelper.isLessAbs(total[i - 1], total[i - 2], 2.1d)
+                        && changePct[itr - 1] < -0.02d && MathStockUtil.calculateChangePct(pMa5[itr - 1], end[itr - 1]) < -0.01d
+                        && changePct[itr] > 0d && end[itr] * 2 > start[itr - 1] + end[itr - 1]
+                        && MathHelper.isLessAbs(total[itr - 1], total[itr - 2], 2.1d)
                         && changePctStats.getMean() < 0.086
-                        && changePct[i] < 0.092
+                        && changePct[itr] < 0.092
                         //&& MathStockUtil.calculateChangePct(pMa5[i - 1], pMa5[i]) > singleDouble
                         ){
-                    setBuy(4.6d, i);
+                    setBuy(4.6d, itr);
                 }
 //                if (isBreakout
 //                        && Math.min(start[i], end[i]) > pMa5[i]
@@ -151,8 +150,8 @@ public class TrendFollowSignal extends IndexCalcBase {
 //                    }
 //                }
             } else if(state == StockState.HoldStock){
-                if(i > buyIndex && macdBar[i] < macdBar[i - 1]){
-                    score[i] = -5d;
+                if(itr > buyIndex && macdBar[itr] < macdBar[itr - 1]){
+                    score[itr] = -5d;
                     state = StockState.HoldMoney;
                     sellIndex = -1;
                 }

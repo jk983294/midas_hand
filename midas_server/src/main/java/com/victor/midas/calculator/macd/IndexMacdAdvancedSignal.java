@@ -69,13 +69,13 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
 
         lines = new IndexLines();
 
-        StockState state = StockState.HoldMoney;
-        for (int i = 5; i < len; i++) {
+        state = StockState.HoldMoney;
+        for (itr = 5; itr < len; ++itr) {
 //            if(dates[i] == 20160122){
 //                System.out.println("wow");
 //            }
-            updateStats(i);
-            macdSectionUtil.update(i);
+            updateStats(itr);
+            macdSectionUtil.update(itr);
             lastSection = macdSectionUtil.lastSection;
 
             if(state == StockState.HoldMoney && lastSection.signalType == SignalType.buy){
@@ -85,18 +85,18 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
                         MacdSection preGreenSection = greenSections.get(greenSections.size() - 2);
                         if(points.size() >= 4 && lastSection.status == MacdSectionStatus.decay2
                                 && MathHelper.isMoreAbs(preGreenSection.limit1, lastSection.limit1, 0.65)){
-                            score[i] = 6d;
-                            state = StockState.HoldStock;
+                            score[itr] = 6d;
+                            setStateHoldStock(score[itr]);
                         }
                     }
-                    if(lastSection.status == MacdSectionStatus.decay2 && end[i] < end[lastSection.limitIndex1]
-                            && Math.abs(macdBar[i]) < Math.abs(macdBar[lastSection.limitIndex1]) * 0.105){
-                        score[i] = 7d;
-                        state = StockState.HoldStock;
+                    if(lastSection.status == MacdSectionStatus.decay2 && end[itr] < end[lastSection.limitIndex1]
+                            && Math.abs(macdBar[itr]) < Math.abs(macdBar[lastSection.limitIndex1]) * 0.105){
+                        score[itr] = 7d;
+                        setStateHoldStock(score[itr]);
                     }
-                    if(lastSection.signalType == SignalType.buy && changePct[i] < -0.075d){  // the first time when price still big fall, but bar arise
-                        score[i] = 10d;
-                        state = StockState.HoldStock;
+                    if(lastSection.signalType == SignalType.buy && changePct[itr] < -0.075d){  // the first time when price still big fall, but bar arise
+                        score[itr] = 10d;
+                        setStateHoldStock(score[itr]);
                     }
                 } else if(lastSection.type == MacdSectionType.red && greenSections.size() > 0 && redSections.size() > 1){
                     MacdSection lastGreen = greenSections.get(greenSections.size() - 1);
@@ -104,17 +104,17 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
                             && MathHelper.isLessAbs(lastSection.limit1, lastGreen.limit1, 0.45d)
                             && min[lastSection.limitIndex2] < lastGreen.priceLimit
                             && changePct[lastSection.limitIndex2] < -0.06d){  // the first time when price still big fall, but bar arise
-                        score[i] = 9d;
-                        state = StockState.HoldStock;
+                        score[itr] = 9d;
+                        setStateHoldStock(score[itr]);
                     }
                 }
             } else if(state == StockState.HoldStock && lastSection.shouldSellByStatus()){
-                score[i] = -5d;
-                state = StockState.HoldMoney;
-
+                score[itr] = -5d;
+                setStateHoldMoney();
             }
 //            score[i] = lastSection.status1.ordinal();
         }
+        setStateHoldMoney();
         addIndexData(INDEX_NAME, score);
     }
 

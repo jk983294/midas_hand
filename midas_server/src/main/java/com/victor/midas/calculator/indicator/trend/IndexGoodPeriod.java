@@ -73,30 +73,30 @@ public class IndexGoodPeriod extends IndexCalcBase {
     private void calcSignals(){
         int upSerialCnt = 0, downSerialCnt = 0;
         double upPctAccum = 0, downPctAccum = 0, prevUpPctAccum = 0, prevDownPctAccum = 0;
-        for (int i = 30; i < len; i++) {
-            if(middleShadowPct[i] > 0){
+        for (itr = 30; itr < len; itr++) {
+            if(middleShadowPct[itr] > 0){
                 ++upSerialCnt;
-                upPctAccum += (upSerialCnt == 1 ? middleShadowPct[i] : changePct[i]);
+                upPctAccum += (upSerialCnt == 1 ? middleShadowPct[itr] : changePct[itr]);
                 prevDownPctAccum = downPctAccum;
                 downSerialCnt = 0;
                 downPctAccum = 0;
             } else {
                 ++downSerialCnt;
-                downPctAccum += (downSerialCnt == 1 ? middleShadowPct[i] : changePct[i]);
+                downPctAccum += (downSerialCnt == 1 ? middleShadowPct[itr] : changePct[itr]);
                 prevUpPctAccum = upPctAccum;
                 upSerialCnt = 0;
                 upPctAccum = 0;
             }
-            if(gpLong[i] > 0.55 && gpShort[i] > 0.55 && calcUtil.isTrendUp(i)
+            if(gpLong[itr] > 0.55 && gpShort[itr] > 0.55 && calcUtil.isTrendUp(itr)
 //                    && !VolPriceCorrelation.isBadHugeVolume(volPriceCorr[i])
                     ){
-                gp_sig[i] = PREPARE;
-                if(((Math.abs(downPctAccum) > middleShadowPctAvg[i] * 2)
-                        || (downSerialCnt >= 2 && Math.abs(changePct[i]) < middleShadowPctAvg[i]))
-                        && calcUtil.isTrendOK(i)) gp_sig[i] = WILLBUY;
-                if(upSerialCnt > 4 || upPctAccum > (middleShadowPctAvg[i - 1] * 2 + middleShadowPctStd[i - 1])) gp_sig[i] = SELL;
+                gp_sig[itr] = PREPARE;
+                if(((Math.abs(downPctAccum) > middleShadowPctAvg[itr] * 2)
+                        || (downSerialCnt >= 2 && Math.abs(changePct[itr]) < middleShadowPctAvg[itr]))
+                        && calcUtil.isTrendOK(itr)) gp_sig[itr] = WILLBUY;
+                if(upSerialCnt > 4 || upPctAccum > (middleShadowPctAvg[itr - 1] * 2 + middleShadowPctStd[itr - 1])) gp_sig[itr] = SELL;
             }
-            if(KState.isSellDecision(k_state[i])) gp_sig[i] = SELL_KSTATE;
+            if(KState.isSellDecision(k_state[itr])) gp_sig[itr] = SELL_KSTATE;
 
         }
     }

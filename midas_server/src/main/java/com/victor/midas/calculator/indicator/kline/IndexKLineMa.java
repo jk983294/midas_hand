@@ -44,10 +44,10 @@ public class IndexKLineMa extends IndexCalcBase {
     public void calculate() throws MidasException {
         DescriptiveStatistics descriptivestats = new DescriptiveStatistics();
         descriptivestats.setWindowSize(TIME_FRAME);
-        for( int i = 0; i < len; i++) {
-            descriptivestats.addValue(Math.abs(middleShadowPct[i]));
-            middleShadowPctAvg[i] = descriptivestats.getMean();
-            middleShadowPctStd[i] = descriptivestats.getStandardDeviation();
+        for(itr = 0; itr < len; itr++) {
+            descriptivestats.addValue(Math.abs(middleShadowPct[itr]));
+            middleShadowPctAvg[itr] = descriptivestats.getMean();
+            middleShadowPctStd[itr] = descriptivestats.getStandardDeviation();
         }
 
         addIndexData("k_m_avg", middleShadowPctAvg);

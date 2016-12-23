@@ -1,12 +1,11 @@
 package com.victor.midas.services.worker.task;
 
-import com.victor.midas.model.common.CmdParameter;
+import com.victor.midas.calculator.macd.IndexMacdAdvancedSignal;
+import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.model.vo.concept.StockCrawlData;
 import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.midas.services.worker.loader.FundDataLoader;
 import com.victor.midas.services.worker.loader.StockDataLoader;
-import com.victor.midas.train.score.ConceptScoreManager;
 import com.victor.midas.train.score.GeneralScoreManager;
 import com.victor.midas.train.score.ScoreManager;
 import com.victor.midas.util.MidasConstants;
@@ -62,12 +61,16 @@ public class ScoreTask extends TaskBase {
 
 	@Override
 	public void doTask() throws Exception {
-        CmdParameter cmdParameter = CmdParameter.getParameter(CmdParameter.score_ma, params, 0);
+        String targetIndexName = IndexMacdAdvancedSignal.INDEX_NAME;
+        if(params != null && params.size() > 0){
+            targetIndexName = params.get(0);
+        }
 
-        ScoreManager manager = getScoreManager(cmdParameter);
+        List<StockVo> stocks = getAllStock();
+        ScoreManager manager = new GeneralScoreManager(stocks, targetIndexName);
 
         logger.info( "start score ...");
-        manager.process();
+        manager.process(IndexFactory.parameter);
         saveResults(manager);
 
         PerformanceUtil.manuallyGC(manager.getStocks());
@@ -81,25 +84,6 @@ public class ScoreTask extends TaskBase {
             logger.info("start save stocks ...");
             stocksService.saveStocks(manager.getStocks());               // maybe train strategy has generate new data
         }
-    }
-
-    private ScoreManager getScoreManager(CmdParameter cmdParameter) throws Exception {
-        List<StockVo> stocks = getAllStock();
-        String indexName = CmdParameter.getIndexName(cmdParameter);
-        switch(cmdParameter){
-            case score_ma:
-            case score_support:
-            case score_macd:
-            case score_pcrs:
-            case score_tfs:
-            case score_revert: return new GeneralScoreManager(stocks, indexName);
-            case score_concept: {
-                List<StockCrawlData> crawlData = stocksService.queryAllStockCrawlData();
-                return new ConceptScoreManager(stocks, indexName, crawlData);
-            }
-            default : logger.error("no such ScoreManager in score task.");
-        }
-        return new GeneralScoreManager(stocks, indexName);
     }
 
     @Override

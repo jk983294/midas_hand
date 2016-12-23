@@ -7,15 +7,12 @@ import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.model.vo.score.StockSeverity;
-import com.victor.midas.train.common.MidasTrainHelper;
 import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.train.common.TrainOptionApply;
 import com.victor.midas.train.common.Trainee;
 import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
-import com.victor.utilities.algorithm.search.TopKElements;
-import com.victor.utilities.utils.ArrayHelper;
 import com.victor.utilities.utils.JsonHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -34,10 +31,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
     private String targetIndexName;
     private IndexCalculator calculator;
     private List<StockVo> stocks;
-    private List<StockVo> tradableStocks;
-    private int tradableCnt;
     private int[] dates;                        // benchmark time line
-    private int index;                          // benchmark stock's date index
     private int len;                            // benchmark stock's date len
 
     private List<StockScoreRecord> scoreRecords;
@@ -51,49 +45,24 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
         initStocks();
     }
 
-    public void process() throws Exception {
+    public void process(CalcParameter parameter) throws Exception {
+        if(isInTrain){
+            initForTrain();
+        }
+
+        calculator.apply(parameter);
+        List<List<StockScore>> list = perfCollector.getAllScoreListSortByCob();
+
         logger.info("start score simulation ...");
-        double[] scores, shBadDepth;
+        double[] shBadDepth;
         StockSeverity severity;
         shBadDepth = (double[])calculator.getFilterUtil().getMarketIndex().queryCmpIndex("badDepth");
         int cob;
+
         for (int i = 0; i < len; i++) {
             cob = dates[i];
-            /*** iterator through all stocks to get scores */
-            List<StockScore> stockScores = new ArrayList<>();
-            for (int j = 0; j < tradableCnt; j++) {
-                StockVo stock = tradableStocks.get(j);
-                index = stock.getCobIndex();
-                if(stock.isSameDayWithIndex(cob)){
-                    scores = (double[])stock.queryCmpIndex(targetIndexName);
-                    if(!Double.isNaN(scores[index])){
-                        if(useSignal){
-                            if(scores[index] > 1d){ // buy signal
-                                StockScore score = new StockScore(stock.getStockName(), scores[index], cob);
-                                score.applyOptions(options);
-                                MidasTrainHelper.getHoldingTime(scores, score, index, stock);
-                                if(score.sellIndex > 0){
-                                    stockScores.add(score);
-                                } else if(index == scores.length - 1){  // record last day's predict even it cannot contribute to performance calculation
-                                    stockScores.add(score);
-                                }
-                            }
-                        } else {    // no signal, every stock will take account
-                            stockScores.add(new StockScore(stock.getStockName(), scores[index], cob));
-                        }
-                    } else {
-                        throw new MidasException("NaN score found for "+ stock.getStockName() + " cob " + stock.getDatesInt()[index]);
-                    }
-                }
-            }
-            /*** move iterator forward */
-            for (StockVo stock : tradableStocks) {
-                stock.advanceIndex(cob);
-            }
-            /*** find best stock with top score */
-            if(options.selectTops){
-                stockScores = ArrayHelper.array2list(TopKElements.getFirstK(stockScores, 5));
-            }
+            List<StockScore> stockScores = list.get(i);
+
             if(shBadDepth[i] > -1d){
                 severity = StockSeverity.Normal;
             } else {
@@ -105,7 +74,17 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
             if(i == len - 1 && stockScores.size() == 0){        // always keep last day
                 stockScores.add(new StockScore("fake", -1d, cob));
             }
-            ScoreHelper.perfCollect(stockScores, cob, perfCollector, scoreRecords, severity);
+
+            /**
+             * no matter what severity is that cob, StockScoreRecord will always be recorded,
+             * but only those normal cob's data will be performance collected
+             */
+            StockScoreRecord stockScoreRecord = new StockScoreRecord(cob, stockScores);
+            scoreRecords.add(stockScoreRecord);
+            stockScoreRecord.setSeverity(severity);
+            if(severity.ordinal() <= StockSeverity.Normal.ordinal()){
+                perfCollector.addRecord(stockScoreRecord);
+            }
         }
 
         if(!isInTrain){
@@ -125,14 +104,12 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
         calculator = new IndexCalculator(stocks, targetIndexName);
         applyOptions(calculator.options);
         options = calculator.options;
-        calculator.calculate();
+        //calculator.calculate();
         isBigDataSet = calculator.isBigDataSet();
         StockFilterUtil filterUtil = calculator.getFilterUtil();
-        tradableStocks = filterUtil.getTradableStocks();
         dates = filterUtil.getMarketIndex().getDatesInt();
         len = dates.length;
-        tradableCnt = tradableStocks.size();
-        perfCollector = new PerfCollector(filterUtil.getName2stock());
+        perfCollector = calculator.targetCalculator.getPerfCollector();
 
         initForTrain();
         logger.info("init stock finished...");
@@ -144,10 +121,6 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
     private void initForTrain(){
         perfCollector.clear();
         scoreRecords = new ArrayList<>();
-        for(StockVo stock : tradableStocks){
-            stock.setCobIndex(0);
-        }
-        index = 0;
     }
 
     public boolean isBigDataSet() {
@@ -169,9 +142,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
 
     @Override
     public void apply(CalcParameter parameter) throws Exception {
-        calculator.apply(parameter);
-        initForTrain();
-        process();
+        process(parameter);
     }
 
     @Override

@@ -53,16 +53,16 @@ public class IndexVolumePriceCorr extends IndexCalcBase {
     public void calculate() throws MidasException {
         VolPriceCorrelation corr = null;
         int frezzeDay = 0;
-        for (int i = 1; i < len; i++) {
-            corr = calcVolPriceCorrelation(i);
+        for (itr = 1; itr < len; itr++) {
+            corr = calcVolPriceCorrelation(itr);
             if(VolPriceCorrelation.isBadHugeVolume(corr)){
-                frezzeDay = Math.max(frezzeDay, MathHelper.multiplyReturnInt(FREEZE_TIME_FRAME_FACTOR, volRatio[i]));
+                frezzeDay = Math.max(frezzeDay, MathHelper.multiplyReturnInt(FREEZE_TIME_FRAME_FACTOR, volRatio[itr]));
             }
             if(frezzeDay > 0) {
                 --frezzeDay;
                 corr = VolPriceCorrelation.HUGE_VOLUME_FREZZE_TIME;
             }
-            signals[i] = VolPriceCorrelation.signal(corr);
+            signals[itr] = VolPriceCorrelation.signal(corr);
         }
 
         addIndexData(INDEX_NAME, signals);

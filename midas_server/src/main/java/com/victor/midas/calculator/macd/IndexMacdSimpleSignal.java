@@ -34,19 +34,20 @@ public class IndexMacdSimpleSignal extends IndexCalcBase {
 
     @Override
     public void calculate() throws MidasException {
-        StockState state = StockState.HoldMoney;
-        for (int i = 5; i < len; i++) {
+        state = StockState.HoldMoney;
+        for (itr = 5; itr < len; itr++) {
 //            if(dates[i] == 20150818){
 //                System.out.println("test");
 //            }
-            if(state == StockState.HoldMoney && macdBar[i] < 0d && macdBar[i - 1] < macdBar[i]){
-                score[i] = 5d;
-                state = StockState.HoldStock;
-            } else if(state == StockState.HoldStock && macdBar[i - 1] > macdBar[i]){
-                score[i] = -5d;
-                state = StockState.HoldMoney;
+            if(state == StockState.HoldMoney && macdBar[itr] < 0d && macdBar[itr - 1] < macdBar[itr]){
+                score[itr] = 5d;
+                setStateHoldStock(score[itr]);
+            } else if(state == StockState.HoldStock && macdBar[itr - 1] > macdBar[itr]){
+                score[itr] = -5d;
+                setStateHoldMoney();
             }
         }
+        setStateHoldMoney();
         addIndexData(INDEX_NAME, score);
     }
 

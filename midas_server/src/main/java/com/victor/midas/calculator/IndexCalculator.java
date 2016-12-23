@@ -7,6 +7,7 @@ import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.train.common.MidasTrainOptions;
+import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.StockFilterUtil;
@@ -23,6 +24,7 @@ public class IndexCalculator {
     private boolean isBigDataSet;
     private CalcParameter parameter;
     private StockFilterUtil filterUtil;
+    private PerfCollector perfCollector;
 
 
     public IndexCalculator(List<StockVo> stocks, String calcName) throws MidasException {
@@ -36,6 +38,9 @@ public class IndexCalculator {
         filterUtil = new StockFilterUtil(stocks);
         filterUtil.filter();
         initCalculator();
+
+        perfCollector = targetCalculator.getPerfCollector();
+        perfCollector.ctor(filterUtil.getName2stock(), options, filterUtil.getMarketIndex().getDatesInt());
     }
 
     public void calculate() throws MidasException {
@@ -85,9 +90,13 @@ public class IndexCalculator {
         }
     }
 
+    /**
+     * used by trainer
+     */
     public void apply(CalcParameter parameter) throws MidasException {
         this.parameter = parameter;
         IndexFactory.applyNewParameter(parameter, calculators);
+        targetCalculator.getPerfCollector().clear();
         calculate();
     }
 

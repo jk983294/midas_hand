@@ -69,22 +69,24 @@ public class StockScoreRank extends IndexCalcBase {
         double score;
         DescriptiveStatistics scoreStats = new DescriptiveStatistics();
         scoreStats.setWindowSize(3);
-        for (int i = 5; i < len; i++) {
+        for (itr = 5; itr < len; itr++) {
             score = 0d;
 
-            score += priceCloseToMaScore(i) * 2;
-            score += maLinageScore(i);
-            score += maTangleScore(i);
-            score += positionInHistoryMinMaxPriceScore(i);
-            scoreStats.addValue(priceScore(i));
+            score += priceCloseToMaScore(itr) * 2;
+            score += maLinageScore(itr);
+            score += maTangleScore(itr);
+            score += positionInHistoryMinMaxPriceScore(itr);
+            scoreStats.addValue(priceScore(itr));
             score += scoreStats.getMean();
-            score += positionInHistoryMinMaxVolumeScore(i);
+            score += positionInHistoryMinMaxVolumeScore(itr);
 //            score += cme[i] * 1d;
             //score += revertScore(i);
             /**perf not good, so comment out*/
 //            score += maTrendScore(i);
 //            score += changPctTrendScore(i);
-            scores[i] = score;
+            scores[itr] = score;
+
+            addStockScore(itr, score);
         }
     }
 

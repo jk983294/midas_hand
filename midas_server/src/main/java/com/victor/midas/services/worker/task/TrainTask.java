@@ -1,5 +1,6 @@
 package com.victor.midas.services.worker.task;
 
+import com.victor.midas.calculator.macd.IndexMacdAdvancedSignal;
 import com.victor.midas.model.common.CmdParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.services.worker.common.TaskBase;
@@ -37,8 +38,11 @@ public class TrainTask extends TaskBase {
     private void trainSingle() throws Exception {
         if(params != null && params.size() == 4){
             SingleParameterTrainer trainer = null;
-            CmdParameter cmdParameter = CmdParameter.getParameter(CmdParameter.score_ma, params, 0);
-            String indexName = CmdParameter.getIndexName(cmdParameter);
+            String targetIndexName = IndexMacdAdvancedSignal.INDEX_NAME;
+            if(params != null && params.size() > 0){
+                targetIndexName = params.get(0);
+            }
+
             if(RegExpHelper.isInts(params.subList(1, 4))){
                 trainer = new SingleParameterTrainer(Integer.valueOf(params.get(1)), Integer.valueOf(params.get(2)), Integer.valueOf(params.get(3)));
             } else if(RegExpHelper.isDoubles(params.subList(1, 4))){
@@ -46,7 +50,7 @@ public class TrainTask extends TaskBase {
             }
             List<StockVo> stocks = stocksService.queryAllStock();
             if(trainer != null){
-                Trainee trainee = new GeneralScoreManager(stocks, indexName);
+                Trainee trainee = new GeneralScoreManager(stocks, targetIndexName);
                 trainee.setIsInTrain(true);
                 trainer.setTrainee(trainee);
                 trainer.process();

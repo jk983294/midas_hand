@@ -53,12 +53,12 @@ public class ChartTimeFrame extends IndexCalcBase {
         buildTrendArray(ctf, ips, end);
         addIndexData("ctf0", ctf);
 
-        for (int i = 0; i < TOTAL_LEVEL; i++) {
-            ips = turningPoints(ips, end, i);
-            ips =  removeSmallTrendTurningPoints(ips, end, i);
+        for (itr = 0; itr < TOTAL_LEVEL; itr++) {
+            ips = turningPoints(ips, end, itr);
+            ips =  removeSmallTrendTurningPoints(ips, end, itr);
             ctf = new int[len];
             buildTrendArray(ctf, ips, end);
-            addIndexData("ctf"+(i+1), ctf);
+            addIndexData("ctf"+(itr+1), ctf);
         }
     }
 

@@ -30,10 +30,10 @@ public class IndexKLine extends IndexCalcBase {
 
     @Override
     public void calculate() throws MidasException {
-        for (int i = 1; i < len; i++) {
-            upShadowPct[i] = MathStockUtil.calculatePct(end[i - 1], max[i] - Math.max(start[i], end[i]));
-            downShadowPct[i] = MathStockUtil.calculatePct(end[i - 1], Math.min(start[i], end[i]) - min[i]);
-            middleShadowPct[i] = MathStockUtil.calculatePct(end[i - 1], end[i] - start[i]);
+        for (itr = 1; itr < len; itr++) {
+            upShadowPct[itr] = MathStockUtil.calculatePct(end[itr - 1], max[itr] - Math.max(start[itr], end[itr]));
+            downShadowPct[itr] = MathStockUtil.calculatePct(end[itr - 1], Math.min(start[itr], end[itr]) - min[itr]);
+            middleShadowPct[itr] = MathStockUtil.calculatePct(end[itr - 1], end[itr] - start[itr]);
         }
 
         addIndexData("k_u", upShadowPct);

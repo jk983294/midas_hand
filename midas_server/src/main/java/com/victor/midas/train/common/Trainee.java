@@ -6,13 +6,13 @@ import com.victor.midas.model.vo.CalcParameter;
 
 public interface Trainee {
 
-    public SingleParameterTrainResult getPerformance();
+    SingleParameterTrainResult getPerformance();
 
     /**
      * apply this parameter to all calculator, then re-calculate all index
      */
-    public void apply(CalcParameter parameter) throws Exception;
+    void apply(CalcParameter parameter) throws Exception;
 
-    public void setIsInTrain(boolean isInTrain);
+    void setIsInTrain(boolean isInTrain);
 
 }

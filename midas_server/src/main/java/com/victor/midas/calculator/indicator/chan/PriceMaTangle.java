@@ -56,7 +56,7 @@ public class PriceMaTangle extends IndexCalcBase {
     }
 
     private void calculateDecision(){
-        for (int i = 5; i < len; i++) {
+        for (itr = 5; itr < len; itr++) {
 //            if(tanglePeriod[i] == MathStockUtil.THRESHOLD_IN_RANGE
 //                    && bearPeriod[i - 2] == MathStockUtil.THRESHOLD_ABOVE){
 //                decision[i] = BUY;
@@ -67,12 +67,12 @@ public class PriceMaTangle extends IndexCalcBase {
 //                decision[i] = Watch;
 //            }
             /** turn point confirm for pMaDiff at point i */
-            if(pMaDiffPct[i] > bearLine &&  pMaDiffPct[i] < pMaDiffPct[i-1] && pMaDiffPct[i- 1] > pMaDiffPct[i-2]){
-                decision[i] = SELL;
-            } else if(pMaDiffPct[i] < bullLine && pMaDiffPct[i] > pMaDiffPct[i-1] && pMaDiffPct[i- 1] < pMaDiffPct[i-2]){
-                decision[i] = BUY;
+            if(pMaDiffPct[itr] > bearLine &&  pMaDiffPct[itr] < pMaDiffPct[itr-1] && pMaDiffPct[itr- 1] > pMaDiffPct[itr-2]){
+                decision[itr] = SELL;
+            } else if(pMaDiffPct[itr] < bullLine && pMaDiffPct[itr] > pMaDiffPct[itr-1] && pMaDiffPct[itr- 1] < pMaDiffPct[itr-2]){
+                decision[itr] = BUY;
             } else {
-                decision[i] = Watch;
+                decision[itr] = Watch;
             }
         }
     }
