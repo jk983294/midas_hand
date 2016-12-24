@@ -123,7 +123,7 @@ flotang.factory('chartService', ['Utils', 'StockUtils',
             var data = [];
             for(var i = 0, len = stocks.length; i < len; ++i ){
                 var stock = stocks[i];
-                data = data.concat(StockUtils.getDataByTwoVaildDate(stock, startDay, endDay, showIndexes));
+                data = data.concat(StockUtils.getDataByTwoValidDate(stock, startDay, endDay, showIndexes));
             }
 
             // calculate how many y axis needed, based on y data range, same range could share y axis

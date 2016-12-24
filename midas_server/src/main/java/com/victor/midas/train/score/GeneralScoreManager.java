@@ -35,7 +35,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
     private int len;                            // benchmark stock's date len
 
     private List<StockScoreRecord> scoreRecords;
-    private PerfCollector perfCollector;
+    public PerfCollector perfCollector;
     public boolean isBigDataSet, isInTrain = false, useSignal = false;
     public MidasTrainOptions options;
 
@@ -46,9 +46,7 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
     }
 
     public void process(CalcParameter parameter) throws Exception {
-        if(isInTrain){
-            initForTrain();
-        }
+        initForTrain();
 
         calculator.apply(parameter);
         List<List<StockScore>> list = perfCollector.getAllScoreListSortByCob();
@@ -111,7 +109,6 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
         len = dates.length;
         perfCollector = calculator.targetCalculator.getPerfCollector();
 
-        initForTrain();
         logger.info("init stock finished...");
     }
 
@@ -119,7 +116,6 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
      * init all cob indexes, init a new PerfCollector for collection
      */
     private void initForTrain(){
-        perfCollector.clear();
         scoreRecords = new ArrayList<>();
     }
 

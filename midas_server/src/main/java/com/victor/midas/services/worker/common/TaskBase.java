@@ -7,7 +7,6 @@ import java.util.concurrent.Callable;
 import com.victor.midas.dao.*;
 import com.victor.midas.model.common.CmdType;
 import com.victor.midas.services.StocksService;
-import com.victor.midas.util.MidasException;
 import org.apache.log4j.Logger;
 
 import com.victor.midas.model.db.TaskDb;
@@ -24,8 +23,6 @@ public abstract class TaskBase implements Callable<Integer> {
     public StocksService stocksService;
     @Autowired
     public ScoreDao scoreDao;
-    @Autowired
-    public ConceptScoreDao conceptScoreDao;
     @Autowired
     public StockInfoDao stockInfoDao;
     @Autowired

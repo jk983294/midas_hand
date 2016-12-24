@@ -23,6 +23,13 @@ public class TopKHeap <T extends Comparable> {
         sorted = (T[]) Array.newInstance(cls, k);
     }
 
+    public void clear(){
+        for (int i = 0; i < count; i++) {
+            sorted[i] = null;
+        }
+        count = 0;
+    }
+
     public void add(T e){
         if(count < k)
             add(count, e);
@@ -63,7 +70,6 @@ public class TopKHeap <T extends Comparable> {
      * check this element is bigger than the smallest in heap
      * if yes, it belong to top k, so remove the smallest in heap, insert it
      * then adjust heap
-     * @param element
      */
     private void removeAndInsert(T element) {
         if ( element.compareTo(sorted[0]) > 0){

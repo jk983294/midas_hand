@@ -38,12 +38,46 @@
         </tr>
     </table>
 
-    <table ng-table="conceptTableParams" template-pagination="custom/pager" class="table table-bordered table-hover">
-        <tr ng-repeat="conceptScore in $data">
-            <td data-title="'Date'">{{conceptScore.cob}}</td>
-            <td data-title="'Stocks'">{{conceptScore.records | scoreList}}</td>
-        </tr>
-    </table>
+    <div class="row">
+        <div class="col-md-1 col-lg-10">
+            <h4><span class="label label-primary">Score Summary : {{ scoreTime | date:'yyyy-MM-dd HH:mm:ss' }}</span></h4>
+        </div>
+        <div class="col-md-1 col-lg-1">
+            <button class="btn btn-default" ng-click="collapseCtrl.isScoreRecordCollapsed = !collapseCtrl.isScoreRecordCollapsed">Score Records</button>
+        </div>
+        <div class="col-md-1 col-lg-1">
+            <button class="btn btn-default" ng-click="collapseCtrl.isSummaryCollapsed = !collapseCtrl.isSummaryCollapsed">Summary</button>
+        </div>
+    </div>
+
+    <div id="scoreRecordTable" collapse="collapseCtrl.isScoreRecordCollapsed">
+        <div class="well well-lg">
+            <table ng-table="scoreRecordTableParams" template-pagination="custom/pager" show-filter="true" class="table table-bordered table-hover">
+                <tr ng-repeat="scoreRecord in $data">
+                    <td data-title="'Stock Code'" filter="{ 'stockCode': 'text' }" sortable="'stockCode'">{{scoreRecord.stockCode}}</td>
+                    <td data-title="'Score'" filter="{ 'score': 'text' }" sortable="'score'">{{scoreRecord.score}}</td>
+                    <td data-title="'Performance'" filter="{ 'perf': 'text' }" sortable="'perf'">{{scoreRecord.perf * 100 | number: 2 | addPct }}</td>
+                    <td data-title="'Signal Cob'" filter="{ 'cob': 'text' }" sortable="'cob'">{{scoreRecord.cob}}</td>
+                    <td data-title="'Buy Info'" filter="{ 'buyCob': 'text' }" sortable="'buyCob'">{{scoreRecord | buyInfo }}</td>
+                    <td data-title="'sell Info'" filter="{ 'sellCob': 'text' }" sortable="'sellCob'">{{scoreRecord | sellInfo}}</td>
+                    <td data-title="'Holding Period'" filter="{ 'holdingPeriod': 'text' }" sortable="'holdingPeriod'">{{scoreRecord.holdingPeriod}}</td>
+                    <td data-title="'Market Performance'" filter="{ 'marketPerf': 'text' }" sortable="'marketPerf'">{{scoreRecord.marketPerf * 100 | number: 2 | addPct }}</td>
+                    <td data-title="'Daily Excess Return'" filter="{ 'dailyExcessReturn': 'text' }" sortable="'dailyExcessReturn'">{{scoreRecord.dailyExcessReturn * 100 | number: 2 | addPct }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="summaryTable" collapse="collapseCtrl.isSummaryCollapsed">
+        <div class="well well-lg">
+            <table ng-table="summaryTableParams" class="table table-bordered table-hover">
+                <tr ng-repeat="parameter in $data">
+                    <td data-title="'Description'" filter="{ 'name': 'text' }" sortable="'name'">{{parameter.name}}</td>
+                    <td data-title="'Value'" filter="{ 'value': 'text' }" sortable="'value'">{{parameter.value}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
     <script type="text/ng-template" id="custom/pager">
         <ul class="pager ng-cloak">

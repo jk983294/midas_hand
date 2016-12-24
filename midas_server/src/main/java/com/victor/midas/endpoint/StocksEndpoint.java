@@ -5,7 +5,6 @@ import com.victor.midas.model.train.SingleParameterTrainResults;
 import com.victor.midas.model.vo.MidasBond;
 import com.victor.midas.model.vo.StockDayStats;
 import com.victor.midas.model.vo.StockVo;
-import com.victor.midas.model.vo.score.StockScoreRecord;
 import com.victor.midas.services.ReportService;
 import com.victor.midas.services.StocksService;
 import com.victor.midas.util.MidasException;
@@ -52,9 +51,9 @@ public class StocksEndpoint {
         List<StockVo> array = new ArrayList<>();
         if(names != null) {
             String[] stringLets = names.split(" ");
-            for (int i = 0; i < stringLets.length; i++) {
-                if(StringPatternAware.isStockCode(stringLets[i])){
-                    array.add(stocksService.queryStock(stringLets[i]));
+            for (String stringLet : stringLets) {
+                if (StringPatternAware.isStockCode(stringLet)) {
+                    array.add(stocksService.queryStock(stringLet));
                 }
             }
         }
@@ -79,35 +78,17 @@ public class StocksEndpoint {
     @GET
     @RequestMapping("/score")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<StockScoreRecord> getStockScoreRecord() {
-        int n = 510;
-        logger.info("fetch "+ n + " score result ...");
-        return stocksService.getScoreDao().queryLastStockScoreRecord(n);
+    public Map<String, Object> getStockScoreRecord() {
+        logger.info("fetch all score result ...");
+        return stocksService.queryScore(null, null);
     }
 
     @GET
     @RequestMapping("/score/{cobFrom}/{cobTo}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<StockScoreRecord> getStockScoreRecord(@PathVariable("cobFrom") Integer cobFrom,
+    public Map<String, Object> getStockScoreRecord(@PathVariable("cobFrom") Integer cobFrom,
                                                       @PathVariable("cobTo") Integer cobTo) {
-        return stocksService.getScoreDao().queryStockScoreRecordByRange(cobFrom, cobTo);
-    }
-
-    @GET
-    @RequestMapping("/conceptScore")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<StockScoreRecord> getConceptStockScoreRecord() {
-        int n = 10;
-        logger.info("fetch "+ n + " concept score result ...");
-        return stocksService.getConceptScoreDao().queryLastStockScoreRecord(n);
-    }
-
-    @GET
-    @RequestMapping("/conceptScore/{cobFrom}/{cobTo}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<StockScoreRecord> getConceptStockScoreRecord(@PathVariable("cobFrom") Integer cobFrom,
-                                                      @PathVariable("cobTo") Integer cobTo) {
-        return stocksService.getConceptScoreDao().queryStockScoreRecordByRange(cobFrom, cobTo);
+        return stocksService.queryScore(cobFrom, cobTo);
     }
 
     @GET

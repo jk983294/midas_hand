@@ -1,6 +1,3 @@
-/**
- *
- */
 midasApp.controller('bondController', function ($scope, $routeParams, $filter, MidasData, Utils, StockUtils,
                                                 uiGridConstants, $location) {
     $scope.datepicker = {
@@ -185,7 +182,7 @@ midasApp.controller('bondController', function ($scope, $routeParams, $filter, M
         }
 
         if(stockData && stockData.$resolved){
-            var x = StockUtils.getDataByTwoVaildDate(stockData, $scope.datepicker.dt1, $scope.datepicker.dt2, ['end']);
+            var x = StockUtils.getDataByTwoValidDate(stockData, $scope.datepicker.dt1, $scope.datepicker.dt2, ['end']);
             series = series.concat(x);
         }
         return {

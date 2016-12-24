@@ -6,9 +6,7 @@ import com.victor.midas.model.db.StockInfoDb;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.util.MidasConstants;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.*;
-import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.*;
 import org.apache.log4j.Logger;
 
@@ -16,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class StockInfoDao {
-	private final String COLLECTION_NAME = MidasConstants.STOCKINFO_COLLECTION_NAME;
+	private final String COLLECTION_NAME = MidasConstants.STOCK_INFO_COLLECTION_NAME;
 	
 	private static final Logger logger = Logger.getLogger(StockInfoDao.class);
 	

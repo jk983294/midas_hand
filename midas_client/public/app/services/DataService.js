@@ -18,8 +18,6 @@ var serviceUrls = (function(){
     var nationalDebtUrl = isRemote ? urlBase + 'stocks/national-debt' : 'app/data/nationalDebt.json';
     var scoreRangeUrl = isRemote ? urlBase + 'stocks/score/:cobFrom/:cobTo' : 'app/data/score.json';
     var dayStatsRangeUrl = isRemote ? urlBase + 'stocks/day-stats/:cob' : 'app/data/dayStats.json';
-    var conceptScoreUrl = isRemote ? urlBase + 'stocks/conceptScore' : 'app/data/conceptScore.json';
-    var conceptScoreRangeUrl = isRemote ? urlBase + 'stocks/conceptScore/:cobFrom/:cobTo' : 'app/data/conceptScore.json';
     var singleTrainResultUrl = isRemote ? urlBase + 'stocks/singleTrainResult' : 'app/data/SingleTrainResults.json';
     var reportsUrl = isRemote ? urlBase + 'stocks/reports/:queryStr' : 'app/data/reports.json';
     return {
@@ -33,8 +31,6 @@ var serviceUrls = (function(){
         scoreUrl : scoreUrl,
         nationalDebtUrl : nationalDebtUrl,
         scoreRangeUrl : scoreRangeUrl,
-        conceptScoreUrl : conceptScoreUrl,
-        conceptScoreRangeUrl : conceptScoreRangeUrl,
         singleTrainResultUrl : singleTrainResultUrl,
         dayStatsRangeUrl : dayStatsRangeUrl,
         reportsUrl : reportsUrl
@@ -108,7 +104,7 @@ dataService.factory('ScoreQuery', ['$resource',
         return $resource(
             serviceUrls.scoreUrl,
             {}, // Query parameters
-            {'query': { method: 'GET' , isArray : true}}
+            {'query': { method: 'GET'}}
         );
     }
 ]);
@@ -131,30 +127,7 @@ dataService.factory('ScoreRangeQuery', ['$resource',
                 cobFrom : 20150110,
                 cobTo : 20150201
             }, // Query parameters
-            {'query': { method: 'GET' , isArray : true}}
-        );
-    }
-]);
-
-dataService.factory('ConceptScoreQuery', ['$resource',
-    function($resource){
-        return $resource(
-            serviceUrls.conceptScoreUrl,
-            { }, // Query parameters
-            {'query': { method: 'GET' , isArray : true}}
-        );
-    }
-]);
-
-dataService.factory('ConceptScoreRangeQuery', ['$resource',
-    function($resource){
-        return $resource(
-            serviceUrls.conceptScoreRangeUrl,
-            {
-                cobFrom : 20150110,
-                cobTo : 20150201
-            }, // Query parameters
-            {'query': { method: 'GET' , isArray : true}}
+            {'query': { method: 'GET'}}
         );
     }
 ]);
@@ -193,13 +166,11 @@ dataService.factory('ReportsQuery', ['$resource',
 
 dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'StocksCmp',
     'TypeAheadTips', 'TypeAheadAction', 'TaskQuery',
-    'ScoreQuery', 'NationalDebtQuery', 'ScoreRangeQuery', 'ConceptScoreQuery',
-    'ConceptScoreRangeQuery', 'singleTrainResultQuery', 'DayStatsRangeQuery',
+    'ScoreQuery', 'NationalDebtQuery', 'ScoreRangeQuery','singleTrainResultQuery', 'DayStatsRangeQuery',
     'ReportsQuery',
     function($resource, StockInfos, StockDetail, StocksCmp,
              TypeAheadTips, TypeAheadAction, TaskQuery,
-             ScoreQuery, NationalDebtQuery, ScoreRangeQuery, ConceptScoreQuery,
-             ConceptScoreRangeQuery, singleTrainResultQuery, DayStatsRangeQuery,
+             ScoreQuery, NationalDebtQuery, ScoreRangeQuery, singleTrainResultQuery, DayStatsRangeQuery,
              ReportsQuery){
         var stockInfos = {};
 
@@ -253,17 +224,6 @@ dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'Stoc
             });
         }
 
-        function getConceptScores(){
-            return ConceptScoreQuery.query();
-        }
-
-        function getConceptScoresRange(cobFrom, cobTo){
-            return ConceptScoreRangeQuery.query({
-                cobFrom : cobFrom,
-                cobTo : cobTo
-            });
-        }
-
         function getSingleTrainResult(){
             return singleTrainResultQuery.query();
         }
@@ -289,8 +249,6 @@ dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'Stoc
             getScores : getScores,
             getNationalDebt : getNationalDebt,
             getScoresRange : getScoresRange,
-            getConceptScores : getConceptScores,
-            getConceptScoresRange : getConceptScoresRange,
             getSingleTrainResult : getSingleTrainResult,
             getDayStats : getDayStats,
             getReports : getReports,

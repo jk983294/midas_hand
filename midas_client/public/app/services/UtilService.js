@@ -1,18 +1,15 @@
-/**
- * Created by Administrator on 2014/10/8.
- */
 var utilService = angular.module('UtilService', []);
 
 utilService.factory('Utils',
     function(){
         function rangeArray(len){
-            var data = new Array();
+            var data = [];
             for(var i = 0; i < len; ++i ) data.push(i);
             return data;
         }
 
         function arrayConcat(array, str, isbefore){
-            var data = new Array();
+            var data = [];
             for(var i = 0, len = array.length; i < len; ++i ){
                 data.push(isbefore ? str + ' ' + array[i] : array[i] + ' ' + str );
             }
@@ -22,7 +19,7 @@ utilService.factory('Utils',
          * data is an object array, extract those object's property to an array
          */
         function extractProperty(array, property){
-            var properties = new Array();
+            var properties = [];
             for(var i = 0, len = array.length; i < len; i++ ) properties.push(array[i][property]);
             return properties;
         }
@@ -32,8 +29,8 @@ utilService.factory('Utils',
          * get {label: yName, data : [[x1, y1]]} and filter between start and end if exists filter condition
          */
         function extractTimeSeries(array, xName, yName, filterName, start, end){
-            var results = new Array();
-            var minDay, maxDay
+            var results = [];
+            var minDay, maxDay;
             if(filterName){
                 minDay = Math.min(start, end);
                 maxDay = Math.max(start, end);
@@ -104,13 +101,13 @@ utilService.factory('Utils',
          * merge two array into one array
          */
         function merge2Array(p1, p2){
-            var properties = new Array();
+            var properties = [];
             for(var i = 0, len = p1.length; i < len; i++ ) properties.push( [ p1[i] , p2[i] ] );
             return properties;
         }
 
         function mergeForD3Point(x, y){
-            var data = new Array();
+            var data = [];
             for(var i = 0, len = x.length; i < len; i++ ) data.push( { x : x[i], y : y[i]} );
             return data;
         }
@@ -141,7 +138,7 @@ utilService.factory('Utils',
          * date and int converter
          */
         function toTimes(dates){
-            var times = new Array();
+            var times = [];
             for(var i = 0, len = dates.length; i < len; ++i ){
                 times[i] = toTime(dates[i]);
             }
@@ -199,14 +196,12 @@ utilService.factory('Utils',
 
             var squareDiffs = values.map(function(value){
                 var diff = value - avg;
-                var sqrDiff = diff * diff;
-                return sqrDiff;
+                return diff * diff;
             });
 
             var avgSquareDiff = average(squareDiffs);
 
-            var stdDev = Math.sqrt(avgSquareDiff);
-            return stdDev;
+            return Math.sqrt(avgSquareDiff);
         }
 
         function average(data){
@@ -214,50 +209,12 @@ utilService.factory('Utils',
                 return sum + value;
             }, 0);
 
-            var avg = sum / data.length;
-            return avg;
+            return sum / data.length;
         }
 
         function disabledWeekend(date, mode) {
             return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-        };
-
-        /**
-         *   Usage:  format_number(12345.678, 2);
-         *   result: 12345.68
-         **/
-        function format_number(pnumber, decimals){
-            if (isNaN(pnumber)) { return 0};
-            if (pnumber=='') { return 0};
-
-            var snum = new String(pnumber);
-            var sec = snum.split('.');
-            var whole = parseFloat(sec[0]);
-            var result = '';
-
-            if(sec.length > 1){
-                var dec = new String(sec[1]);
-                dec = String(parseFloat(sec[1])/Math.pow(10,(dec.length - decimals)));
-                dec = String(whole + Math.round(parseFloat(dec))/Math.pow(10,decimals));
-                var dot = dec.indexOf('.');
-                if(dot == -1){
-                    dec += '.';
-                    dot = dec.indexOf('.');
-                }
-                while(dec.length <= dot + decimals) { dec += '0'; }
-                result = dec;
-            } else{
-                var dot;
-                var dec = new String(whole);
-                dec += '.';
-                dot = dec.indexOf('.');
-                while(dec.length <= dot + decimals) { dec += '0'; }
-                result = dec;
-            }
-            return result;
         }
-
-
 
         return {
             array2object : array2object,
@@ -283,7 +240,6 @@ utilService.factory('Utils',
             toTimes : toTimes,
             toTime : toTime,
             date2int : date2int,
-            format_number : format_number,
 
             deviateLevel : deviateLevel,
 

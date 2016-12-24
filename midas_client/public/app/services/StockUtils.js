@@ -44,7 +44,7 @@ utilService.factory('StockUtils',
         /**
          * get data for showIndexes set between two days
          */
-        function getDataByTwoVaildDate(stock, startDay, endDay, showIndexes){
+        function getDataByTwoValidDate(stock, startDay, endDay, showIndexes){
             if( Utils.isNull(startDay) && Utils.isNull(endDay)) {
                 var times = getStockTimeSeries(stock);
                 startDay = times[0];
@@ -163,7 +163,7 @@ utilService.factory('StockUtils',
             calcChangePctLevel : calcChangePctLevel,
             getStockTimeSeries : getStockTimeSeries,
             getStockIndexCmp : getStockIndexCmp,
-            getDataByTwoVaildDate : getDataByTwoVaildDate,
+            getDataByTwoValidDate : getDataByTwoValidDate,
             getStockIndexNameSet : getStockIndexNameSet,
             getStockIndexCmpNameSet : getStockIndexCmpNameSet,
             calcYaxisSets : calcYaxisSets

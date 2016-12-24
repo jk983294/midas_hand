@@ -2,12 +2,12 @@ package com.victor.midas.services.worker.task;
 
 import com.victor.midas.calculator.macd.IndexMacdAdvancedSignal;
 import com.victor.midas.calculator.util.IndexFactory;
+import com.victor.midas.model.db.misc.MiscGenericObject;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.midas.services.worker.loader.FundDataLoader;
 import com.victor.midas.services.worker.loader.StockDataLoader;
 import com.victor.midas.train.score.GeneralScoreManager;
-import com.victor.midas.train.score.ScoreManager;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.utils.PerformanceUtil;
@@ -67,7 +67,7 @@ public class ScoreTask extends TaskBase {
         }
 
         List<StockVo> stocks = getAllStock();
-        ScoreManager manager = new GeneralScoreManager(stocks, targetIndexName);
+        GeneralScoreManager manager = new GeneralScoreManager(stocks, targetIndexName);
 
         logger.info( "start score ...");
         manager.process(IndexFactory.parameter);
@@ -78,8 +78,10 @@ public class ScoreTask extends TaskBase {
 		logger.info( description + " complete...");
 	}
 
-    private void saveResults(ScoreManager manager) throws MidasException {
+    private void saveResults(GeneralScoreManager manager) throws MidasException {
         scoreDao.save(manager.getScoreRecords());
+        miscDao.saveMiscGenericObject(new MiscGenericObject<>(MidasConstants.MISC_SCORE_RESULT, manager.getPerformance()));
+
         if(isFromFileSystem || !manager.isBigDataSet()){
             logger.info("start save stocks ...");
             stocksService.saveStocks(manager.getStocks());               // maybe train strategy has generate new data

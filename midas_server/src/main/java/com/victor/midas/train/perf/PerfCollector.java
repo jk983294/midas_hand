@@ -15,6 +15,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * dayPerformance collector
@@ -41,10 +42,6 @@ public class PerfCollector {
     public TreeMap<Integer, List<StockScore>> cob2scoreList;
     public TreeMap<Integer, TopKHeap<StockScore>> cob2topK;
     public MidasTrainOptions options;
-
-    public PerfCollector(Map<String, StockVo> name2stock) throws MidasException {
-        ctor(name2stock, null, null);
-    }
 
     public PerfCollector() {
     }
@@ -79,10 +76,20 @@ public class PerfCollector {
         ArrayHelper.clear(kellyGood, kellyBad, perfStats, sharpeStats, holdingDaysStats);
         buyDayStatistics.clear();
         sellDayStatistics.clear();
+        if(cob2scoreList != null){
+            cob2scoreList.values().forEach(List<StockScore>::clear);
+        }
+        if(cob2topK != null){
+            cob2topK.values().forEach(TopKHeap::clear);
+        }
     }
 
     public void addRecord(StockScoreRecord record) throws MidasException {
         recordByName(record);
+        if(!isInTrain){
+            allScoreRecords.addAll(record.getRecords());
+        }
+
         if(record.getCob() >= cobRangeFrom && record.getCob() <= cobRangeTo){
             for(StockScore stockScore : record.getRecords()){
                 if(stockScore.getScore() <= 0.5) continue;
@@ -99,7 +106,6 @@ public class PerfCollector {
                 sharpeStats.addValue(stockScore.dailyExcessReturn);
                 perfStats.addValue(totalChangePct);
                 if(stockScore.holdingPeriod > 0) holdingDaysStats.addValue(stockScore.holdingPeriod);
-                if(!isInTrain) allScoreRecords.add(stockScore);
 
                 if(totalChangePct < 0){
                     kellyBad.addValue(totalChangePct);
@@ -185,9 +191,7 @@ public class PerfCollector {
 
     private void recordByName(StockScoreRecord record){
         if(record != null && CollectionUtils.isNotEmpty(record.getRecords())){
-            for(StockScore stockScore : record.getRecords()){
-                recordByName(stockScore);
-            }
+            record.getRecords().forEach(this::recordByName);
         }
     }
 
@@ -198,13 +202,9 @@ public class PerfCollector {
     public List<List<StockScore>> getAllScoreListSortByCob(){
         List<List<StockScore>> list = new ArrayList<>();
         if(options.useSignal){
-            for(Map.Entry<Integer, List<StockScore>> entry : cob2scoreList.entrySet()){
-                list.add(entry.getValue());
-            }
+            list.addAll(cob2scoreList.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList()));
         } else {
-            for(Map.Entry<Integer, TopKHeap<StockScore>> entry : cob2topK.entrySet()){
-                list.add(entry.getValue().toList());
-            }
+            list.addAll(cob2topK.entrySet().stream().map(entry -> entry.getValue().toList()).collect(Collectors.toList()));
         }
         return list;
     }

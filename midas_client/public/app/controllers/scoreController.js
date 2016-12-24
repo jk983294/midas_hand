@@ -14,6 +14,11 @@ midasApp.controller('scoreController', function ($scope, $filter, $routeParams, 
         }
     };
 
+    $scope.collapseCtrl = {
+        isSummaryCollapsed : false,
+        isScoreRecordCollapsed : false
+    };
+
     // Disable weekend selection
     $scope.disabled = Utils.disabledWeekend;
 
@@ -28,23 +33,18 @@ midasApp.controller('scoreController', function ($scope, $filter, $routeParams, 
         $scope.datepicker.opened2 = true;
     };
 
-    $scope.scores = MidasData.getScores();
+    var scoreData = MidasData.getScores();
+    MidasData.getScores();
 
-    $scope.scores.$promise.then(function success(){
-        initDefault();
+    scoreData.$promise.then(function success(data){
+        initDefault(data);
     }, Utils.errorHandler);
 
-    $scope.conceptScores = MidasData.getConceptScores();
-
-    $scope.conceptScores.$promise.then(function success(){
-        setConceptTableData();
-    }, Utils.errorHandler);
-
-    function initDefault() {
-        setTableData();
+    function initDefault(data) {
+        setTableData(data);
 
         if($scope.scores.length > 0){
-            var minday = Utils.toTime(20140101);
+            var minday = Utils.toTime(Math.min($scope.scores[0].cob, $scope.scores[$scope.scores.length - 1].cob));
             var maxday = Utils.toTime(Math.max($scope.scores[0].cob, $scope.scores[$scope.scores.length - 1].cob));
             $scope.datepicker.minDay = minday;
             $scope.datepicker.maxDay = maxday;
@@ -54,30 +54,41 @@ midasApp.controller('scoreController', function ($scope, $filter, $routeParams, 
     }
 
     /**
-     * when date picker is changed, update the flot chart
+     * when date picker is changed, update grid
      */
     $scope.updateDatePick = function(){
         var minday = Utils.date2int(Math.min($scope.datepicker.dt1, $scope.datepicker.dt2));
         var maxday = Utils.date2int(Math.max($scope.datepicker.dt1, $scope.datepicker.dt2));
-        $scope.scores = MidasData.getScoresRange(minday, maxday);
-        $scope.scores.$promise.then(function success(){
-            setTableData();
+        var scoreData = MidasData.getScoresRange(minday, maxday);
+        scoreData.$promise.then(function success(data){
+            setTableData(data);
         }, Utils.errorHandler);
-        $scope.conceptScores = MidasData.getConceptScoresRange(minday, maxday);
-        $scope.conceptScores.$promise.then(function success(){
-            setConceptTableData();
-        }, Utils.errorHandler);
-    }
+    };
 
-    function setTableData(){
+    function setTableData(data){
+        var scoreResult = data.scoreResult;
+        var scoreRecordsTmp = [];
+        data.stockScoreRecords.forEach(function (stockScoreRecord) {
+            stockScoreRecord.records.forEach(function (record) {
+                if(record.stockCode !== 'fake'){
+                    scoreRecordsTmp.push(record);
+                }
+            });
+        });
+
+        $scope.scoreTime = scoreResult.time;
+        $scope.scoreSummary = Utils.object2PropArray(scoreResult);
+        $scope.scores = data.stockScoreRecords;
+        $scope.scoreRecords = scoreRecordsTmp;
+
         $scope.tableParams = new ngTableParams({
-            page: 1,                // show first page
-            count: 10,               // count per page
+            page: 1,                    // show first page
+            count: 10,                  // count per page
             sorting: {
-                cob : 'desc'     // initial sorting
+                cob : 'desc'
             },
             filter: {
-                desc : ''            // initial filter
+                desc : ''
             }
         },{
             total : $scope.scores.length,
@@ -87,25 +98,35 @@ midasApp.controller('scoreController', function ($scope, $filter, $routeParams, 
                 $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
             }
         });
-    }
 
-    function setConceptTableData(){
-        $scope.conceptTableParams = new ngTableParams({
+        $scope.summaryTableParams = new ngTableParams({
             page: 1,                // show first page
-            count: 10,               // count per page
+            count: 50               // count per page
+        }, {
+            counts: [],             // hide page counts control
+            total: 1,               // value less than count hide pagination
+            getData: function($defer, params) {
+                $defer.resolve($scope.scoreSummary.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+            }
+        });
+
+        $scope.scoreRecordTableParams = new ngTableParams({
+            page: 1,                    // show first page
+            count: 10,                  // count per page
             sorting: {
-                date : 'desc'     // initial sorting
+                perf : 'asc'            // initial sorting
             },
             filter: {
-                desc : ''            // initial filter
             }
         },{
-            total : $scope.conceptScores.length,
+            total : $scope.scoreRecords.length,
             getData : function($defer, params) {
-                var orderedData = params.sorting() ? $filter('orderBy')($scope.conceptScores, params.orderBy()) : $scope.conceptScores;
+                var orderedData = params.filter() ? $filter('filter')($scope.scoreRecords, params.filter()) : $scope.scoreRecords;
+                orderedData = params.sorting() ? $filter('orderBy')(orderedData, params.orderBy()) : orderedData;
                 params.total("after orderBy", orderedData.length);
                 $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
             }
         });
     }
+
 });

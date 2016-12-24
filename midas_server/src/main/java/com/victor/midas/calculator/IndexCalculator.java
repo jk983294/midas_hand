@@ -91,7 +91,7 @@ public class IndexCalculator {
     }
 
     /**
-     * used by trainer
+     * used by trainer, apply new parameter, init performance collector, then calculate target index
      */
     public void apply(CalcParameter parameter) throws MidasException {
         this.parameter = parameter;

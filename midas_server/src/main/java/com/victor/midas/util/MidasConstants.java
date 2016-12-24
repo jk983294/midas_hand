@@ -26,19 +26,17 @@ public class MidasConstants {
     public static final String MISC_SINGLE_TRAIN_RESULT = "SingleTrainResult";
     public static final String MISC_NATIONAL_DEBT = "NationalDebt";
     public static final String MISC_STOCK_DAY_STATS_COBS = "StockDayStatsCobs";
+    public static final String MISC_SCORE_RESULT = "StockScoreResult";
 
     /**
      * collection name
      */
     public static final String STOCK_COLLECTION_NAME = "Stock";
     public static final String MISC_COLLECTION_NAME = "StockMisc";
-    public static final String STOCKINFO_COLLECTION_NAME = "StockInfo";
+    public static final String STOCK_INFO_COLLECTION_NAME = "StockInfo";
     public static final String STOCK_CRAWL_DATA_COLLECTION_NAME = "StockCrawlData";
-    public static final String DAY_FOCUS_COLLECTION_NAME = "StockDayFocus";
     public static final String TASK_COLLECTION_NAME = "StockTask";
-    public static final String TRAIN_COLLECTION_NAME = "StockTrain";
     public static final String SCORE_COLLECTION_NAME = "StockScore";
-    public static final String CONCEPT_SCORE_COLLECTION_NAME = "StockConceptScore";
     public static final String STOCK_DAY_STATS_COLLECTION_NAME = "StockDayStats";
     public static final String STOCK_REPORTS_COLLECTION_NAME = "StockReports";
 
@@ -56,15 +54,9 @@ public class MidasConstants {
     public static final String INDEX_NAME_END = "end";
     public static final String INDEX_NAME_VOLUME = "volume";
     public static final String INDEX_NAME_TOTAL = "total";
-    public static final String INDEX_NAME_CHANGEPCT = "changePct";
+    public static final String INDEX_NAME_CHANGE_PCT = "changePct";
     public static final String INDEX_NAME_NAV = "nav";
     public static final String INDEX_NAME_CUMULATIVE_NAV = "cumulativeNavs";
-
-    public static String getIndexId(String stockName, String indexName){
-        StringBuilder sb = new StringBuilder(stockName);
-        sb.append("_").append(indexName);
-        return sb.toString();
-    }
 
     /**
      * response status

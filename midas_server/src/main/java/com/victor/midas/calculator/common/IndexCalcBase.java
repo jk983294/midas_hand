@@ -65,7 +65,7 @@ public abstract class IndexCalcBase implements ICalculator {
         min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
         total = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_TOTAL);
         volume = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_VOLUME);
-        changePct = stock.queryCmpIndexDoubleWithNull(MidasConstants.INDEX_NAME_CHANGEPCT);
+        changePct = stock.queryCmpIndexDoubleWithNull(MidasConstants.INDEX_NAME_CHANGE_PCT);
         dates = stock.getDatesInt();
         len = end.length;
         cmpIndexName2Index = new HashMap<>();

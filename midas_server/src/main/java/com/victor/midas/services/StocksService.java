@@ -3,7 +3,9 @@ package com.victor.midas.services;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.victor.midas.calculator.common.AggregationCalcBase;
@@ -44,8 +46,6 @@ public class StocksService {
     private MiscDao miscDao;
     @Autowired
     private ScoreDao scoreDao;
-    @Autowired
-    private ConceptScoreDao conceptScoreDao;
     @Autowired
     private StockCrawlDataDao stockCrawlDataDao;
 	@Autowired
@@ -110,6 +110,17 @@ public class StocksService {
         int monthInt = TimeHelper.cob2month(cob) - 2;
         int twoMonthAgo = TimeHelper.date2cob(TimeHelper.month2date(monthInt));
         return stockDayStatsDao.queryByCob(twoMonthAgo, cob);
+    }
+
+    public Map<String, Object> queryScore(Integer from, Integer to){
+        Map<String, Object> result = new HashMap<>();
+        result.put("scoreResult", miscDao.queryScoreResult());
+        if(from == null){
+            result.put("stockScoreRecords", scoreDao.queryAll());
+        } else {
+            result.put("stockScoreRecords", scoreDao.queryStockScoreRecordByRange(from, to));
+        }
+        return result;
     }
 
     public StockVo queryStock(String stockName){
@@ -178,13 +189,5 @@ public class StocksService {
 
     public void setScoreDao(ScoreDao scoreDao) {
         this.scoreDao = scoreDao;
-    }
-
-    public ConceptScoreDao getConceptScoreDao() {
-        return conceptScoreDao;
-    }
-
-    public void setConceptScoreDao(ConceptScoreDao conceptScoreDao) {
-        this.conceptScoreDao = conceptScoreDao;
     }
 }

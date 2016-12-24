@@ -3,6 +3,8 @@ package com.victor.midas.model.train;
 
 import com.victor.midas.train.perf.DayStatistics;
 
+import java.util.Date;
+
 public class SingleParameterTrainResult {
     // day1 is buy day
     public double parameter, dayPerformance, kellyAnnualizedPerformance, stdDev, kellyFraction;
@@ -12,6 +14,11 @@ public class SingleParameterTrainResult {
     public double d2OpenStdDev, d2CloseStdDev, d2HighStdDev, d2LowStdDev;
     public long cnt;
     public double sharpeRatio, holdingDays;
+    public Date time;
+
+    public SingleParameterTrainResult() {
+        time = new Date();
+    }
 
     public void setBuyDayStatistics(DayStatistics buyDayStatistics){
         d1Open = buyDayStatistics.openStats.getMean();
@@ -218,6 +225,22 @@ public class SingleParameterTrainResult {
 
     public void setSharpeRatio(double sharpeRatio) {
         this.sharpeRatio = sharpeRatio;
+    }
+
+    public double getHoldingDays() {
+        return holdingDays;
+    }
+
+    public void setHoldingDays(double holdingDays) {
+        this.holdingDays = holdingDays;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
     }
 
     @Override

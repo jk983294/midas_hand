@@ -1,9 +1,10 @@
 package com.victor.midas.dao;
 
-import com.victor.midas.model.db.misc.FocusedStockNamesDb;
+import com.victor.midas.model.db.misc.MiscGenericObject;
 import com.victor.midas.model.db.misc.NationalDebtDb;
 import com.victor.midas.model.db.misc.SampleCobDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
+import com.victor.midas.model.train.SingleParameterTrainResult;
 import com.victor.midas.model.train.SingleParameterTrainResults;
 import com.victor.midas.model.vo.MidasBond;
 import com.victor.midas.util.MidasConstants;
@@ -26,30 +27,26 @@ public class MiscDao {
 
     private static final Logger logger = Logger.getLogger(StockDao.class);
 
-    private static Query allStockNamesQuery, singleTrainResultQuery, nationalDebtQuery, dayStatsCobsQuery;
+    private static Query allStockNamesQuery, singleTrainResultQuery, nationalDebtQuery, dayStatsCobsQuery,
+        scoreResultQuery;
 
     static {
         allStockNamesQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_ALL_STOCK_NAMES));
         singleTrainResultQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_SINGLE_TRAIN_RESULT));
         nationalDebtQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_NATIONAL_DEBT));
         dayStatsCobsQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_STOCK_DAY_STATS_COBS));
+        scoreResultQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_SCORE_RESULT));
     }
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
     public StockNamesDb queryStockNames(){
-        StockNamesDb stockNamesDb = mongoTemplate.findOne(allStockNamesQuery, StockNamesDb.class, COLLECTION_NAME);
-        return stockNamesDb;
-    }
-
-    public FocusedStockNamesDb queryFocusedStockNamesDb(){
-        return mongoTemplate.findOne(new Query(Criteria.where("_id").is(FocusedStockNamesDb.MISC_NAME)), FocusedStockNamesDb.class, COLLECTION_NAME);
+        return mongoTemplate.findOne(allStockNamesQuery, StockNamesDb.class, COLLECTION_NAME);
     }
 
     public SingleParameterTrainResults querySingleParameterTrainResults(){
-        SingleParameterTrainResults results = mongoTemplate.findOne(singleTrainResultQuery, SingleParameterTrainResults.class, COLLECTION_NAME);
-        return results;
+        return mongoTemplate.findOne(singleTrainResultQuery, SingleParameterTrainResults.class, COLLECTION_NAME);
     }
 
     public List<MidasBond> queryNationalDebt(){
@@ -59,8 +56,15 @@ public class MiscDao {
     }
 
     public SampleCobDb querySampleCobs(){
-        SampleCobDb cobDb = mongoTemplate.findOne(dayStatsCobsQuery, SampleCobDb.class, COLLECTION_NAME);
-        return cobDb;
+        return mongoTemplate.findOne(dayStatsCobsQuery, SampleCobDb.class, COLLECTION_NAME);
+    }
+
+    public SingleParameterTrainResult queryScoreResult(){
+        return (SingleParameterTrainResult)(queryMiscGenericObject(scoreResultQuery).getObject());
+    }
+
+    private MiscGenericObject queryMiscGenericObject(Query query){
+        return mongoTemplate.findOne(query, MiscGenericObject.class, COLLECTION_NAME);
     }
 
     /**
@@ -74,10 +78,6 @@ public class MiscDao {
         mongoTemplate.save(cobs, COLLECTION_NAME);
     }
 
-    public void saveMisc(FocusedStockNamesDb focusedStockNamesDb){
-        mongoTemplate.save(focusedStockNamesDb, COLLECTION_NAME);
-    }
-
     public void saveMisc(SingleParameterTrainResults results){
         mongoTemplate.save(results, COLLECTION_NAME);
     }
@@ -85,6 +85,10 @@ public class MiscDao {
     public void saveMisc(List<MidasBond> bonds){
         NationalDebtDb nationalDebtDb = new NationalDebtDb(MidasConstants.MISC_NATIONAL_DEBT, bonds);
         mongoTemplate.save(nationalDebtDb, COLLECTION_NAME);
+    }
+
+    public void saveMiscGenericObject(MiscGenericObject miscGenericObject){
+        mongoTemplate.save(miscGenericObject, COLLECTION_NAME);
     }
 
 

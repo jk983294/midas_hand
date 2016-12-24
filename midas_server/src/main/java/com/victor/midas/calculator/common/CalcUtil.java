@@ -40,7 +40,7 @@ public class CalcUtil {
         upShadowPct = stock.queryCmpIndexDoubleWithNull("k_u");
         downShadowPct = stock.queryCmpIndexDoubleWithNull("k_d");
         middleShadowPct = stock.queryCmpIndexDoubleWithNull("k_m");
-        changePct = stock.queryCmpIndexDoubleWithNull(MidasConstants.INDEX_NAME_CHANGEPCT);
+        changePct = stock.queryCmpIndexDoubleWithNull(MidasConstants.INDEX_NAME_CHANGE_PCT);
         pMa5D1 = stock.queryCmpIndexDoubleWithNull("pMa5D1");
         pMa10D1 = stock.queryCmpIndexDoubleWithNull("pMa10D1");
         pMa20D1 = stock.queryCmpIndexDoubleWithNull("pMa20D1");

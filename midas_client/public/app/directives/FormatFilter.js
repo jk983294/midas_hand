@@ -1,22 +1,22 @@
 /**
  * used to format web GUI
  */
-var levels = new Array("danger", "warning", "success");
+var levels = ["danger", "warning", "success"];
 /**
  *   Usage:  format_number(12345.678, 2);
  *   result: 12345.68
  **/
 function format_number(pnumber, decimals){
-    if (isNaN(pnumber)) { return 0};
-    if (pnumber=='') { return 0};
+    if (isNaN(pnumber)) { return 0}
+    if (pnumber=='') { return 0}
 
-    var snum = new String(pnumber);
+    var snum = String(pnumber);
     var sec = snum.split('.');
     var whole = parseFloat(sec[0]);
     var result = '';
 
     if(sec.length > 1){
-        var dec = new String(sec[1]);
+        var dec = String(sec[1]);
         dec = String(parseFloat(sec[1])/Math.pow(10,(dec.length - decimals)));
         dec = String(whole + Math.round(parseFloat(dec))/Math.pow(10,decimals));
         var dot = dec.indexOf('.');
@@ -28,13 +28,17 @@ function format_number(pnumber, decimals){
         result = dec;
     } else{
         var dot;
-        var dec = new String(whole);
+        var dec = String(whole);
         dec += '.';
         dot = dec.indexOf('.');
         while(dec.length <= dot + decimals) { dec += '0'; }
         result = dec;
     }
     return result;
+}
+
+function timing2string(n){
+    return n ? 'Close' : 'Open';
 }
 
 angular.module('formatFilters', []).filter('addPct', function() {
@@ -61,7 +65,7 @@ angular.module('formatFilters', []).filter('addPct', function() {
 }).filter('keyValueList', function() {
     function keyValue2Html(data){
         return data.value + ' '+ format_number(data.key, 2);
-    };
+    }
     return function(keyValueList) {
         var result = keyValue2Html(keyValueList[0]);
         for(var i = 1, len = keyValueList.length; i < len; ++i){
@@ -73,14 +77,22 @@ angular.module('formatFilters', []).filter('addPct', function() {
     return function(text) {
         return text.replace(/\n/g, '<br/>');
     }
+}).filter('buyInfo', function () {
+    return function(record) {
+        return record.buyCob + ' ' + timing2string(record.buyTiming);
+    }
+}).filter('sellInfo', function () {
+    return function(record) {
+        return record.sellCob + ' ' + timing2string(record.sellTiming);
+    }
 }).filter('scoreList', function() {
     function sortScoreRecord(a, b){
         return b.score - a.score;
-    };
+    }
     function toHtml(score){
         return score.stockCode + ' '+ format_number(score.score, 2)
             + (score.conceptName === null ? '' : (' ' + score.conceptName ));
-    };
+    }
     return function(scores) {
         var newScores = scores.slice(); // copy a new array to avoid touch original array for infinite digest loop
         newScores.sort(sortScoreRecord);

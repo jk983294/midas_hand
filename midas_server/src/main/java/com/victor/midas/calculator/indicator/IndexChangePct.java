@@ -1,22 +1,17 @@
 package com.victor.midas.calculator.indicator;
 
 import com.victor.midas.calculator.common.IndexCalcBase;
-import com.victor.midas.calculator.indicator.kline.IndexKLine;
-import com.victor.midas.calculator.util.IndexFactory;
 import com.victor.midas.calculator.util.MathStockUtil;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
-import com.victor.utilities.utils.ArrayHelper;
-
-import java.util.HashMap;
 
 /**
  * calculate change percentage per day
  */
 public class IndexChangePct extends IndexCalcBase {
 
-    public final static String INDEX_NAME = MidasConstants.INDEX_NAME_CHANGEPCT;
+    public final static String INDEX_NAME = MidasConstants.INDEX_NAME_CHANGE_PCT;
 
     public IndexChangePct(CalcParameter parameter) {
         super(parameter);

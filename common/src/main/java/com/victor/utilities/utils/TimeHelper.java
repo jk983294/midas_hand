@@ -13,7 +13,7 @@ public class TimeHelper {
     private final static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
     public static Date cob2date(int date) throws ParseException {
-        return sdf.parse(new StringBuilder().append(date).toString());
+        return sdf.parse(String.valueOf(date));
     }
 
     public static int date2cob(Date date){
@@ -49,8 +49,6 @@ public class TimeHelper {
 
     /**
      * last business day of that month
-     * @param monthInt
-     * @return
      * @throws ParseException
      */
     public static Date month2date(int monthInt) throws ParseException {
@@ -67,6 +65,10 @@ public class TimeHelper {
             dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         } while (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY);
         return cal.getTime();
+    }
+
+    public static Timestamp getCurrentTimestamp(){
+        return new Timestamp(new Date().getTime());
     }
 
 }

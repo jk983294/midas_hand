@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface ScoreManager {
 
-    public void process(CalcParameter parameter) throws Exception;
+    void process(CalcParameter parameter) throws Exception;
 
-    public List<StockScoreRecord> getScoreRecords();
+    List<StockScoreRecord> getScoreRecords();
 
-    public List<StockVo> getStocks();
+    List<StockVo> getStocks();
 
-    public boolean isBigDataSet();
+    boolean isBigDataSet();
 }
