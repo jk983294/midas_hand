@@ -54,9 +54,8 @@ public class TrainTask extends TaskBase {
                 trainee.setIsInTrain(true);
                 trainer.setTrainee(trainee);
                 trainer.process();
-                FileUtils.write(new File("E:\\stock_train_result.txt"), new JsonHelper().toJson(trainer.getResults()));
+//                FileUtils.write(new File("E:\\stock_train_result.txt"), new JsonHelper().toJson(trainer.getResults()));
                 stocksService.saveSingleParameterTrainResults(trainer.getResults());
-                //trainDao.saveTrainResult(manager.getTrainResult());
             }
             PerformanceUtil.manuallyGC(stocks);
         } else {

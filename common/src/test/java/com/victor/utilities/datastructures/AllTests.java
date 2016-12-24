@@ -13,7 +13,6 @@ import org.junit.runners.Suite.SuiteClasses;
                 BTreeTests.class,
                 CompactSuffixTrieTests.class,
                 HashArrayMappedTreeTests.class,
-                HashMapTests.class,
                 IntervalTreeTests.class,
                 KdTreeTests.class,
                 MatrixTests.class,
@@ -30,7 +29,6 @@ import org.junit.runners.Suite.SuiteClasses;
                 SuffixTreeTests.class,
                 SuffixTrieTests.class,
                 TreapTests.class,
-                TreeMapTests.class,
                 TrieTests.class,
                 TrieMapTests.class
                }
