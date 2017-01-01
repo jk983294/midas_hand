@@ -1,10 +1,14 @@
 package com.victor.midas.calculator.util;
 
+import com.victor.midas.calculator.score.week.WeeklyStockData;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.utils.ArrayHelper;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.math3.stat.StatUtils;
+
+import java.util.List;
 
 /**
  * util to find max and min for a stock
@@ -44,7 +48,26 @@ public class MaxMinUtil {
         len = end.length;
     }
 
+    public void init(List<WeeklyStockData> weeks) throws MidasException {
+        if(CollectionUtils.isNotEmpty(weeks)){
+            len = weeks.size();
+            end = new double[len];
+            start = new double[len];
+            max = new double[len];
+            min = new double[len];
+            dates = new int[len];
+            for (int i = 0; i < len; i++) {
+                end[i] = weeks.get(i).end;
+                start[i] = weeks.get(i).start;
+                max[i] = weeks.get(i).max;
+                min[i] = weeks.get(i).min;
+                dates[i] = weeks.get(i).cobTo;
+            }
+        }
+    }
+
     public void calcMaxMinIndex(int timeFrame){
+        if(len <= 0) return;
         maxIndex = new int[len];
         minIndex = new int[len];
         double maxPrice = Double.MIN_VALUE, minPrice = Double.MAX_VALUE;

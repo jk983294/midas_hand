@@ -62,45 +62,60 @@ public class MathHelper {
      * max and min
      */
     public static <T extends Comparable> T max(T[] array) {
-        T maxvalue = array[0];
-        for (int i = 0; i < array.length; i++) {
-            if (maxvalue.compareTo(array[i]) < 0){
-                maxvalue = array[i];
+        T maxValue = array[0];
+        for (T anArray : array) {
+            if (maxValue.compareTo(anArray) < 0) {
+                maxValue = anArray;
             }
         }
-        return maxvalue;
+        return maxValue;
     }
 
     public static <T extends Comparable> T max(List<T> array) {
-        T maxvalue = array.get(0);
-        for (int i = 0; i < array.size(); i++) {
-            if (maxvalue.compareTo(array.get(i)) < 0){
-                maxvalue = array.get(i);
+        T maxValue = array.get(0);
+        for (T anArray : array) {
+            if (maxValue.compareTo(anArray) < 0) {
+                maxValue = anArray;
             }
         }
-        return maxvalue;
+        return maxValue;
     }
 
     public static <T extends Comparable> T min(T[] array) {
-        T minvalue = array[0];
-        for (int i = 0; i < array.length; i++) {
-            if (minvalue.compareTo(array[i]) > 0){
-                minvalue = array[i];
+        T minValue = array[0];
+        for (T anArray : array) {
+            if (minValue.compareTo(anArray) > 0) {
+                minValue = anArray;
             }
         }
-        return minvalue;
+        return minValue;
     }
 
     public static <T extends Comparable> T min(List<T> array) {
-        T minvalue = array.get(0);
-        for (int i = 0; i < array.size(); i++) {
-            if (minvalue.compareTo(array.get(i)) > 0){
-                minvalue = array.get(i);
+        T minValue = array.get(0);
+        for (T anArray : array) {
+            if (minValue.compareTo(anArray) > 0) {
+                minValue = anArray;
             }
         }
-        return minvalue;
+        return minValue;
     }
 
+    public static double min(double... values){
+        double minValue = values[0];
+        for (double v : values) {
+            minValue = Math.min(minValue, v);
+        }
+        return minValue;
+    }
+
+    public static double max(double... values){
+        double maxValue = values[0];
+        for (double v : values) {
+            maxValue = Math.max(maxValue, v);
+        }
+        return maxValue;
+    }
 
     /**
      * swap elements in array
@@ -118,51 +133,38 @@ public class MathHelper {
     }
 
     public static boolean isSameSign(int x, int y) {
-        if( x > 0 && y < 0) return false;
-        else if( x < 0 && y > 0) return false;
-        else return true;
+        return !(x > 0 && y < 0) && !(x < 0 && y > 0);
     }
 
     public static boolean isSameSign(double x, double y) {
-        if( x > 0 && y < 0) return false;
-        else if( x < 0 && y > 0) return false;
-        else return true;
+        return !(x > 0 && y < 0) && !(x < 0 && y > 0);
     }
 
     /**
      * strong constrain, if x or y is zero, consider not same sign
      */
     public static boolean isSameSignStrong(int x, int y) {
-        if(x == 0 || y == 0) return false;
-        if( x > 0 && y < 0) return false;
-        else if( x < 0 && y > 0) return false;
-        else return true;
+        return !(x == 0 || y == 0) && !(x > 0 && y < 0) && !(x < 0 && y > 0);
     }
 
     public static boolean isSameSignStrong(double x, double y) {
-        if(x == 0 || y == 0) return false;
-        if( x > 0 && y < 0) return false;
-        else if( x < 0 && y > 0) return false;
-        else return true;
+        return !(x == 0 || y == 0) && !(x > 0 && y < 0) && !(x < 0 && y > 0);
     }
 
     /**
      * range
      */
     public static boolean isInRange(double value, double low, double high){
-        if(value > Math.min(low, high) && value < Math.max(low, high)) return true;
-        else return false;
+        return value > Math.min(low, high) && value < Math.max(low, high);
     }
 
     public static boolean isInRange(int value, int low, int high){
-        if(value >= Math.min(low, high) && value <= Math.max(low, high)) return true;
-        else return false;
+        return value >= Math.min(low, high) && value <= Math.max(low, high);
     }
 
     /**check if [x, y] is in range of [a,b] */
     public static boolean isInRange(double x, double y, double a, double b){
-        if(isInRange(x, a, b) && isInRange(y, a, b) ) return true;
-        else return false;
+        return isInRange(x, a, b) && isInRange(y, a, b);
     }
 
     public static double average(double x, double y){

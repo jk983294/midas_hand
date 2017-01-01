@@ -49,36 +49,29 @@ public class ArrayHelper {
     public static <T> List<T> array2list(T[] original){
         List<T> list = new ArrayList<>();
         if(original != null){
-            for (int i = 0; i < original.length; i++) {
-                list.add(original[i]);
-            }
+            Collections.addAll(list, original);
         }
         return list;
     }
 
     public static <T> List<T> array2list(Collection<T> original){
-        List<T> list = new ArrayList<>(original);
-        return list;
+        return new ArrayList<>(original);
     }
 
     public static <T> boolean isNull(T[] original){
-        if(original == null || original.length == 0) return true;
-        else return false;
+        return original == null || original.length == 0;
     }
 
     public static boolean isNull(double[] original){
-        if(original == null || original.length == 0) return true;
-        else return false;
+        return original == null || original.length == 0;
     }
 
     public static boolean isNull(int[] original){
-        if(original == null || original.length == 0) return true;
-        else return false;
+        return original == null || original.length == 0;
     }
 
     public static <T> boolean isNull(List<T> original){
-        if(original == null || original.size() == 0) return true;
-        else return false;
+        return original == null || original.size() == 0;
     }
 
 
@@ -144,9 +137,9 @@ public class ArrayHelper {
         return null;
     }
 
-    public static void clear(DescriptiveStatistics... statisticses){
-        for(DescriptiveStatistics statistics : statisticses){
-            statistics.clear();
+    public static void clear(DescriptiveStatistics... statistics){
+        for(DescriptiveStatistics stat : statistics){
+            stat.clear();
         }
     }
 

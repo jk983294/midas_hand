@@ -13,8 +13,7 @@ public class IoHelper {
 
     public static String toJson(Object o){
         Gson g = new Gson();
-        String json = g.toJson(o);
-        return json;
+        return g.toJson(o);
     }
 
     public static void toJsonFileWithIndent(Object o, String filePath) throws IOException {

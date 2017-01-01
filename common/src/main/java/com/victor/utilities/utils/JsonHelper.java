@@ -1,6 +1,7 @@
 package com.victor.utilities.utils;
 
 import com.google.gson.*;
+import com.victor.utilities.utils.gson.IgnoreStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class JsonHelper {
     }
 
     public String toJson(Object o){
-        Gson g = (new GsonBuilder().serializeSpecialFloatingPointValues().create());
+        Gson g = (new GsonBuilder().addSerializationExclusionStrategy(new IgnoreStrategy()).serializeSpecialFloatingPointValues().create());
         JsonElement element = g.toJsonTree(o);
         StringBuilder sb = new StringBuilder();
         toJsonFile(sb, null, element, 0);

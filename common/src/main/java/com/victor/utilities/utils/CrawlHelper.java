@@ -17,14 +17,11 @@ public class CrawlHelper {
     public static String crawl(String url) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
-        CloseableHttpResponse response = httpclient.execute(httpGet);
-        try {
-            if(response.getStatusLine().getStatusCode() == 200){
+        try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
+            if (response.getStatusLine().getStatusCode() == 200) {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             }
-        } finally {
-            response.close();
         }
         return null;
     }

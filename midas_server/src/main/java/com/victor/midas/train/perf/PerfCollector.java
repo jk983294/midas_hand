@@ -105,7 +105,7 @@ public class PerfCollector {
                 stockScore.calculateDailyExcessReturn();
                 sharpeStats.addValue(stockScore.dailyExcessReturn);
                 perfStats.addValue(totalChangePct);
-                if(stockScore.holdingPeriod > 0) holdingDaysStats.addValue(stockScore.holdingPeriod);
+                holdingDaysStats.addValue(stockScore.holdingPeriod);
 
                 if(totalChangePct < 0){
                     kellyBad.addValue(totalChangePct);
@@ -141,8 +141,18 @@ public class PerfCollector {
         return 0d;
     }
 
-    public double kellyAnnualizedPerformance(double kellyFraction, double expectedDayPerformance){
-        return Math.pow(1d + kellyFraction * expectedDayPerformance, 250d);
+    public double kellyAnnualizedPerformance(double kellyFraction){
+        if(kellyFraction <= 0d) return 0d;
+        double[] perf = perfStats.getValues();
+        double[] period = holdingDaysStats.getValues();
+        double result = 0d;
+        if(perf.length > 0 && perf.length == period.length){
+            for (int i = 0; i < perf.length; i++) {
+                result += Math.pow(1d + kellyFraction * perf[i], 250d / period[i]);
+            }
+            return result / perf.length;
+        }
+        return result;
     }
 
     public SingleParameterTrainResult getResult(){
@@ -154,7 +164,7 @@ public class PerfCollector {
         result.setSellDayStatistics(sellDayStatistics);
         result.holdingDays = holdingDaysStats.getMean();
         result.kellyFraction = kellyFormula();
-        result.kellyAnnualizedPerformance = kellyAnnualizedPerformance(result.kellyFraction, result.dayPerformance);
+        result.kellyAnnualizedPerformance = kellyAnnualizedPerformance(result.kellyFraction);
         result.sharpeRatio = Math.sqrt(250) * sharpeStats.getMean() / sharpeStats.getStandardDeviation();
         return result;
     }

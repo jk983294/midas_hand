@@ -1,5 +1,8 @@
 package com.victor.utilities.utils;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -69,6 +72,24 @@ public class TimeHelper {
 
     public static Timestamp getCurrentTimestamp(){
         return new Timestamp(new Date().getTime());
+    }
+
+    public static boolean isSameWeek(final Date d1, final Date d2) {
+        return isSameWeek(new DateTime(d1), new DateTime(d2));
+    }
+
+    public static boolean isSameWeek(final DateTime d1, final DateTime d2) {
+        return d1.getWeekOfWeekyear() == d2.getWeekOfWeekyear()
+                && d1.getWeekyear() == d2.getWeekyear()
+                && d1.getEra() == d2.getEra();
+    }
+
+    public static int daysBetween(final DateTime start, final DateTime end) {
+        return Days.daysBetween(start, end).getDays();
+    }
+
+    public static int daysBetween(final Date start, final Date end) {
+        return daysBetween(new DateTime(start), new DateTime(end));
     }
 
 }

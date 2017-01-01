@@ -51,12 +51,9 @@ public class PerformanceUtil {
 
     /**
      * release collection space consume
-     * @param objects
      */
     private static void releaseResource(List<Object> objects){
-        for(Object object : objects){
-            releaseResource(object);
-        }
+        objects.forEach(com.victor.utilities.utils.PerformanceUtil::releaseResource);
     }
 
     private static void releaseResource(Object object){

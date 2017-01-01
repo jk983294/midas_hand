@@ -116,7 +116,7 @@ public class RegExpHelper {
 
     public static Double extractFirstVariableValue(String str){
         Matcher matcher = variablePattern.matcher(str);
-        while(matcher.find()){
+        if(matcher.find()){
             String numberStr = matcher.group(3);
             return getNumber(numberStr);
         }
@@ -283,10 +283,7 @@ public class RegExpHelper {
 
     public static boolean contains(String str, Pattern pattern){
         Matcher matcher = pattern.matcher(str);
-        while (matcher.find()) {
-            return true;
-        }
-        return false;
+        return matcher.find();
     }
 
     public static int count(String str, Pattern pattern){
@@ -300,7 +297,7 @@ public class RegExpHelper {
 
     public static String extract(String str, Pattern pattern){
         Matcher matcher = pattern.matcher(str);
-        while(matcher.find()){
+        if(matcher.find()){
             return matcher.group(1);
         }
         return null;
@@ -312,8 +309,6 @@ public class RegExpHelper {
 
     /**
      * remove space and ,
-     * @param str
-     * @return
      */
     private static String removeFormatForNumberStr(String str){
         String result = str;
