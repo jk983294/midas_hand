@@ -8,6 +8,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class WeeklyDataUtil {
     public List<WeeklyStockData> weeks;
     public int len;
     public double[] ma5, ma10, ma20, ma30;
+    private double[] orderedMA = new double[4];
     private DescriptiveStatistics vMa5Stats = new DescriptiveStatistics(5);
     private DescriptiveStatistics ma5Stats = new DescriptiveStatistics(5);
     private DescriptiveStatistics ma10Stats = new DescriptiveStatistics(10);
@@ -69,6 +71,9 @@ public class WeeklyDataUtil {
             currentWeeklyData.upEntityPct = MathStockUtil.calculateChangePct(Math.max(currentWeeklyData.end, currentWeeklyData.start), currentWeeklyData.max);
             currentWeeklyData.downEntityPct = MathStockUtil.calculateChangePct(currentWeeklyData.min, Math.min(currentWeeklyData.end, currentWeeklyData.start));
             currentWeeklyData.weekIndex = 0;
+            currentWeeklyData.orderOfPriceMa = calculateOrderOfPriceMa(currentWeeklyData.cobToIndex);
+            currentWeeklyData.maScore = calculateMaScore(currentWeeklyData.cobToIndex);
+            currentWeeklyData.aboveMaxMaWeekCount = calculateAboveMaxMaWeekCount(0);
             for (int i = 1; i < weeks.size(); i++) {
                 previous = currentWeeklyData;
                 currentWeeklyData = weeks.get(i);
@@ -77,8 +82,63 @@ public class WeeklyDataUtil {
                 currentWeeklyData.upEntityPct = MathStockUtil.calculateChangePct(Math.max(currentWeeklyData.end, currentWeeklyData.start), currentWeeklyData.max);
                 currentWeeklyData.downEntityPct = MathStockUtil.calculateChangePct(currentWeeklyData.min, Math.min(currentWeeklyData.end, currentWeeklyData.start));
                 currentWeeklyData.weekIndex = i;
+                currentWeeklyData.orderOfPriceMa = calculateOrderOfPriceMa(currentWeeklyData.cobToIndex);
+                currentWeeklyData.maScore = calculateMaScore(currentWeeklyData.cobToIndex);
+                currentWeeklyData.aboveMaxMaWeekCount = calculateAboveMaxMaWeekCount(i);
             }
         }
+    }
+
+    private int calculateAboveMaxMaWeekCount(int weekIndex){
+        int result = 0, tolerate = 1, tolerateWeekIndex = -10;
+        while (weekIndex >= 0){
+            if(weeks.get(weekIndex).orderOfPriceMa == 5){
+                result++;
+            } else {
+                tolerate--;
+                if(tolerate < 0){
+                    if(tolerateWeekIndex == weekIndex + 1)
+                        return result - 1;
+                    else
+                        return result;
+                }
+                tolerateWeekIndex = weekIndex;
+                result++;
+            }
+            weekIndex--;
+        }
+        if(tolerateWeekIndex == 0)
+            return result - 1;
+        else
+            return result;
+    }
+
+    private int calculateOrderOfPriceMa(int i){
+        orderedMA[0] = ma5[i];
+        orderedMA[1] = ma10[i];
+        orderedMA[2] = ma20[i];
+        orderedMA[3] = ma30[i];
+        Arrays.sort(orderedMA);
+        if(end[i] >= orderedMA[3]) return 5;
+        else if(end[i] >= orderedMA[2]) return 4;
+        else if(end[i] >= orderedMA[1]) return 3;
+        else if(end[i] >= orderedMA[0]) return 2;
+        else return 1;
+    }
+
+    private int calculateMaScore(int i){
+        orderedMA[0] = ma5[i];
+        orderedMA[1] = ma10[i];
+        orderedMA[2] = ma20[i];
+        orderedMA[3] = ma30[i];
+        int result = 0;
+        for (int j = 0; j < 4; j++) {
+            for (int k = j + 1; k < 4; k++) {
+                if(orderedMA[j] >= orderedMA[k])
+                    ++result;
+            }
+        }
+        return result;
     }
 
     private void update(int i){

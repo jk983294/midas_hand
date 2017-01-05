@@ -14,13 +14,20 @@ public class WeeklyStockData {
     public double changePct, middleEntityPct, upEntityPct, downEntityPct;
     /**
      * if end > max MA, then 5; if end > second max MA, then 4, etc.
+     * [1, 5]
      */
     public int orderOfPriceMa;
     /**
      * if short term MA > long term MA, then maScore++
      * the more bull market, the high maScore
+     * [0, 6]
      */
     public int maScore;
+    /**
+     * the count of weeks which end price is above max MA, i.e. orderOfPriceMa = 5
+     * we tolerate one week is below max MA
+     */
+    public int aboveMaxMaWeekCount;
 
     @Ignore
     public DateTime lastDay;                // used for same week check
@@ -216,6 +223,14 @@ public class WeeklyStockData {
 
     public void setDownEntityPct(double downEntityPct) {
         this.downEntityPct = downEntityPct;
+    }
+
+    public int getAboveMaxMaWeekCount() {
+        return aboveMaxMaWeekCount;
+    }
+
+    public void setAboveMaxMaWeekCount(int aboveMaxMaWeekCount) {
+        this.aboveMaxMaWeekCount = aboveMaxMaWeekCount;
     }
 
     @Override

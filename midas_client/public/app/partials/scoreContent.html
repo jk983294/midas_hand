@@ -55,7 +55,7 @@
             <table ng-table="scoreRecordTableParams" template-pagination="custom/pager" show-filter="true" class="table table-bordered table-hover">
                 <tr ng-repeat="scoreRecord in $data">
                     <td data-title="'Stock Code'" filter="{ 'stockCode': 'text' }" sortable="'stockCode'">{{scoreRecord.stockCode}}</td>
-                    <td data-title="'Score'" filter="{ 'score': 'text' }" sortable="'score'">{{scoreRecord.score}}</td>
+                    <td data-title="'Score'" filter="{ 'score': 'text' }" sortable="'score'">{{ scoreRecord.score | number: 2 }}</td>
                     <td data-title="'Performance'" filter="{ 'perf': 'text' }" sortable="'perf'">{{scoreRecord.perf * 100 | number: 2 | addPct }}</td>
                     <td data-title="'Signal Cob'" filter="{ 'cob': 'text' }" sortable="'cob'">{{scoreRecord.cob}}</td>
                     <td data-title="'Buy Info'" filter="{ 'buyCob': 'text' }" sortable="'buyCob'">{{scoreRecord | buyInfo }}</td>

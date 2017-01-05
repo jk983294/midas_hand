@@ -8,9 +8,13 @@ import com.victor.midas.model.common.StockState;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.util.MidasException;
+import com.victor.utilities.utils.JsonHelper;
 import com.victor.utilities.utils.MathHelper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,17 +26,17 @@ public class WeeklyScoreRank extends IndexCalcBase {
 
     private WeeklyDataUtil weeklyDataUtil = new WeeklyDataUtil();
     private List<WeeklyStockData> weeks;
-    private WeeklyStockData previousWeeklyData, currentWeeklyData, minWeek, minWeekLeft;
-    private int weekCount, currentWeeklyDataIndex, buyWeekIndex, orderOfPriceMa, minIndex, minIndex1, maxIndex;
+    private WeeklyStockData previousWeeklyData, currentWeeklyData, minWeek, minWeekLeft, aboveMaxMaWeekLeft;
+    private int weekCount, currentWeeklyDataIndex, buyWeekIndex, minIndex, minIndex1, maxIndex, aboveMaxMaWeekLeftIndex;
     private double minPrice, maxPrice;
     private double[] ma5, ma10, ma20, ma30;
-    private double[] orderedMA;
     private MaxMinUtil mmWeekPriceUtil5;
+    private MaxMinUtil mmWeekPriceUtil10;
 
     public WeeklyScoreRank(CalcParameter parameter) {
         super(parameter);
         mmWeekPriceUtil5 = new MaxMinUtil();
-        orderedMA = new double[4];
+        mmWeekPriceUtil10 = new MaxMinUtil();
     }
 
     @Override
@@ -53,6 +57,8 @@ public class WeeklyScoreRank extends IndexCalcBase {
         if(CollectionUtils.isEmpty(weeks)) return;
         mmWeekPriceUtil5.init(weeks);
         mmWeekPriceUtil5.calcMaxMinIndex(5);
+        mmWeekPriceUtil10.init(weeks);
+        mmWeekPriceUtil10.calcMaxMinIndex(10);
         weekCount = weeks.size();
         currentWeeklyDataIndex = 0;
         currentWeeklyData = previousWeeklyData = weeks.get(currentWeeklyDataIndex);
@@ -61,11 +67,11 @@ public class WeeklyScoreRank extends IndexCalcBase {
         ma20 = weeklyDataUtil.ma20;
         ma30 = weeklyDataUtil.ma30;
 
-        double changPctLeft, changPctRight, changPctNow;
+        double changPctLeft, changPctRight, changPctNow, changePctAboveMaxMa = 0d;
 
         state = StockState.HoldMoney;
         for (itr = 0; itr < len; itr++) {
-//            if(dates[i] == 20150818){
+//            if(dates[itr] == 20161230){
 //                System.out.println("test");
 //            }
 
@@ -79,8 +85,6 @@ public class WeeklyScoreRank extends IndexCalcBase {
             if(currentWeeklyDataIndex <= 4 || !currentWeeklyData.isLastDayOfTheWeek(itr))
                 continue;
 
-            calculateOrderOfPriceMa(itr);
-
             if(state == StockState.HoldMoney){
                 minIndex = mmWeekPriceUtil5.getMinIndexRecursive(currentWeeklyDataIndex);
                 maxIndex = mmWeekPriceUtil5.getMaxIndexRecursive(minIndex);
@@ -91,15 +95,23 @@ public class WeeklyScoreRank extends IndexCalcBase {
                 changPctRight = MathStockUtil.calculateChangePct(mmWeekPriceUtil5.getMinPrice(minIndex), mmWeekPriceUtil5.getMaxPrice(maxIndex));
                 changPctNow = MathStockUtil.calculateChangePct(mmWeekPriceUtil5.getMinPrice(minIndex1), currentWeeklyData.end);
 
+                if(currentWeeklyData.aboveMaxMaWeekCount > 0){
+                    aboveMaxMaWeekLeftIndex = currentWeeklyDataIndex - currentWeeklyData.aboveMaxMaWeekCount - 3;
+                    aboveMaxMaWeekLeft = weeks.get(aboveMaxMaWeekLeftIndex >= 0 ? aboveMaxMaWeekLeftIndex : 0);
+                    changePctAboveMaxMa = MathStockUtil.calculateChangePct(
+                            mmWeekPriceUtil10.getMinPrice(mmWeekPriceUtil10.getMinIndexRecursive(mmWeekPriceUtil10.getMaxIndexRecursive(currentWeeklyDataIndex))),
+                            currentWeeklyData.max);
+                }
+
+
                 if(previousWeeklyData.end < minOfPriceMa(previousWeeklyData.cobToIndex)
                         && currentWeeklyData.start > maxOfPriceMa(itr)
                         && currentWeeklyData.end > maxOfPriceMa(itr)
                         && MathStockUtil.calculateChangePct(previousWeeklyData.end, currentWeeklyData.end) < 0.36
                         && currentWeeklyData.min > minOfPriceMa(itr)
                         ){
-                    buyAction(6d);
-                } else if(
-                        (currentWeeklyData.changePct > 0.0 || currentWeeklyData.end > currentWeeklyData.start)
+                    //buyAction(3d);
+                } else if((currentWeeklyData.end > currentWeeklyData.start || currentWeeklyData.changePct > 0d)
                         && minWeek.end < minOfPriceMa(minWeek.cobToIndex)
                         && minWeek.end < Math.min(minWeekLeft.end, minWeekLeft.start)
                         && minWeek.start < Math.min(minWeekLeft.end, minWeekLeft.start)
@@ -108,7 +120,14 @@ public class WeeklyScoreRank extends IndexCalcBase {
                         && currentWeeklyDataIndex - minIndex <= 1
                         && currentWeeklyDataIndex - maxIndex > 2
                         ){
-                    //buyAction(5d);
+                    //buyAction(4d);
+                } else if(
+                        currentWeeklyData.aboveMaxMaWeekCount > 2
+                        && currentWeeklyData.aboveMaxMaWeekCount < 11
+                        && currentWeeklyData.maScore - aboveMaxMaWeekLeft.maScore > 3
+                        && changePctAboveMaxMa < 0.24
+                        ){
+                    buyAction(5d + 0.01 * currentWeeklyData.aboveMaxMaWeekCount);
                 }
             } else if(state == StockState.HoldStock){
                 // hold four week, one month
@@ -131,19 +150,6 @@ public class WeeklyScoreRank extends IndexCalcBase {
         score[itr] = scoreValue;
         buyWeekIndex = currentWeeklyDataIndex;
         setStateHoldStock(scoreValue);
-    }
-
-    private void calculateOrderOfPriceMa(int i){
-        orderedMA[0] = ma5[i];
-        orderedMA[1] = ma10[i];
-        orderedMA[2] = ma20[i];
-        orderedMA[3] = ma30[i];
-        Arrays.sort(orderedMA);
-        if(end[i] >= orderedMA[3]) orderOfPriceMa = 5;
-        else if(end[i] >= orderedMA[2]) orderOfPriceMa = 4;
-        else if(end[i] >= orderedMA[1]) orderOfPriceMa = 3;
-        else if(end[i] >= orderedMA[0]) orderOfPriceMa = 2;
-        else orderOfPriceMa = 1;
     }
 
     private double minOfPriceMa(int i){
