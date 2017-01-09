@@ -28,6 +28,10 @@ public class WeeklyStockData {
      * we tolerate one week is below max MA
      */
     public int aboveMaxMaWeekCount;
+    /**
+     * the count of ma[i] < ma[i - 1]
+     */
+    public int maSlopeDownCount;
 
     @Ignore
     public DateTime lastDay;                // used for same week check

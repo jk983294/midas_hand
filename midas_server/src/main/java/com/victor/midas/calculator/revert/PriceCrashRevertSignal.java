@@ -95,12 +95,12 @@ public class PriceCrashRevertSignal extends IndexCalcBase {
                 }
             } else if(state == StockState.HoldStock && itr == sellIndex){
                 score[itr] = -5d;
-                setStateHoldMoney();
+                setStateHoldMoney(false);
                 sellIndex = -1;
             }
 //            score[i] = lastSection.status1.ordinal();
         }
-        setStateHoldMoney();
+        setStateHoldMoney(true);
         addIndexData(INDEX_NAME, score);
     }
 

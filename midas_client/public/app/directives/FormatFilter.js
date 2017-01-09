@@ -90,8 +90,11 @@ angular.module('formatFilters', []).filter('addPct', function() {
         return b.score - a.score;
     }
     function toHtml(score){
-        return score.stockCode + ' '+ format_number(score.score, 2)
+        var str = score.stockCode + ' '+ format_number(score.score, 2)
             + (score.conceptName === null ? '' : (' ' + score.conceptName ));
+        if(score.state === 'Signaled') return '<--' + str + '-->';
+        else if(score.state === 'Holding') return '<<' + str + '>>';
+        else return str;
     }
     return function(scores) {
         var newScores = scores.slice(); // copy a new array to avoid touch original array for infinite digest loop

@@ -110,11 +110,11 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
                 }
             } else if(state == StockState.HoldStock && lastSection.shouldSellByStatus()){
                 score[itr] = -5d;
-                setStateHoldMoney();
+                setStateHoldMoney(false);
             }
 //            score[i] = lastSection.status1.ordinal();
         }
-        setStateHoldMoney();
+        setStateHoldMoney(true);
         addIndexData(INDEX_NAME, score);
     }
 

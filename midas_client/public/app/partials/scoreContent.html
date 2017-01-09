@@ -34,13 +34,16 @@
         <tr ng-repeat="score in $data" class="{{score.severity | stockSeverityLevel}}">
             <td data-title="'Date'" sortable="'cob'">{{score.cob}}</td>
             <td data-title="'Severity'" sortable="'severity'">{{score.severity}}</td>
-            <td data-title="'Stocks'">{{score.records | scoreList}}</td>
+            <td data-title="'Stocks ( <--Signaled--> <<Holding>> )'">{{score.records | scoreList}}</td>
         </tr>
     </table>
 
     <div class="row">
-        <div class="col-md-1 col-lg-10">
+        <div class="col-md-1 col-lg-9">
             <h4><span class="label label-primary">Score Summary : {{ scoreTime | date:'yyyy-MM-dd HH:mm:ss' }}</span></h4>
+        </div>
+        <div class="col-md-1 col-lg-1">
+            <button class="btn btn-default" ng-click="isIgnoreFakeChange()">Ignore Fake</button>
         </div>
         <div class="col-md-1 col-lg-1">
             <button class="btn btn-default" ng-click="collapseCtrl.isScoreRecordCollapsed = !collapseCtrl.isScoreRecordCollapsed">Score Records</button>
@@ -57,6 +60,7 @@
                     <td data-title="'Stock Code'" filter="{ 'stockCode': 'text' }" sortable="'stockCode'">{{scoreRecord.stockCode}}</td>
                     <td data-title="'Score'" filter="{ 'score': 'text' }" sortable="'score'">{{ scoreRecord.score | number: 2 }}</td>
                     <td data-title="'Performance'" filter="{ 'perf': 'text' }" sortable="'perf'">{{scoreRecord.perf * 100 | number: 2 | addPct }}</td>
+                    <td data-title="'State'" filter="{ 'state': 'text' }" sortable="'state'">{{scoreRecord.state}}</td>
                     <td data-title="'Signal Cob'" filter="{ 'cob': 'text' }" sortable="'cob'">{{scoreRecord.cob}}</td>
                     <td data-title="'Buy Info'" filter="{ 'buyCob': 'text' }" sortable="'buyCob'">{{scoreRecord | buyInfo }}</td>
                     <td data-title="'sell Info'" filter="{ 'sellCob': 'text' }" sortable="'sellCob'">{{scoreRecord | sellInfo}}</td>

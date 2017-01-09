@@ -5,6 +5,7 @@ import com.victor.midas.model.train.SingleParameterTrainResult;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
+import com.victor.midas.model.vo.score.StockScoreState;
 import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
@@ -92,7 +93,7 @@ public class PerfCollector {
 
         if(record.getCob() >= cobRangeFrom && record.getCob() <= cobRangeTo){
             for(StockScore stockScore : record.getRecords()){
-                if(stockScore.getScore() <= 0.5) continue;
+                if(stockScore.state == StockScoreState.Signaled || stockScore.getScore() <= 0.5) continue;
                 initState(stockScore.getStockCode());
                 recordBuySellDayStatistics(stockScore);
 

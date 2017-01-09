@@ -6,6 +6,7 @@ import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.score.StockScore;
 import com.victor.midas.model.vo.score.StockScoreRecord;
+import com.victor.midas.model.vo.score.StockScoreState;
 import com.victor.midas.model.vo.score.StockSeverity;
 import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.train.common.TrainOptionApply;
@@ -66,11 +67,11 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
             } else {
                 severity = StockSeverity.Warning;
                 if(stockScores.size() == 0){                    // keep all warning days
-                    stockScores.add(new StockScore("fake", -1d, cob));
+                    stockScores.add(new StockScore("fake", -1d, cob, StockScoreState.Pseudo));
                 }
             }
             if(i == len - 1 && stockScores.size() == 0){        // always keep last day
-                stockScores.add(new StockScore("fake", -1d, cob));
+                stockScores.add(new StockScore("fake", -1d, cob, StockScoreState.Pseudo));
             }
 
             /**

@@ -31,20 +31,25 @@ public class StockScore implements Comparable<StockScore>, TrainOptionApply {
     public double marketPerf;
     public double dailyExcessReturn;
 
+    public StockScoreState state = StockScoreState.Signaled;
+
     public StockScore() {
     }
 
-    public StockScore(String stockCode, double score, int cob) {
+    public StockScore(String stockCode, double score, int cob, StockScoreState state) {
         this.stockCode = stockCode;
         this.score = score;
         this.cob = cob;
+        this.state = state;
+    }
+
+    public StockScore(String stockCode, double score, int cob) {
+        this(stockCode, score, cob, StockScoreState.Signaled);
     }
 
     public StockScore(String stockCode, String conceptName, double score, int cob) {
-        this.stockCode = stockCode;
+        this(stockCode, score, cob, StockScoreState.Signaled);
         this.conceptName = conceptName;
-        this.score = score;
-        this.cob = cob;
     }
 
     public void calculateDailyExcessReturn(){
@@ -139,6 +144,38 @@ public class StockScore implements Comparable<StockScore>, TrainOptionApply {
 
     public void setHoldingPeriod(int holdingPeriod) {
         this.holdingPeriod = holdingPeriod;
+    }
+
+    public int getBuyIndex() {
+        return buyIndex;
+    }
+
+    public void setBuyIndex(int buyIndex) {
+        this.buyIndex = buyIndex;
+    }
+
+    public int getSellIndex() {
+        return sellIndex;
+    }
+
+    public void setSellIndex(int sellIndex) {
+        this.sellIndex = sellIndex;
+    }
+
+    public double getDailyExcessReturn() {
+        return dailyExcessReturn;
+    }
+
+    public void setDailyExcessReturn(double dailyExcessReturn) {
+        this.dailyExcessReturn = dailyExcessReturn;
+    }
+
+    public StockScoreState getState() {
+        return state;
+    }
+
+    public void setState(StockScoreState state) {
+        this.state = state;
     }
 
     @Override

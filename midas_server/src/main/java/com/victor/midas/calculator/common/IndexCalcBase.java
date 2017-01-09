@@ -5,6 +5,7 @@ import com.victor.midas.model.common.StockType;
 import com.victor.midas.model.vo.CalcParameter;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.model.vo.score.StockScore;
+import com.victor.midas.model.vo.score.StockScoreState;
 import com.victor.midas.train.common.MidasTrainOptions;
 import com.victor.midas.train.perf.PerfCollector;
 import com.victor.midas.util.MidasConstants;
@@ -169,18 +170,29 @@ public abstract class IndexCalcBase implements ICalculator {
     public void setStateHoldStock(double score) {
         if(stock.getStockType() == StockType.Index) return;
         this.state = StockState.HoldStock;
+        _stockScore = new StockScore(stock.getStockName(), score, dates[itr]);
         if(itr + 1 < len){
-            _stockScore = new StockScore(stock.getStockName(), score, dates[itr]);
             _stockScore.buyIndex = itr + 1;
             _stockScore.buyCob = dates[itr + 1];
             _stockScore.buyTiming = 0;
+            _stockScore.state = StockScoreState.Holding;
         }
     }
 
-    public void setStateHoldMoney() {
+    /**
+     * default is sell at sell signal day's close
+     * when sell signal day is the buy day, then because the T + 1 policy, sell at next day's open
+     * only when next day is unavailable, for calculation purpose, sell at last day's close even violate the T + 1 policy
+     * @param isLastDayForceSell true, state won't change since it hasn't expire the strategy, false, state will change to Sold
+     */
+    public void setStateHoldMoney(boolean isLastDayForceSell) {
         if(stock.getStockType() == StockType.Index) return;
         this.state = StockState.HoldMoney;
         if(_stockScore != null){
+            if(!isLastDayForceSell) {
+                _stockScore.state = StockScoreState.Sold;
+            }
+
             if(itr < len){
                 _stockScore.sellIndex = itr;
                 _stockScore.sellCob = dates[itr];

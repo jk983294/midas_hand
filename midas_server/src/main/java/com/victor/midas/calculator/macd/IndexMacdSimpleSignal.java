@@ -44,10 +44,10 @@ public class IndexMacdSimpleSignal extends IndexCalcBase {
                 setStateHoldStock(score[itr]);
             } else if(state == StockState.HoldStock && macdBar[itr - 1] > macdBar[itr]){
                 score[itr] = -5d;
-                setStateHoldMoney();
+                setStateHoldMoney(false);
             }
         }
-        setStateHoldMoney();
+        setStateHoldMoney(true);
         addIndexData(INDEX_NAME, score);
     }
 

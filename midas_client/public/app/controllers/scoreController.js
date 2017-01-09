@@ -19,6 +19,8 @@ midasApp.controller('scoreController', function ($scope, $filter, $routeParams, 
         isScoreRecordCollapsed : false
     };
 
+    $scope.isIgnoreFake = false;
+
     // Disable weekend selection
     $scope.disabled = Utils.disabledWeekend;
 
@@ -32,11 +34,14 @@ midasApp.controller('scoreController', function ($scope, $filter, $routeParams, 
         $event.stopPropagation();
         $scope.datepicker.opened2 = true;
     };
+    $scope.isIgnoreFakeChange = function() {
+        $scope.isIgnoreFake = !$scope.isIgnoreFake;
+        $scope.scores = getScoreData($scope.scoreRawData);
+        $scope.tableParams.reload();
+    };
 
-    var scoreData = MidasData.getScores();
-    MidasData.getScores();
-
-    scoreData.$promise.then(function success(data){
+    MidasData.getScores().$promise.then(function success(data){
+        $scope.scoreRawData = data;
         initDefault(data);
     }, Utils.errorHandler);
 
@@ -59,8 +64,8 @@ midasApp.controller('scoreController', function ($scope, $filter, $routeParams, 
     $scope.updateDatePick = function(){
         var minday = Utils.date2int(Math.min($scope.datepicker.dt1, $scope.datepicker.dt2));
         var maxday = Utils.date2int(Math.max($scope.datepicker.dt1, $scope.datepicker.dt2));
-        var scoreData = MidasData.getScoresRange(minday, maxday);
-        scoreData.$promise.then(function success(data){
+        MidasData.getScoresRange(minday, maxday).$promise.then(function success(data){
+            $scope.scoreRawData = data;
             setTableData(data);
         }, Utils.errorHandler);
     };
@@ -69,16 +74,18 @@ midasApp.controller('scoreController', function ($scope, $filter, $routeParams, 
         var scoreResult = data.scoreResult;
         var scoreRecordsTmp = [];
         data.stockScoreRecords.forEach(function (stockScoreRecord) {
-            stockScoreRecord.records.forEach(function (record) {
-                if(record.stockCode !== 'fake'){
+            if(stockScoreRecord.records.length == 1 && stockScoreRecord.records[0].stockCode === 'fake'){
+                // pass
+            } else {
+                stockScoreRecord.records.forEach(function (record) {
                     scoreRecordsTmp.push(record);
-                }
-            });
+                });
+            }
         });
 
         $scope.scoreTime = scoreResult.time;
         $scope.scoreSummary = Utils.object2PropArray(scoreResult);
-        $scope.scores = data.stockScoreRecords;
+        $scope.scores = getScoreData(data);
         $scope.scoreRecords = scoreRecordsTmp;
 
         $scope.tableParams = new ngTableParams({
@@ -127,6 +134,20 @@ midasApp.controller('scoreController', function ($scope, $filter, $routeParams, 
                 $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
             }
         });
+    }
+
+    function getScoreData(data){
+        var scoresTmp = [];
+        data.stockScoreRecords.forEach(function (stockScoreRecord) {
+            if(stockScoreRecord.records.length == 1 && stockScoreRecord.records[0].stockCode === 'fake'){
+                if(!$scope.isIgnoreFake){
+                    scoresTmp.push(stockScoreRecord);
+                }
+            } else {
+                scoresTmp.push(stockScoreRecord);
+            }
+        });
+        return scoresTmp;
     }
 
 });

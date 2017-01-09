@@ -20,7 +20,7 @@ public class WeeklyDataUtil {
     public double[] min, max, end, start, volume, total;
     public int[] dates;
     public Date[] datesDate;
-    public WeeklyStockData currentWeeklyData;
+    public WeeklyStockData currentWeeklyData, previous;
     public List<WeeklyStockData> weeks;
     public int len;
     public double[] ma5, ma10, ma20, ma30;
@@ -64,7 +64,6 @@ public class WeeklyDataUtil {
 
     private void calculateChangePct(){
         if(CollectionUtils.isNotEmpty(weeks)){
-            WeeklyStockData previous;
             currentWeeklyData = weeks.get(0);
             currentWeeklyData.changePct = MathStockUtil.calculateChangePct(currentWeeklyData.start, currentWeeklyData.end);
             currentWeeklyData.middleEntityPct = Math.abs(currentWeeklyData.changePct);
@@ -74,6 +73,7 @@ public class WeeklyDataUtil {
             currentWeeklyData.orderOfPriceMa = calculateOrderOfPriceMa(currentWeeklyData.cobToIndex);
             currentWeeklyData.maScore = calculateMaScore(currentWeeklyData.cobToIndex);
             currentWeeklyData.aboveMaxMaWeekCount = calculateAboveMaxMaWeekCount(0);
+            currentWeeklyData.maSlopeDownCount = 0;
             for (int i = 1; i < weeks.size(); i++) {
                 previous = currentWeeklyData;
                 currentWeeklyData = weeks.get(i);
@@ -85,8 +85,18 @@ public class WeeklyDataUtil {
                 currentWeeklyData.orderOfPriceMa = calculateOrderOfPriceMa(currentWeeklyData.cobToIndex);
                 currentWeeklyData.maScore = calculateMaScore(currentWeeklyData.cobToIndex);
                 currentWeeklyData.aboveMaxMaWeekCount = calculateAboveMaxMaWeekCount(i);
+                currentWeeklyData.maSlopeDownCount = calculateMaSlopeDownCount();
             }
         }
+    }
+
+    private int calculateMaSlopeDownCount(){
+        int count = 0;
+        if(ma30[currentWeeklyData.cobToIndex] < ma30[previous.cobToIndex]) ++count;
+        if(ma20[currentWeeklyData.cobToIndex] < ma20[previous.cobToIndex]) ++count;
+        if(ma10[currentWeeklyData.cobToIndex] < ma10[previous.cobToIndex]) ++count;
+        if(ma5[currentWeeklyData.cobToIndex] < ma5[previous.cobToIndex]) ++count;
+        return count;
     }
 
     private int calculateAboveMaxMaWeekCount(int weekIndex){
