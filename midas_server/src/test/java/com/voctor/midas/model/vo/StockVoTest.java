@@ -24,7 +24,7 @@ public class StockVoTest {
         int[] data = new int[]{20150601, 20150602, 20150603, 20150604, 20150605, 20150606, 20150607, 20150608, 20150609, 20150610};
         stock.setCobIndex(7);
         stock.setDatesInt(data);
-        assertEquals(stock.getCobIndex(20150607), -1);
+        assertEquals(stock.getCobIndex(20150607), 6);
     }
 
     @Test(expected = RuntimeException.class)
