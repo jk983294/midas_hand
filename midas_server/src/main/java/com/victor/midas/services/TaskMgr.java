@@ -43,6 +43,7 @@ public class TaskMgr {
             case load : callable = (MktDataTask) context.getBean("mktDataTask"); break;
             case reports : callable = (ParseReportTask) context.getBean("parseReportTask"); break;
             case lucene :  callable = (LuceneTask) context.getBean("luceneTask");   break;
+            case aip :  callable = (AipTask) context.getBean("aipTask");   break;
             case calculate : callable = (CalculateTask) context.getBean("calculateTask"); break;
             case trainSingle : callable = (TrainTask) context.getBean("trainTask");break;
             case score :

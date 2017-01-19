@@ -18,6 +18,7 @@ public enum CmdType {
     chan,
     reports,
     lucene,
+    aip,
 
 
     bad_cmd

@@ -34,6 +34,10 @@ public class MathHelper {
         return Math.abs(a - b) < epsilon;
     }
 
+    public static boolean isZero(double v){
+        return isEqual(v, 0d);
+    }
+
     /**
      * generate uniform random variables in given bounds
      */
