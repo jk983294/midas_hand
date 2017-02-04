@@ -1,7 +1,9 @@
 package com.victor.midas.endpoint;
 
+import com.victor.midas.dao.MiscDao;
 import com.victor.midas.model.db.StockInfoDb;
 import com.victor.midas.model.train.SingleParameterTrainResults;
+import com.victor.midas.model.vo.AipResults;
 import com.victor.midas.model.vo.MidasBond;
 import com.victor.midas.model.vo.StockDayStats;
 import com.victor.midas.model.vo.StockVo;
@@ -36,6 +38,8 @@ public class StocksEndpoint {
     private StocksService stocksService;
     @Autowired
     private ReportService reportService;
+    @Autowired
+    private MiscDao miscDao;
 	
 	@GET
     @RequestMapping("/{name}")
@@ -112,6 +116,13 @@ public class StocksEndpoint {
             throws MidasException, IOException, org.apache.lucene.queryparser.classic.ParseException {
         if(StringUtils.isEmpty(query)) return new HashMap<>();
         else return reportService.queryReports(query);
+    }
+
+    @GET
+    @RequestMapping("/aip")
+    @Produces(MediaType.APPLICATION_JSON)
+    public AipResults getAipData() {
+        return miscDao.queryAipData();
     }
 
 	@GET

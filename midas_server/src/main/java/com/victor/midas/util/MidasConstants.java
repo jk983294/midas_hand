@@ -27,6 +27,7 @@ public class MidasConstants {
     public static final String MISC_NATIONAL_DEBT = "NationalDebt";
     public static final String MISC_STOCK_DAY_STATS_COBS = "StockDayStatsCobs";
     public static final String MISC_SCORE_RESULT = "StockScoreResult";
+    public static final String MISC_AIP_RESULT = "StockAipResult";
 
     /**
      * collection name

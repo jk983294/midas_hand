@@ -6,6 +6,7 @@ import com.victor.midas.model.db.misc.SampleCobDb;
 import com.victor.midas.model.db.misc.StockNamesDb;
 import com.victor.midas.model.train.SingleParameterTrainResult;
 import com.victor.midas.model.train.SingleParameterTrainResults;
+import com.victor.midas.model.vo.AipResults;
 import com.victor.midas.model.vo.MidasBond;
 import com.victor.midas.util.MidasConstants;
 import org.apache.log4j.Logger;
@@ -28,7 +29,7 @@ public class MiscDao {
     private static final Logger logger = Logger.getLogger(StockDao.class);
 
     private static Query allStockNamesQuery, singleTrainResultQuery, nationalDebtQuery, dayStatsCobsQuery,
-        scoreResultQuery;
+        scoreResultQuery, aipDataQuery;
 
     static {
         allStockNamesQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_ALL_STOCK_NAMES));
@@ -36,6 +37,7 @@ public class MiscDao {
         nationalDebtQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_NATIONAL_DEBT));
         dayStatsCobsQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_STOCK_DAY_STATS_COBS));
         scoreResultQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_SCORE_RESULT));
+        aipDataQuery = new Query(Criteria.where("_id").is(MidasConstants.MISC_AIP_RESULT));
     }
 
     @Autowired
@@ -61,6 +63,10 @@ public class MiscDao {
 
     public SingleParameterTrainResult queryScoreResult(){
         return (SingleParameterTrainResult)(queryMiscGenericObject(scoreResultQuery).getObject());
+    }
+
+    public AipResults queryAipData(){
+        return (AipResults)(queryMiscGenericObject(aipDataQuery).getObject());
     }
 
     private MiscGenericObject queryMiscGenericObject(Query query){

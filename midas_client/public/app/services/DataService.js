@@ -20,6 +20,7 @@ var serviceUrls = (function(){
     var dayStatsRangeUrl = isRemote ? urlBase + 'stocks/day-stats/:cob' : 'app/data/dayStats.json';
     var singleTrainResultUrl = isRemote ? urlBase + 'stocks/singleTrainResult' : 'app/data/SingleTrainResults.json';
     var reportsUrl = isRemote ? urlBase + 'stocks/reports/:queryStr' : 'app/data/reports.json';
+    var aipUrl = isRemote ? urlBase + 'stocks/aip' : 'app/data/aip.json';
     return {
         stockInfosUrl : stockInfosUrl,
         stockDetailUrl : stockDetailUrl,
@@ -33,7 +34,8 @@ var serviceUrls = (function(){
         scoreRangeUrl : scoreRangeUrl,
         singleTrainResultUrl : singleTrainResultUrl,
         dayStatsRangeUrl : dayStatsRangeUrl,
-        reportsUrl : reportsUrl
+        reportsUrl : reportsUrl,
+        aipUrl: aipUrl
     };
 })();
 
@@ -164,14 +166,24 @@ dataService.factory('ReportsQuery', ['$resource',
     }
 ]);
 
+dataService.factory('AipQuery', ['$resource',
+    function($resource){
+        return $resource(
+            serviceUrls.aipUrl,
+            {}, // Query parameters
+            {'query': { method: 'GET'}}
+        );
+    }
+]);
+
 dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'StocksCmp',
     'TypeAheadTips', 'TypeAheadAction', 'TaskQuery',
     'ScoreQuery', 'NationalDebtQuery', 'ScoreRangeQuery','singleTrainResultQuery', 'DayStatsRangeQuery',
-    'ReportsQuery',
+    'ReportsQuery', 'AipQuery',
     function($resource, StockInfos, StockDetail, StocksCmp,
              TypeAheadTips, TypeAheadAction, TaskQuery,
              ScoreQuery, NationalDebtQuery, ScoreRangeQuery, singleTrainResultQuery, DayStatsRangeQuery,
-             ReportsQuery){
+             ReportsQuery, AipQuery){
         var stockInfos = {};
 
         // get future object
@@ -232,6 +244,10 @@ dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'Stoc
             return ReportsQuery.get({queryStr : queryStr});
         }
 
+        function getAipData(){
+            return AipQuery.query();
+        }
+
         var dateFormats = ['dd-MMMM-yyyy', 'yyyy-MM-dd', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
 
         var alerts = [];
@@ -252,6 +268,7 @@ dataService.factory('MidasData', ['$resource','StockInfos', 'StockDetail', 'Stoc
             getSingleTrainResult : getSingleTrainResult,
             getDayStats : getDayStats,
             getReports : getReports,
+            getAipData : getAipData,
 
             dateFormats : dateFormats,
 

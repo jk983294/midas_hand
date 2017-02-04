@@ -4,14 +4,12 @@ package com.victor.midas.model.vo;
 import com.google.common.collect.ComparisonChain;
 import com.victor.utilities.utils.MathHelper;
 import com.victor.utilities.utils.TimeHelper;
-import org.springframework.data.annotation.Id;
 
 public class AipResult implements Comparable<AipResult> {
 
-    @Id
     public String stockName;
 
-    public int startCob, endCob, monthCount, stockCountTotal;
+    public int startCob, endCob, monthCount, stockCountTotal, performanceOrder;
     public double availableMoney, totalInvestedMoney;
     public double performanceTotal, performanceMonthly;
 
@@ -110,6 +108,14 @@ public class AipResult implements Comparable<AipResult> {
 
     public void setMonthCount(int monthCount) {
         this.monthCount = monthCount;
+    }
+
+    public int getPerformanceOrder() {
+        return performanceOrder;
+    }
+
+    public void setPerformanceOrder(int performanceOrder) {
+        this.performanceOrder = performanceOrder;
     }
 
     @Override

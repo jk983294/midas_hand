@@ -109,6 +109,7 @@
     loadJS("app/controllers/singleTrainController.js");
     loadJS("app/controllers/bondController.js");
     loadJS("app/controllers/reportsController.js");
+    loadJS("app/controllers/aipController.js");
 
 
 })();

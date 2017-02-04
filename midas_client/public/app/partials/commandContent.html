@@ -99,5 +99,64 @@
         </div>
     </div>
 
+    <div class="container-fluid">
+        <h4>Useful Commands</h4>
+
+        <div class="row">
+            <div class="col-md-6 col-lg-6">
+<pre>
+-- frequently used
+load_score macd_advanced
+load_score weekly
+score pcrs
+calculate dsa
+reports
+aip
+</pre>
+
+<pre>
+-- load data
+load stock
+load bond
+load fund
+</pre>
+
+<pre>
+-- score
+score macd_advanced
+score macd_advanced SH603567
+</pre>
+
+            </div>
+
+            <div class="col-md-6 col-lg-6">
+<pre>
+-- training
+trainSingle score_pcrs 1 10 1
+trainSingle score_pcrs 0.8 1.2 0.1.
+</pre>
+
+<pre>
+-- calculator
+calculate IDX999999 badDepth
+calculate score_revert
+</pre>
+
+<pre>
+-- pipe
+loadStock | score macd_advanced
+</pre>
+
+            </div>
+        </div>
+
+
+
+
+
+
+
+    </div>
+
 
 </div>

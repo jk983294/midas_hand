@@ -54,6 +54,10 @@ midasApp.config(['$routeProvider',
                 controller: 'reportsController',
                 templateUrl: urlBase + 'reportsContent.html'
             })
+            .when('/AIP', {
+                controller: 'aipController',
+                templateUrl: urlBase + 'aipContent.html'
+            })
             .otherwise({
                 redirectTo: '/Overview'
             });
