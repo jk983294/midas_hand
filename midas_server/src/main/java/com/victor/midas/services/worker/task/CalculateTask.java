@@ -3,6 +3,8 @@ package com.victor.midas.services.worker.task;
 import com.victor.midas.calculator.IndexCalculator;
 import com.victor.midas.calculator.indicator.IndexChangePct;
 import com.victor.midas.calculator.stats.DayStatsAggregator;
+import com.victor.midas.calculator.stats.GlobalIndex;
+import com.victor.midas.model.common.StockType;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.midas.util.MidasConstants;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Scope("prototype")
@@ -47,6 +50,9 @@ public class CalculateTask extends TaskBase {
         if(indexCalculator.targetCalculator.getIndexName().equals(DayStatsAggregator.INDEX_NAME)){
             DayStatsAggregator aggregator = (DayStatsAggregator)indexCalculator.targetCalculator;
             stocksService.saveDayStatsList(aggregator.dayStatses);
+        } else if(indexCalculator.targetCalculator.getIndexName().equals(GlobalIndex.INDEX_NAME)){
+            List<StockVo> indexes = stocks.stream().filter(stock -> StockType.Index.equals(stock.getStockType())).collect(Collectors.toList());
+            stocksService.saveStocks(indexes);
         } else {
             if(params.size() == 2){
                 stocksService.getStockDao().updateStock(stocks.get(0));

@@ -30,7 +30,6 @@ public abstract class AggregationCalcBase implements ICalculator {
     protected int len;                            // benchmark stock's date len
     protected PerfCollector perfCollector;
 
-
     protected AggregationCalcBase(CalcParameter parameter) {
         this.parameter = parameter;
         setRequiredCalculators();
