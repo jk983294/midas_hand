@@ -14,8 +14,7 @@ import com.victor.spider.core.thread.CountableThreadPool;
 import com.victor.spider.core.utils.UrlUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.HttpHost;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -67,7 +66,7 @@ public class Spider implements Runnable, Task {
 
     protected Scheduler scheduler = new QueueScheduler();
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = Logger.getLogger(getClass());
 
     protected CountableThreadPool threadPool;
 

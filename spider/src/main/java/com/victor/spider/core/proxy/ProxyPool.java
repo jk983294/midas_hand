@@ -3,8 +3,7 @@ package com.victor.spider.core.proxy;
 import com.victor.spider.core.utils.FilePersistentBase;
 import com.victor.spider.core.utils.ProxyUtils;
 import org.apache.http.HttpHost;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -22,7 +21,7 @@ import java.util.concurrent.DelayQueue;
  */
 public class ProxyPool {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = Logger.getLogger(getClass());
 
     private BlockingQueue<Proxy> proxyQueue = new DelayQueue<Proxy>();
     private Map<String, Proxy> allProxy = new ConcurrentHashMap<String, Proxy>();

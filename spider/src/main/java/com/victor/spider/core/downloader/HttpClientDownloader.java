@@ -14,12 +14,11 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.victor.spider.core.Page;
 import com.victor.spider.core.Request;
 import com.victor.spider.core.Site;
@@ -41,7 +40,7 @@ import java.util.Set;
 @ThreadSafe
 public class HttpClientDownloader extends AbstractDownloader {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = Logger.getLogger(getClass());
 
     private final Map<String, CloseableHttpClient> httpClients = new HashMap<String, CloseableHttpClient>();
 
@@ -81,7 +80,7 @@ public class HttpClientDownloader extends AbstractDownloader {
         } else {
             acceptStatCode = Sets.newHashSet(200);
         }
-        logger.info("downloading page {}", request.getUrl());
+        logger.info("downloading page " + request.getUrl());
         CloseableHttpResponse httpResponse = null;
         int statusCode=0;
         try {
@@ -192,7 +191,6 @@ public class HttpClientDownloader extends AbstractDownloader {
             if (htmlCharset != null) {
                 return new String(contentBytes, htmlCharset);
             } else {
-                logger.warn("Charset autodetect failed, use {} as charset. Please specify charset in Site.setCharset()", Charset.defaultCharset());
                 return new String(contentBytes);
             }
         } else {

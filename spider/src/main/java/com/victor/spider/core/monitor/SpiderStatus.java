@@ -1,9 +1,8 @@
 package com.victor.spider.core.monitor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.victor.spider.core.Spider;
 import com.victor.spider.core.scheduler.MonitorableScheduler;
+import org.apache.log4j.Logger;
 
 import java.util.Date;
 import java.util.List;
@@ -12,7 +11,7 @@ public class SpiderStatus implements SpiderStatusMXBean {
 
     protected final Spider spider;
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = Logger.getLogger(getClass());
 
     protected final SpiderMonitor.MonitorSpiderListener monitorSpiderListener;
 

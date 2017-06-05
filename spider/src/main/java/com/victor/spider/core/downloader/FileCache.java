@@ -2,8 +2,6 @@ package com.victor.spider.core.downloader;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.victor.spider.core.*;
 import com.victor.spider.core.pipeline.Pipeline;
 import com.victor.spider.core.processor.PageProcessor;
@@ -13,6 +11,7 @@ import com.victor.spider.core.selector.PlainText;
 import com.victor.spider.core.utils.Experimental;
 import com.victor.spider.core.utils.FilePersistentBase;
 import com.victor.spider.core.utils.UrlUtils;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 
@@ -26,7 +25,7 @@ public class FileCache extends FilePersistentBase implements Downloader, Pipelin
 
     private final PageProcessor pageProcessor;
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = Logger.getLogger(getClass());
 
     public FileCache(String startUrl, String urlPattern) {
         this(startUrl, urlPattern, "/data/spider/temp/");

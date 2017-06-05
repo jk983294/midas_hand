@@ -2,8 +2,7 @@ package com.victor.utilities.report;
 
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -12,7 +11,7 @@ import java.util.*;
 
 public class CsvParser {
 
-    private static Logger logger = LoggerFactory.getLogger(CsvParser.class);
+    private static Logger logger = Logger.getLogger(CsvParser.class);
 
     public String filePath;
 

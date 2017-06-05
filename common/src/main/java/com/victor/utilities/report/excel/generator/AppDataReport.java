@@ -6,8 +6,7 @@ import com.victor.utilities.report.excel.generator.common.TabWriterBase;
 import com.victor.utilities.report.excel.model.AppMetadata;
 import com.victor.utilities.report.excel.model.AppModel;
 import com.victor.utilities.report.excel.util.AppSortingUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,7 +19,7 @@ import java.util.Map;
  */
 public class AppDataReport extends ReportXssfBase {
 
-    private final static Logger logger = LoggerFactory.getLogger(AppDataReport.class);
+    private final static Logger logger = Logger.getLogger(AppDataReport.class);
 
     private  List<AppModel> appModels;
 

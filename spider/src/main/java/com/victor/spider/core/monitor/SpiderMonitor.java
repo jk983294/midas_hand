@@ -1,11 +1,10 @@
 package com.victor.spider.core.monitor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.victor.spider.core.Request;
 import com.victor.spider.core.Spider;
 import com.victor.spider.core.SpiderListener;
 import com.victor.spider.core.utils.Experimental;
+import org.apache.log4j.Logger;
 
 import javax.management.*;
 import java.lang.management.ManagementFactory;
@@ -22,7 +21,7 @@ public class SpiderMonitor {
 
     private AtomicBoolean started = new AtomicBoolean(false);
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = Logger.getLogger(getClass());
 
     private MBeanServer mbeanServer;
 

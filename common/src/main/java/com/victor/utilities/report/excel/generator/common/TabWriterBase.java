@@ -4,12 +4,11 @@ import com.victor.utilities.report.excel.model.AppModel;
 import com.victor.utilities.report.excel.model.ColorTag;
 import com.victor.utilities.utils.RegExpHelper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public abstract class TabWriterBase {
 
-    private final static Logger logger = LoggerFactory.getLogger(TabWriterBase.class);
+    private final static Logger logger = Logger.getLogger(TabWriterBase.class);
 
     protected XSSFWorkbook wb;
     protected XSSFSheet sheet;

@@ -2,11 +2,10 @@ package com.victor.spider.core.pipeline;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.victor.spider.core.ResultItems;
 import com.victor.spider.core.Task;
 import com.victor.spider.core.utils.FilePersistentBase;
+import org.apache.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,7 +16,7 @@ import java.io.PrintWriter;
  */
 public class JsonFilePipeline extends FilePersistentBase implements Pipeline {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = Logger.getLogger(getClass());
 
     /**
      * new JsonFilePageModelPipeline with default path "/data/spider/"

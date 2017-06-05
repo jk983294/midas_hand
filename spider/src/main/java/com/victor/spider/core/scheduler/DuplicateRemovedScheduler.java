@@ -4,8 +4,7 @@ import com.victor.spider.core.Request;
 import com.victor.spider.core.Task;
 import com.victor.spider.core.scheduler.component.DuplicateRemover;
 import com.victor.spider.core.scheduler.component.HashSetDuplicateRemover;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -13,7 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DuplicateRemovedScheduler implements Scheduler {
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = Logger.getLogger(getClass());
 
     private DuplicateRemover duplicatedRemover = new HashSetDuplicateRemover();
 
@@ -28,7 +27,7 @@ public abstract class DuplicateRemovedScheduler implements Scheduler {
 
     @Override
     public void push(Request request, Task task) {
-        logger.trace("get a candidate url {}", request.getUrl());
+        logger.trace("get a candidate url " + request.getUrl());
         if (!duplicatedRemover.isDuplicate(request, task) || shouldReserved(request)) {
             pushWhenNoDuplicate(request, task);
         }

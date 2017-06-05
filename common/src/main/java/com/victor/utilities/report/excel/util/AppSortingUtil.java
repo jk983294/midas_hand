@@ -4,8 +4,7 @@ import com.victor.utilities.model.KeyValue;
 import com.victor.utilities.report.excel.model.AppModel;
 import com.victor.utilities.utils.RegExpHelper;
 import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -15,7 +14,7 @@ import java.util.regex.Pattern;
  */
 public class AppSortingUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(AppSortingUtil.class);
+    private static final Logger logger = Logger.getLogger(AppSortingUtil.class);
 
     private static final String[] field1s = new String[]{"aa", "bb", "cc", "dd", "ee"};
     private static final Pattern[] field1Patterns = new Pattern[field1s.length];

@@ -1,8 +1,6 @@
 package com.victor.spider.core.model;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.victor.spider.core.Page;
 import com.victor.spider.core.model.annotation.*;
 import com.victor.spider.core.model.formatter.BasicTypeFormatter;
@@ -11,6 +9,7 @@ import com.victor.spider.core.model.formatter.ObjectFormatters;
 import com.victor.spider.core.selector.*;
 import com.victor.spider.core.utils.ClassUtils;
 import com.victor.spider.core.utils.ExtractorUtils;
+import org.apache.log4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -39,7 +38,7 @@ class PageModelExtractor {
 
     private Extractor objectExtractor;
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = Logger.getLogger(getClass());
 
     public static PageModelExtractor create(Class clazz) {
         PageModelExtractor pageModelExtractor = new PageModelExtractor();

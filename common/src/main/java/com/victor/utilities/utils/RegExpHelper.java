@@ -3,8 +3,7 @@ package com.victor.utilities.utils;
 
 import com.victor.utilities.model.KeyValue;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class RegExpHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(RegExpHelper.class);
+    private static final Logger logger = Logger.getLogger(RegExpHelper.class);
 
     private static final String numberPatternStr = "[-+]?\\s*(\\d+(,\\d{3})*(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?";
     private static final String percentPatternStr = numberPatternStr + "\\s*%";

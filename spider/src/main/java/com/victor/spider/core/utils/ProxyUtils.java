@@ -1,8 +1,7 @@
 package com.victor.spider.core.utils;
 
 import org.apache.http.HttpHost;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.*;
@@ -17,7 +16,7 @@ public class ProxyUtils {
 	private static InetAddress localAddr;
 	private static String networkInterface = "eth7";
 
-	private static final Logger logger = LoggerFactory.getLogger(ProxyUtils.class);
+	private static final Logger logger = Logger.getLogger(ProxyUtils.class);
 	static {
 		init();
 	}

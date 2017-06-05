@@ -4,11 +4,10 @@ import com.victor.utilities.report.excel.model.AppModel;
 import com.victor.utilities.report.excel.parser.SheetHandlerForAppData;
 import com.victor.utilities.report.excel.parser.SheetHandlerForTabTable;
 import com.victor.utilities.report.excel.parser.common.TabTable;
+import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -20,7 +19,7 @@ import java.util.List;
 
 public class XlsxParser {
 
-    private static Logger logger = LoggerFactory.getLogger(XlsxParser.class);
+    private static Logger logger = Logger.getLogger(XlsxParser.class);
 
     /**
      * parse AppData excel file

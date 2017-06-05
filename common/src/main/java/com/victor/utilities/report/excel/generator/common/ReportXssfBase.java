@@ -1,10 +1,8 @@
 package com.victor.utilities.report.excel.generator.common;
 
-import com.victor.utilities.report.excel.generator.common.ReportException;
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
@@ -15,7 +13,7 @@ import java.io.IOException;
  */
 public abstract class ReportXssfBase {
 
-    private static Logger logger = LoggerFactory.getLogger(ReportXssfBase.class);
+    private static Logger logger = Logger.getLogger(ReportXssfBase.class);
 
     protected XSSFWorkbook wb;
 
