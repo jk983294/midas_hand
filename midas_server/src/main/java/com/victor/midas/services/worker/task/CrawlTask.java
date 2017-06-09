@@ -43,7 +43,7 @@ public class CrawlTask extends TaskBase {
     public void crawlGuBa(List<String> stockNames){
         String stockCode = "000702";
         Spider.create(new GuBaPageProcessor(stockCode)).addUrl("http://guba.eastmoney.com/news,601766,211862489_1.html")
-                .addPipeline(new JsonFilePipeline("F:\\Data\\MktData\\guba")).run();
+                .addPipeline(new JsonFilePipeline(environment.getProperty("DataDirPrefix") + "\\MktData\\guba")).run();
     }
 
     @Override

@@ -91,8 +91,8 @@ public class GeneralScoreManager implements ScoreManager, Trainee, TrainOptionAp
                 logger.info("today score result : " + scoreRecords.get(scoreRecords.size() - 1));
             }
             logger.info("result : " + perfCollector.toString());
-//            FileUtils.write(new File("E:\\stock_performance.txt"), perfCollector.toPerfString());
-//            FileUtils.write(new File("E:\\stock_performance_by_name.txt"), new JsonHelper().toJson(perfCollector.getName2scores()));
+//            FileUtils.write(new File(OsHelper.getPathByOs("stock_performance.txt")), perfCollector.toPerfString());
+//            FileUtils.write(new File(OsHelper.getPathByOs("stock_performance_by_name.txt")), new JsonHelper().toJson(perfCollector.getName2scores()));
         }
     }
 

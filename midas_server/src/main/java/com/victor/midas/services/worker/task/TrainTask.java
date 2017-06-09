@@ -9,6 +9,7 @@ import com.victor.midas.train.common.Trainee;
 import com.victor.midas.train.score.GeneralScoreManager;
 import com.victor.midas.util.MidasException;
 import com.victor.utilities.utils.JsonHelper;
+import com.victor.utilities.utils.OsHelper;
 import com.victor.utilities.utils.PerformanceUtil;
 import com.victor.utilities.utils.RegExpHelper;
 import org.apache.commons.io.FileUtils;
@@ -54,7 +55,7 @@ public class TrainTask extends TaskBase {
                 trainee.setIsInTrain(true);
                 trainer.setTrainee(trainee);
                 trainer.process();
-//                FileUtils.write(new File("E:\\stock_train_result.txt"), new JsonHelper().toJson(trainer.getResults()));
+//                FileUtils.write(new File(OsHelper.getPathByOs("stock_train_result.txt")), new JsonHelper().toJson(trainer.getResults()));
                 stocksService.saveSingleParameterTrainResults(trainer.getResults());
             }
             PerformanceUtil.manuallyGC(stocks);

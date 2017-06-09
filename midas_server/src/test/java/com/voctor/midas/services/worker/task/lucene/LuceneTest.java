@@ -2,6 +2,7 @@ package com.voctor.midas.services.worker.task.lucene;
 
 import com.victor.midas.services.worker.task.lucene.LuceneConstants;
 import com.victor.midas.services.worker.task.lucene.ReportIndexer;
+import com.victor.utilities.utils.OsHelper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -23,8 +24,8 @@ import java.util.HashMap;
 
 public class LuceneTest {
 
-    String indexDir = "F:\\Data\\dummy\\ReportSearch";
-    String dataDir = "F:\\Data\\MktData\\fundamental\\cninfo\\000001";
+    String indexDir = OsHelper.getPathByOs("/home/kun/", "F:\\", "Data\\dummy\\ReportSearch");
+    String dataDir = OsHelper.getPathByOs("/home/kun/", "F:\\", "Data\\MktData\\fundamental\\cninfo\\000001");
 
     @Ignore
     @Test

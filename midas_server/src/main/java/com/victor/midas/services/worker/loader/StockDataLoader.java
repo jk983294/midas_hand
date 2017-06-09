@@ -8,6 +8,7 @@ import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.util.MidasConstants;
 import com.victor.midas.util.MidasException;
 import com.victor.midas.util.ModelConvertor;
+import com.victor.utilities.utils.OsHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -113,7 +114,7 @@ public class StockDataLoader implements IDataLoader {
         if(stockName.endsWith("指") || stockName.endsWith("指数")){
             return "IDX" + stockCode;
         } else {
-            return filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
+            return filePath.substring(filePath.lastIndexOf(OsHelper.getDelimiter()) + 1, filePath.lastIndexOf("."));
         }
     }
 

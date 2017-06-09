@@ -26,9 +26,6 @@ public class TaskMgr {
     @Autowired
     private ApplicationContext context;
 
-    @Resource(name="filepath2prefix")
-    private Map<String, String> filepath2prefix;
-
     private ExecutorService executor = Executors.newFixedThreadPool(10);
     
     /**

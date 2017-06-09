@@ -20,14 +20,7 @@
 		</property>
 	</bean>
 
-    <!-- static properties , read from property files -->
-    <util:map id="filepath2prefix" map-class="java.util.HashMap" >
-        <entry key="D:/MktData/RawDataSmallSetForTest/SZ" value="SZ"/>
-        <entry key="D:/MktData/RawDataSmallSetForTest/SH" value="SH"/>
-        <entry key="D:/MktData/RawDataSmallSetForTest/IDX" value="IDX"/>
-    </util:map>
-
-<!-- Loads MongoDB configuraton -->
+<!-- Loads MongoDB configuration -->
 	<import resource="mongo-config.xml"/>
 
 	<!-- thread pool for tasks -->  

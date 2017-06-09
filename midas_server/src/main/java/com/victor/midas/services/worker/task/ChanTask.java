@@ -7,6 +7,7 @@ import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.services.worker.common.TaskBase;
 import com.victor.midas.services.worker.loader.StockDataLoader;
 import com.victor.utilities.utils.IoHelper;
+import com.victor.utilities.utils.OsHelper;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -23,16 +24,14 @@ public class ChanTask extends TaskBase {
 
     /** default come from DB*/
     private boolean isFromFileSystem = false;
-    private Map<String,String> filepath2prefix;
 
-    public void init(Map<String, String> filepath2prefix) {
-        this.filepath2prefix = filepath2prefix;
+    public void init() {
         isFromFileSystem = true;
     }
 
     private List<StockVo> getAllStock() throws Exception {
         if(isFromFileSystem){
-            return (List<StockVo>)(new StockDataLoader().load("F:\\Data\\MktData\\ALL"));
+            return (List<StockVo>)(new StockDataLoader().load(environment.getProperty("MktDataLoader.Stock.Path")));
         } else {
             return stocksService.queryAllStock();
         }
@@ -61,7 +60,7 @@ public class ChanTask extends TaskBase {
         ChanMorphologyExtend indexCalcbase = new ChanMorphologyExtend(new CalcParameter());
         indexCalcbase.calculate(stock);
         ChanResults results = new ChanResults(indexCalcbase.getMergedKLines(), indexCalcbase.getFractalKeyPoints(), indexCalcbase.getStrokes());
-        IoHelper.toJsonFileWithIndent(results, "D:\\chan.json");
+        IoHelper.toJsonFileWithIndent(results, OsHelper.getPathByOs("chan.json"));
 
 //        PerformanceUtil.manuallyGC(stocks);
 

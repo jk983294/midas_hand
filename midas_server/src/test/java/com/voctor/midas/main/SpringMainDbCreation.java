@@ -13,10 +13,6 @@ import java.util.ArrayList;
 public class SpringMainDbCreation {
 
     public static void main(String[] args) {
-        //ApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
-        //ApplicationContext context = new FileSystemXmlApplicationContext("D:/GitHub/Store/midas/src/main/webapp/WEB-INF/midas-content.xml");
-
-        //D:\GitHub\Store\midas\src\main\webapp\WEB-INF\midas-content.xml
         ApplicationContext context = new ClassPathXmlApplicationContext("/midas-content.xml");
         TaskMgr taskMgr = (TaskMgr) context.getBean("taskMgr");
         taskMgr.cmd(CmdType.bad_cmd, new ArrayList<String>());

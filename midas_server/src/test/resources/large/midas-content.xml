@@ -20,12 +20,6 @@
 		</property>
 	</bean>
 
-    <util:map id="filepath2prefix" map-class="java.util.HashMap" >
-        <entry key="D:/MktData/RawData/SZ" value="SZ"/>
-        <entry key="D:/MktData/RawData/SH" value="SH"/>
-        <entry key="D:/MktData/RawData/IDX" value="IDX"/>
-    </util:map>
-
 <!-- Loads MongoDB configuraton -->
 	<import resource="mongo-config.xml"/>
 

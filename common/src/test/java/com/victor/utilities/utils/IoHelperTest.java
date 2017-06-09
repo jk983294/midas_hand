@@ -26,7 +26,7 @@ public class IoHelperTest {
         a.getMap().put("b", b);
         a.getMap().put("c", c);
         VisualAssist.print(IoHelper.toJson(a));
-        IoHelper.toJsonFileWithIndent(a, "D:\\test.json");
+        IoHelper.toJsonFileWithIndent(a, OsHelper.getPathByOs("test.json"));
     }
 
     public static class TestA {
