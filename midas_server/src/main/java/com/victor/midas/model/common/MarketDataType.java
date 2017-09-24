@@ -6,7 +6,8 @@ import java.util.List;
 public enum MarketDataType {
     stock,
     fund,
-    bond;
+    bond,
+    tushare_report;
 
     public static MarketDataType getDataType(MarketDataType defaultPara, List<String> params, int index){
         if(params != null && params.size() > index){

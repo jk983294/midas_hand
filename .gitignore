@@ -1,0 +1,8 @@
+.idea/
+target/
+/logs/
+/midas_server/logs/
+node_modules/
+*.iml
+*.pyc
+package-lock.json

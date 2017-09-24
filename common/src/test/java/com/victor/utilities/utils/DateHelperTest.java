@@ -1,5 +1,6 @@
 package com.victor.utilities.utils;
 
+import com.victor.utilities.model.KeyValue;
 import com.victor.utilities.visual.VisualAssist;
 import org.junit.Test;
 
@@ -30,5 +31,13 @@ public class DateHelperTest {
         VisualAssist.print("current date", now);
         VisualAssist.print("current date convert to int", monthInt);
         VisualAssist.print("current date int convert back to Date", int2date);
+    }
+
+    @Test
+    public void quarterTest() throws ParseException {
+        System.out.println(TimeHelper.quarterCount(2017, 2));
+        KeyValue<Integer, Integer> ym = TimeHelper.count2quarter(189);
+        System.out.println(ym.getKey().toString() + " : " + ym.getValue());
+        System.out.println(TimeHelper.quarterCountFromMonthCount(TimeHelper.monthCount(2017, 6)));
     }
 }

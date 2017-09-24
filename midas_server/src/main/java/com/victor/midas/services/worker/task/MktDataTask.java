@@ -4,10 +4,7 @@ import java.util.List;
 
 import com.victor.midas.model.common.MarketDataType;
 import com.victor.midas.model.vo.MidasBond;
-import com.victor.midas.services.worker.loader.FundDataLoader;
-import com.victor.midas.services.worker.loader.IDataLoader;
-import com.victor.midas.services.worker.loader.NationalDebtDataLoader;
-import com.victor.midas.services.worker.loader.StockDataLoader;
+import com.victor.midas.services.worker.loader.*;
 import com.victor.midas.model.vo.StockVo;
 import com.victor.midas.services.worker.common.TaskBase;
 import org.apache.commons.collections.CollectionUtils;
@@ -51,6 +48,11 @@ public class MktDataTask extends TaskBase {
                 if(CollectionUtils.isNotEmpty(bonds)){
                     stocksService.saveNationalDebt(bonds);
                 }
+                break;
+            }
+            case tushare_report: {
+                IDataLoader dataLoader = new FundamentalDataLoader();
+                List<StockVo> fundmentals = (List<StockVo>)dataLoader.load(environment.getProperty("MktDataLoader.Tushare.stock.report"));
                 break;
             }
         }

@@ -1,5 +1,6 @@
 package com.victor.utilities.utils;
 
+import com.victor.utilities.model.KeyValue;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -90,6 +91,32 @@ public class TimeHelper {
 
     public static int daysBetween(final Date start, final Date end) {
         return daysBetween(new DateTime(start), new DateTime(end));
+    }
+
+    public static KeyValue<Integer, Integer> count2quarter(int count) {
+        int year = Math.floorDiv(count, 4) + 1970;
+        int quarter = count % 4 + 1;
+        return new KeyValue<>(year, quarter);
+    }
+
+    public static KeyValue<Integer, Integer> count2month(int count) {
+        int year = Math.floorDiv(count, 12) + 1970;
+        int month = count % 12 + 1;
+        return new KeyValue<>(year, month);
+    }
+
+    public static int quarterCount(int year, int quarter) {
+        return (year - 1970) * 4 + quarter - 1;
+    }
+
+    public static int monthCount(int year, int month) {
+        return (year - 1970) * 12 + month - 1;
+    }
+
+    public static int quarterCountFromMonthCount(int monthCount) {
+        KeyValue<Integer, Integer> ym = count2month(monthCount);
+        int quarter = Math.floorDiv((ym.getValue() - 1), 3) + 1;
+        return quarterCount(ym.getKey(), quarter);
     }
 
 }
