@@ -14,6 +14,7 @@ import com.victor.utilities.utils.ArrayHelper;
 import com.victor.utilities.utils.StringHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,12 +24,15 @@ import java.util.stream.Collectors;
  */
 public class PerfCollector {
 
+    private static final Logger logger = Logger.getLogger(PerfCollector.class);
+
     private Map<String, StockVo> name2stock;    // stock name map to date index
     private StockVo marketIndex;
     private boolean isInTrain = false;
 
     private int cobRangeFrom, cobRangeTo;
     private double[] end, start, max, min;
+    private int[] stockCob;
 
     private List<StockScore> allScoreRecords = new ArrayList<>();
     private Map<String, List<StockScore>> name2scores = new HashMap<>();
@@ -97,6 +101,10 @@ public class PerfCollector {
                 initState(stockScore.getStockCode());
                 recordBuySellDayStatistics(stockScore);
 
+//                if(stockScore.getStockCode().equalsIgnoreCase("SZ002219")){
+//                    logger.info("debug: " + stockCob[stockScore.buyIndex]);
+//                }
+
                 double totalChangePct, buyPrice, sellPrice;
                 buyPrice = stockScore.buyTiming == 0 ? start[stockScore.buyIndex] : end[stockScore.buyIndex];
                 sellPrice = stockScore.sellTiming == 0 ? start[stockScore.sellIndex] : end[stockScore.sellIndex];
@@ -129,6 +137,7 @@ public class PerfCollector {
         start = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_START);
         max = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MAX);
         min = (double[])stock.queryCmpIndex(MidasConstants.INDEX_NAME_MIN);
+        stockCob = stock.getDatesInt();
     }
 
     public double kellyFormula(){

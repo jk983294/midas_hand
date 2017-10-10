@@ -22,7 +22,8 @@ public class WeeklyScoreRank extends IndexCalcBase {
     private WeeklyDataUtil weeklyDataUtil = new WeeklyDataUtil();
     private List<WeeklyStockData> weeks;
     private WeeklyStockData previousWeeklyData, currentWeeklyData, minWeek, minWeekLeft, aboveMaxMaWeekLeft;
-    private int currentWeeklyDataIndex, buyWeekIndex, minIndex, maxIndex, aboveMaxMaWeekLeftIndex;
+    private int currentWeeklyDataIndex, buyWeekIndex, minIndex, maxIndex, aboveMaxMaWeekLeftIndex, greenCount, greenMinIndex;
+    private double greenChangePctLeft, greenChangePctRight;
     private double[] ma5, ma10, ma20, ma30;
     private MaxMinUtil mmWeekPriceUtil5;
     private MaxMinUtil mmWeekPriceUtil10;
@@ -64,7 +65,7 @@ public class WeeklyScoreRank extends IndexCalcBase {
 
         state = StockState.HoldMoney;
         for (itr = 0; itr < len; itr++) {
-//            if(dates[itr] == 20170107){
+//            if(dates[itr] == 20170707 && stock.getStockName().equalsIgnoreCase("SZ002291")){
 //                System.out.println("test");
 //            }
 
@@ -74,8 +75,8 @@ public class WeeklyScoreRank extends IndexCalcBase {
                 currentWeeklyData = weeks.get(currentWeeklyDataIndex);
             }
 
-            // exclude new stock first 4 weeks, only decide in weekend
-            if(currentWeeklyDataIndex <= 4 || !currentWeeklyData.isLastDayOfTheWeek(itr))
+            // exclude new stock first few weeks, only decide in weekend
+            if(currentWeeklyDataIndex <= 10 || !currentWeeklyData.isLastDayOfTheWeek(itr))
                 continue;
 
             if(state == StockState.HoldMoney){
@@ -86,6 +87,11 @@ public class WeeklyScoreRank extends IndexCalcBase {
 
                 changPctRight = MathStockUtil.calculateChangePct(mmWeekPriceUtil5.getMaxPrice(maxIndex), mmWeekPriceUtil5.getMinPrice(minIndex));
                 avgChangPctRight = changPctRight / (minIndex - maxIndex + 1);
+
+                greenCount = countOfGreenWeekBefore(currentWeeklyDataIndex - 1);
+                greenMinIndex = mmWeekPriceUtil5.getMinIndexRecursive(currentWeeklyDataIndex - 1 - greenCount);
+                greenChangePctLeft = MathStockUtil.calculateChangePct(mmWeekPriceUtil5.getMinPrice(greenMinIndex), mmWeekPriceUtil5.getMaxPrice(currentWeeklyDataIndex - 1 - greenCount));
+                greenChangePctRight = MathStockUtil.calculateChangePct(mmWeekPriceUtil5.getMinPrice(currentWeeklyDataIndex - 1), mmWeekPriceUtil5.getMaxPrice(currentWeeklyDataIndex - 1 - greenCount));
 
                 if(currentWeeklyData.aboveMaxMaWeekCount > 0){
                     aboveMaxMaWeekLeftIndex = currentWeeklyDataIndex - currentWeeklyData.aboveMaxMaWeekCount - 3;
@@ -113,14 +119,14 @@ public class WeeklyScoreRank extends IndexCalcBase {
                         && currentWeeklyDataIndex - minIndex <= 1
                         && currentWeeklyDataIndex - maxIndex > 2
                         ){
-                    //buyAction(4d);
+                    ///buyAction(4d);
                 } else if(
                         currentWeeklyData.aboveMaxMaWeekCount > 2
                         && currentWeeklyData.aboveMaxMaWeekCount < 11
                         && currentWeeklyData.maScore - aboveMaxMaWeekLeft.maScore > 3
                         && changePctAboveMaxMa < 0.24
                         ){
-                    buyAction(5d + 0.01 * currentWeeklyData.aboveMaxMaWeekCount);
+                    ///buyAction(5d + 0.01 * currentWeeklyData.aboveMaxMaWeekCount);
                 } else if(
                         currentWeeklyData.orderOfPriceMa == 3
                         && previousWeeklyData.orderOfPriceMa == 2
@@ -131,7 +137,13 @@ public class WeeklyScoreRank extends IndexCalcBase {
                         && currentWeeklyData.maSlopeDownCount < 4
                         && isVolumeDownWhenWeekGreen(minIndex, currentWeeklyDataIndex)
                         ){
-                    buyAction(6d + 0.01 * (currentWeeklyData.weekIndex - minIndex));
+                    buyAction(9d + 0.01 * (currentWeeklyData.weekIndex - minIndex));
+                } else if(previousWeeklyData.start < previousWeeklyData.end && greenCount > 7
+                        && greenChangePctLeft - greenChangePctRight < -0.28
+                        && previousWeeklyData.changePct < 0.06
+                        && currentWeeklyData.changePct > -0.07
+                        && currentWeeklyData.middleEntityPct < 0.09){
+                    buyAction(7d + 0.01 * greenCount);
                 }
             } else if(state == StockState.HoldStock){
                 // hold four week, one month
@@ -144,6 +156,26 @@ public class WeeklyScoreRank extends IndexCalcBase {
 
         setStateHoldMoney(true);
         addIndexData(INDEX_NAME, score);
+    }
+
+    private int countOfGreenWeekBefore(int weekIndex){
+        int count = 0;
+        int skip = 1;
+        for (int i = weekIndex - 1; i >= 0; i--) {
+            WeeklyStockData w = weeks.get(i);
+
+            if(w.changePct < 0d || w.start > w.end){
+                count++;
+            } else if(w.changePct < 0.031){
+                skip--;
+
+                if(skip < 0) break;
+                else count++;
+            } else {
+                break;
+            }
+        }
+        return count;
     }
 
     private boolean isMaScoreMonotonousIncrease(int weekFrom, int weekEnd){

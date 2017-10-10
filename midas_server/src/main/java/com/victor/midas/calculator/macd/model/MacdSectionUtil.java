@@ -70,81 +70,50 @@ public class MacdSectionUtil {
      */
     public void updateSectionDivergence(){
         points.clear();
-        if(CollectionUtils.isNotEmpty(sections) && sections.size() >= 3){
+        if(CollectionUtils.isNotEmpty(greenSections) && greenSections.size() >= 3){
             double price = -100d;
             int index = -1;
-            int skipCnt = 0;
-            for (int i = sections.size() - 1; i >= 0; i--) {
-                MacdSection thisSection = sections.get(i);
+            double barLength = -100d;
+            for (int i = greenSections.size() - 1; i >= 1; i--) {
+                MacdSection thisSection = greenSections.get(i);
 
-                if(thisSection.type == MacdSectionType.green){
-                    if(index < 0){     // not initialized
-                        if(thisSection.limitIndex3 != -1){
-                            index = thisSection.limitIndex3;
-                            points.add(index);
-                            price = min[thisSection.limitIndex3];
-                            if(price < min[thisSection.limitIndex1]){
-                                points.add(thisSection.limitIndex1);
-                                price = min[thisSection.limitIndex1];
-                            } else {
-                                return;
-                            }
-                        } else if(thisSection.limitIndex1 != -1){
-                            index = thisSection.limitIndex1;
-                            points.add(index);
+                if(index < 0){     // not initialized
+                    if(thisSection.limitIndex3 != -1){
+                        index = thisSection.limitIndex3;
+                        points.add(index);
+                        price = min[thisSection.limitIndex3];
+                        if(price < min[thisSection.limitIndex1]){
+                            points.add(thisSection.limitIndex1);
                             price = min[thisSection.limitIndex1];
+                        } else {
+                            return;
                         }
-                    } else {            // initialized
-                        if(thisSection.limitIndex3 != -1){
-                            if(price < min[thisSection.limitIndex3]){
-                                points.add(thisSection.limitIndex3);
-                                price = min[thisSection.limitIndex3];
-                                skipCnt = 0;
-                            } else {
-                                skipCnt++;
-                            }
-                        }
-                        if(thisSection.limitIndex1 != -1){
-                            if(price < min[thisSection.limitIndex1]){
-                                points.add(thisSection.limitIndex1);
-                                price = min[thisSection.limitIndex1];
-                                skipCnt = 0;
-                            } else {
-                                skipCnt++;
-                            }
+                    } else if(thisSection.limitIndex1 != -1){
+                        index = thisSection.limitIndex1;
+                        points.add(index);
+                        price = min[thisSection.limitIndex1];
+                    }
+                    barLength = thisSection.limit1;
+                } else {            // initialized
+                    if(barLength < thisSection.limit1) return;
+
+                    if(thisSection.limitIndex3 != -1){
+                        if(price < min[thisSection.limitIndex3]){
+                            points.add(thisSection.limitIndex3);
+                            price = min[thisSection.limitIndex3];
+                        } else {
+                            return;
                         }
                     }
-
-                } else {    // red
-                    if(index < 0) {     // not initialized
-                        if(thisSection.limitIndex3 != -1){
-                            MacdSection lastGreen = sections.get(i - 1);
-                            if(lastGreen.limitIndex3 != -1){
-                                if(min[thisSection.limitIndex2] < Math.min(min[lastGreen.limitIndex1], min[lastGreen.limitIndex3])){
-                                    index = thisSection.limitIndex2;
-                                    points.add(index);
-                                    price = min[thisSection.limitIndex2];
-                                }
-                            } else if(lastGreen.limitIndex1 != -1){
-                                if(min[thisSection.limitIndex2] < min[lastGreen.limitIndex1]){
-                                    index = thisSection.limitIndex2;
-                                    points.add(index);
-                                    price = min[thisSection.limitIndex2];
-                                }
-                            }
-                        }
-                    } else {            // initialized
-                        if(thisSection.limitIndex3 != -1){
-                            if(price < min[thisSection.limitIndex2]){
-                                points.add(thisSection.limitIndex2);
-                                price = min[thisSection.limitIndex2];
-                                skipCnt = 0;
-                            }           // red section won't add skip count
+                    if(thisSection.limitIndex1 != -1){
+                        if(price < min[thisSection.limitIndex1]){
+                            points.add(thisSection.limitIndex1);
+                            price = min[thisSection.limitIndex1];
+                        } else {
+                            return;
                         }
                     }
                 }
-
-                if(skipCnt >= 2) return;
             }
         }
     }

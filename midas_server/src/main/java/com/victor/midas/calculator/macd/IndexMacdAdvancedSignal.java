@@ -71,9 +71,10 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
 
         state = StockState.HoldMoney;
         for (itr = 5; itr < len; ++itr) {
-//            if(dates[i] == 20160122){
-//                System.out.println("wow");
+//            if(dates[itr] == 20170929 && stock.getStockName().equalsIgnoreCase("SZ002111")){
+//                System.out.println("debug");
 //            }
+
             updateStats(itr);
             macdSectionUtil.update(itr);
             lastSection = macdSectionUtil.lastSection;
@@ -81,12 +82,12 @@ public class IndexMacdAdvancedSignal extends IndexCalcBase {
             if(state == StockState.HoldMoney && lastSection.signalType == SignalType.buy){
                 if(lastSection.type == MacdSectionType.green){
                     if(greenSections.size() > 1){
-                        //macdSectionUtil.updateGreenSectionDivergence(greenSections);
-                        MacdSection preGreenSection = greenSections.get(greenSections.size() - 2);
-                        if(points.size() >= 4 && lastSection.status == MacdSectionStatus.decay2
-                                && MathHelper.isMoreAbs(preGreenSection.limit1, lastSection.limit1, 0.65)){
-                            score[itr] = 6d;
-                            setStateHoldStock(score[itr]);
+                        if(points.size() >= 4
+                                && (lastSection.status == MacdSectionStatus.decay1 || lastSection.status == MacdSectionStatus.decay2)
+                                //&& MathHelper.isMoreAbs(preGreenSection.limit1, lastSection.limit1, 0.65)
+                                ){
+                            score[itr] = 3d;
+                            setStateHoldStock(score[itr] + points.size() * 0.1);
                         }
                     }
                     if(lastSection.status == MacdSectionStatus.decay2 && end[itr] < end[lastSection.limitIndex1]
