@@ -15,7 +15,7 @@ public class FundamentalLoaderTest {
         CsvParser parser = new CsvParser();
         parser.delimiter = ",";
         parser.parse(path);
-        System.out.println(parser.dataCount);
+        System.out.println(parser.columnCount);
     }
 
     @Test

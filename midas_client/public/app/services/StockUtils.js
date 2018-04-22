@@ -2,22 +2,22 @@
  * provide stock related utils
  */
 utilService.factory('StockUtils',
-    function(Utils){
+    function(Utils) {
         /**
          * get stock times, this times is Date type, not the int type
          */
-        function getStockTimeSeries(stock){
-            if( Utils.isNull(stock) ) return null;
+        function getStockTimeSeries(stock) {
+            if (Utils.isNull(stock)) return null;
             return stock.datesDate;
         }
 
         /**
          * extract stock data's index
          */
-        function getStockIndexCmp(stock, indexCmpName){
-            if( stock != null && indexCmpName != null){
-                if(stock.indexInts[indexCmpName] != null) return stock.indexInts[indexCmpName];
-                else if(stock.indexDoubles[indexCmpName] != null) return stock.indexDoubles[indexCmpName];
+        function getStockIndexCmp(stock, indexCmpName) {
+            if (stock != null && indexCmpName != null) {
+                if (stock.indexInts[indexCmpName] != null) return stock.indexInts[indexCmpName];
+                else if (stock.indexDoubles[indexCmpName] != null) return stock.indexDoubles[indexCmpName];
                 else return null;
             }
         }
@@ -25,16 +25,16 @@ utilService.factory('StockUtils',
         /**
          * extract stock data's index name, not include date
          */
-        function getStockIndexNameSet(stock){
-            if( stock != null && stock.indexName2indexCmp != null ){
+        function getStockIndexNameSet(stock) {
+            if (stock != null && stock.indexName2indexCmp != null) {
                 return Utils.object2array(stock.indexName2indexCmp);
             } else return [];
         }
 
-        function getStockIndexCmpNameSet(stock, indexNames){
-            if( stock != null && indexNames != null ){
+        function getStockIndexCmpNameSet(stock, indexNames) {
+            if (stock != null && indexNames != null) {
                 var cmpNames = [];
-                for(var i = 0, len = indexNames.length; i < len; ++i ){
+                for (var i = 0, len = indexNames.length; i < len; ++i) {
                     cmpNames = cmpNames.concat(stock.indexName2indexCmp[indexNames[i]]);
                 }
                 return cmpNames;
@@ -44,21 +44,21 @@ utilService.factory('StockUtils',
         /**
          * get data for showIndexes set between two days
          */
-        function getDataByTwoValidDate(stock, startDay, endDay, showIndexes){
-            if( Utils.isNull(startDay) && Utils.isNull(endDay)) {
+        function getDataByTwoValidDate(stock, startDay, endDay, showIndexes) {
+            if (Utils.isNull(startDay) && Utils.isNull(endDay)) {
                 var times = getStockTimeSeries(stock);
                 startDay = times[0];
                 endDay = times[times.length - 1];
             }
             var t1 = Utils.date2int(startDay);
             var t2 = Utils.date2int(endDay);
-            if( Utils.isNull(t1) ) {
+            if (Utils.isNull(t1)) {
                 t1 = t2;
                 t2 = stock.maxDayInt;
-            } else if( Utils.isNull(t2) ) {
+            } else if (Utils.isNull(t2)) {
                 t2 = stock.maxDayInt;
             } else {
-                if( t1 > t2){       //swap two date
+                if (t1 > t2) { //swap two date
                     t2 = [t1, t1 = t2][0];
                 }
             }
@@ -66,26 +66,35 @@ utilService.factory('StockUtils',
             var stockName = stock.stockName;
             var times = getStockTimeSeries(stock);
             var date = stock.datesInt;
-            var index1 = Utils.binaryIndexOf(date, t1), index2 = Utils.binaryIndexOf(date, t2);
-            if(Math.abs(index2) - Math.abs(index1) < 3) return null;
+            var index1 = Utils.binaryIndexOf(date, t1),
+                index2 = Utils.binaryIndexOf(date, t2);
+            if (Math.abs(index2) - Math.abs(index1) < 3) return null;
             else {
                 index1 = (index1 >= 0) ? index1 : -index1;
                 index2 = (index2 >= 0) ? index2 + 1 : -index2;
-                if( ! Utils.isNull(showIndexes) ){
+                if (!Utils.isNull(showIndexes)) {
                     var showIndexCmps = showIndexes; //getStockIndexCmpNameSet(stock, showIndexes);
                     var plotData = [];
-                    for(var i = 0, len = showIndexCmps.length; i < len; i++ ){
+                    for (var i = 0, len = showIndexCmps.length; i < len; i++) {
                         plotData.push({
-                            label : stockName + '.' + showIndexCmps[i],
-                            data : Utils.merge2Array(times.slice(index1, index2), getStockIndexCmp(stock , showIndexCmps[i]).slice(index1, index2))
+                            label: stockName + '.' + showIndexCmps[i],
+                            data: Utils.merge2Array(times.slice(index1, index2), getStockIndexCmp(stock, showIndexCmps[i]).slice(index1, index2))
                         });
                     }
                     return plotData;
-                }else {
-                    return [{
-                        label : stockName + '.end',
-                        data : Utils.merge2Array(times.slice(index1, index2), getStockIndexCmp(stock , 'end').slice(index1, index2))
-                    }];
+                } else {
+                    var defaultData = {
+                        label: 'end',
+                        data: []
+                    };
+                    if (stock && stock.indexDoubles['end']) {
+                        defaultData.label = stockName + '.end';
+                        defaultData.data = Utils.merge2Array(times.slice(index1, index2), getStockIndexCmp(stock, 'end').slice(index1, index2));
+                    } else if (stock && stock.indexDoubles['close']) {
+                        defaultData.label = stockName + '.close';
+                        defaultData.data = Utils.merge2Array(times.slice(index1, index2), getStockIndexCmp(stock, 'close').slice(index1, index2));
+                    }
+                    return [defaultData];
                 }
             }
         }
@@ -94,10 +103,11 @@ utilService.factory('StockUtils',
          * calculate the change percentage class
          */
         var levels = ["danger", "success"];
-        function calcChangePctLevel(stockinfos){
-            for(var i = 0, len = stockinfos.length; i < len; i++ ){
-                if( stockinfos[i].change <= 0.0  ) stockinfos[i].level = levels[0];
-                else  stockinfos[i].level = levels[1];
+
+        function calcChangePctLevel(stockinfos) {
+            for (var i = 0, len = stockinfos.length; i < len; i++) {
+                if (stockinfos[i].change <= 0.0) stockinfos[i].level = levels[0];
+                else stockinfos[i].level = levels[1];
             }
         }
 
@@ -106,17 +116,17 @@ utilService.factory('StockUtils',
          * extract the first y value, compare it to existing set to check if it belongs to
          * based on y data range, same range could share y axis
          */
-        function calcYaxisSets(data){
-            if(Utils.isNull(data)) return null;
+        function calcYaxisSets(data) {
+            if (Utils.isNull(data)) return null;
             var sets = [];
             var isFindSet = false;
-            for(var i = 0, len = data.length; i < len; ++i){
-                var sampleValue = data[i].data[0][1];       // get y axis value
+            for (var i = 0, len = data.length; i < len; ++i) {
+                var sampleValue = data[i].data[0][1]; // get y axis value
                 var indexName = data[i].label;
                 // check if exist set is suitable for this index
                 isFindSet = false;
-                for(var j = 0, len1 = sets.length; j < len1; ++j){
-                    if(Utils.deviateLevel(sampleValue, sets[j].average) < 0.3){
+                for (var j = 0, len1 = sets.length; j < len1; ++j) {
+                    if (Utils.deviateLevel(sampleValue, sets[j].average) < 0.3) {
                         sets[j].average = (sets[j].average + sampleValue) / 2;
                         sets[j].indexes.push(indexName);
                         sets[j].indexCnt++;
@@ -125,11 +135,11 @@ utilService.factory('StockUtils',
                     }
                 }
                 // not find in any set, create a new set
-                if( !isFindSet){
+                if (!isFindSet) {
                     sets.push({
-                        average : sampleValue,
-                        indexes : new Array(indexName),
-                        indexCnt : 1
+                        average: sampleValue,
+                        indexes: new Array(indexName),
+                        indexCnt: 1
                     });
                 }
             }
@@ -139,19 +149,19 @@ utilService.factory('StockUtils',
         /**
          * help to sort the Y axis set by index number
          */
-        function sortSetCnt(a,b){
+        function sortSetCnt(a, b) {
             return a.indexCnt - b.indexCnt;
         }
 
         /**
          * does this string match the stock code regex
          */
-        function isStockCode(stockCodeStr){
-            if(typeof stockCodeStr === 'string'){
+        function isStockCode(stockCodeStr) {
+            if (typeof stockCodeStr === 'string') {
                 return stockCodeStr.match(/\w{2,3}\d{6}/);
-            } else if(stockCodeStr instanceof Array){
-                for(var i = 0, len = stockCodeStr.length; i < len; i++ ){
-                    if(!stockCodeStr[i].match(/\w{2,3}\d{6}/)) return false;
+            } else if (stockCodeStr instanceof Array) {
+                for (var i = 0, len = stockCodeStr.length; i < len; i++) {
+                    if (!stockCodeStr[i].match(/\w{2,3}\d{6}/)) return false;
                 }
                 return true;
             }
@@ -159,14 +169,14 @@ utilService.factory('StockUtils',
         }
 
         return {
-            isStockCode : isStockCode,
-            calcChangePctLevel : calcChangePctLevel,
-            getStockTimeSeries : getStockTimeSeries,
-            getStockIndexCmp : getStockIndexCmp,
-            getDataByTwoValidDate : getDataByTwoValidDate,
-            getStockIndexNameSet : getStockIndexNameSet,
-            getStockIndexCmpNameSet : getStockIndexCmpNameSet,
-            calcYaxisSets : calcYaxisSets
+            isStockCode: isStockCode,
+            calcChangePctLevel: calcChangePctLevel,
+            getStockTimeSeries: getStockTimeSeries,
+            getStockIndexCmp: getStockIndexCmp,
+            getDataByTwoValidDate: getDataByTwoValidDate,
+            getStockIndexNameSet: getStockIndexNameSet,
+            getStockIndexCmpNameSet: getStockIndexCmpNameSet,
+            calcYaxisSets: calcYaxisSets
         };
     }
 );

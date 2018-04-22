@@ -16,10 +16,9 @@ flotang.directive('flotChart', function(chartService, Utils) {
         replace: true,
         link: function(scope, elem, attrs) {
             elem.css('height', scope.chartHeight);
-            scope.$watch('ngModel', function(data){
+            scope.$watch('ngModel', function(data) {
                 var model = chartService.getModel(data, scope.chartType);
-                if(Utils.isNull(model) || Utils.isNull(model.data)){}
-                else{
+                if (Utils.isNull(model) || Utils.isNull(model.data)) {} else {
                     $.plot(elem, model.data, model.options);
                     elem.show();
                 }
@@ -29,8 +28,14 @@ flotang.directive('flotChart', function(chartService, Utils) {
 });
 
 flotang.factory('chartService', ['Utils', 'StockUtils',
-    function(Utils, StockUtils){
-        var defaultData = [[[0, 0], [1, 0], [2, 0]]];
+    function(Utils, StockUtils) {
+        var defaultData = [
+            [
+                [0, 0],
+                [1, 0],
+                [2, 0]
+            ]
+        ];
         var legendOpts = {
             backgroundOpacity: 0.5,
             noColumns: 0,
@@ -39,7 +44,7 @@ flotang.factory('chartService', ['Utils', 'StockUtils',
         };
         var tooltipOpts = {
             content: "'%s' of %x.1 is %y.4",
-            dateFormat: "%y-%m-%d",
+            dateFormat: "%y-%m-%d %h:%M:%S",
             shifts: {
                 x: -60,
                 y: 25
@@ -60,40 +65,40 @@ flotang.factory('chartService', ['Utils', 'StockUtils',
             xaxis: xaxisOpts,
             grid: gridOpts,
             tooltip: true,
-            tooltipOpts : tooltipOpts,
-            legend : legendOpts
+            tooltipOpts: tooltipOpts,
+            legend: legendOpts
         };
 
-        function getFlotOptions(yaxes){
-            if(Utils.isNull(yaxes)) return stockChartOptions;
+        function getFlotOptions(yaxes) {
+            if (Utils.isNull(yaxes)) return stockChartOptions;
             return {
                 xaxis: xaxisOpts,
                 yaxes: yaxes,
                 grid: gridOpts,
                 tooltip: true,
-                tooltipOpts : tooltipOpts,
-                legend : legendOpts
+                tooltipOpts: tooltipOpts,
+                legend: legendOpts
             };
         }
 
         /**
          * for given chart type, generate plot data and its options
          */
-        function getModel(data, chartType){
+        function getModel(data, chartType) {
             if (chartType === 'stocks') {
-                if( Utils.isNull(data) || Utils.isNull(data.stocks)){
+                if (Utils.isNull(data) || Utils.isNull(data.stocks)) {
                     return {
-                        data : defaultData,
-                        options : stockChartOptions
+                        data: defaultData,
+                        options: stockChartOptions
                     };
                 } else {
                     return getStockPlotDatas(data.stocks, data.startDay, data.endDay, data.showIndexes);
                 }
-            } else if (chartType === 'TimeSeries') {    // show all time series, format is [{label : 't', data :[[x1, y1],[x2, y2]]}]
-                if( Utils.isNull(data) || Utils.isNull(data.series)){
+            } else if (chartType === 'TimeSeries') { // show all time series, format is [{label : 't', data :[[x1, y1],[x2, y2]]}]
+                if (Utils.isNull(data) || Utils.isNull(data.series)) {
                     return {
-                        data : defaultData,
-                        options : stockChartOptions
+                        data: defaultData,
+                        options: stockChartOptions
                     };
                 } else {
                     return getSeriesData(data.series);
@@ -101,43 +106,43 @@ flotang.factory('chartService', ['Utils', 'StockUtils',
             }
         }
 
-        function getSeriesData(series){
+        function getSeriesData(series) {
             // calculate how many y axis needed, based on y data range, same range could share y axis
             var sets = StockUtils.calcYaxisSets(series);
-            if(Utils.isNull(sets) || (sets.length == 1)){
+            if (Utils.isNull(sets) || (sets.length == 1)) {
                 return {
-                    options : stockChartOptions,
-                    data : series
+                    options: stockChartOptions,
+                    data: series
                 };
-            } else {    // for more than one y axis, add corresponding y info
+            } else { // for more than one y axis, add corresponding y info
                 var yaxes = addAxisInfo(series, sets);
                 return {
-                    options : getFlotOptions(yaxes),
-                    data : series
+                    options: getFlotOptions(yaxes),
+                    data: series
                 };
             }
         }
 
-        function getStockPlotDatas(stocks, startDay, endDay, showIndexes){
+        function getStockPlotDatas(stocks, startDay, endDay, showIndexes) {
             // combine each stock's index data into one array
             var data = [];
-            for(var i = 0, len = stocks.length; i < len; ++i ){
+            for (var i = 0, len = stocks.length; i < len; ++i) {
                 var stock = stocks[i];
                 data = data.concat(StockUtils.getDataByTwoValidDate(stock, startDay, endDay, showIndexes));
             }
 
             // calculate how many y axis needed, based on y data range, same range could share y axis
             var sets = StockUtils.calcYaxisSets(data);
-            if(Utils.isNull(sets) || (sets.length == 1)){
+            if (Utils.isNull(sets) || (sets.length == 1)) {
                 return {
-                    options : stockChartOptions,
-                    data : data
+                    options: stockChartOptions,
+                    data: data
                 };
-            } else {    // for more than one y axis, add corresponding y infos
+            } else { // for more than one y axis, add corresponding y infos
                 var yaxes = addAxisInfo(data, sets);
                 return {
-                    options : getFlotOptions(yaxes),
-                    data : data
+                    options: getFlotOptions(yaxes),
+                    data: data
                 };
             }
         }
@@ -146,15 +151,18 @@ flotang.factory('chartService', ['Utils', 'StockUtils',
          * generate infos for y axis
          */
         var axisPosition = ['left', 'right'];
+
         function addAxisInfo(data, sets) {
             var yaxes = [];
-            for(var j = 0, len1 = sets.length; j < len1; j++ ){
-                yaxes.push({position : axisPosition[j % 2]});
+            for (var j = 0, len1 = sets.length; j < len1; j++) {
+                yaxes.push({
+                    position: axisPosition[j % 2]
+                });
             }
-            for(var i = 0, len = data.length; i < len; i++ ){
+            for (var i = 0, len = data.length; i < len; i++) {
                 var label = data[i].label;
-                for(var j = 0, len1 = sets.length; j < len1; j++ ){
-                    if(Utils.isInArray(sets[j].indexes, label)){
+                for (var j = 0, len1 = sets.length; j < len1; j++) {
+                    if (Utils.isInArray(sets[j].indexes, label)) {
                         data[i].yaxis = j + 1;
                         break;
                     }
@@ -164,10 +172,7 @@ flotang.factory('chartService', ['Utils', 'StockUtils',
         }
 
         return {
-            getModel : getModel
+            getModel: getModel
         };
     }
 ]);
-
-
-

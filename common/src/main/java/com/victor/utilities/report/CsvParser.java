@@ -1,10 +1,7 @@
 package com.victor.utilities.report;
 
-
-import com.victor.utilities.utils.StringHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,7 +17,7 @@ public class CsvParser {
 
     public List<String> header = new ArrayList<>();
 
-    public int dataCount;
+    public int columnCount;
 
     public boolean hasHeader = true;
 
@@ -55,32 +52,32 @@ public class CsvParser {
 
         if(hasHeader){
             header = rows.removeFirst();
-            dataCount = header.size();
+            columnCount = header.size();
         } else {
-            dataCount = rows.getFirst().size();
-            for(int i = 0; i < dataCount; ++i){
+            columnCount = rows.getFirst().size();
+            for(int i = 0; i < columnCount; ++i){
                 header.add("header" + i);
             }
         }
 
         List<List<String>> columnArray = new ArrayList<>();
-        for(int i = 0; i < dataCount; ++i){
-            columnArray.add(new ArrayList<String>());
+        for(int i = 0; i < columnCount; ++i){
+            columnArray.add(new ArrayList<>());
         }
 
 
         int cnt = 0;
         for(List<String> row : rows){
-            if(row.size() == dataCount){
-                for(int i = 0; i < dataCount; ++i){
+            if(row.size() == columnCount){
+                for(int i = 0; i < columnCount; ++i){
                     columnArray.get(i).add(row.get(i));
                 }
-            } else if(row.size() == dataCount - 1){
-                for(int i = 0; i < dataCount - 1; ++i){
+            } else if(row.size() == columnCount - 1){
+                for(int i = 0; i < columnCount - 1; ++i){
                     columnArray.get(i).add(row.get(i));
                 }
                 // last value can be null, like a,b,c,
-                columnArray.get(dataCount - 1).add("null");
+                columnArray.get(columnCount - 1).add("null");
             } else {
                 throw new RuntimeException(filePath + " : data count not correct in row " + cnt);
             }
@@ -88,7 +85,7 @@ public class CsvParser {
         }
 
         int missingCount = 0;
-        for(int i = 0; i < dataCount; ++i){
+        for(int i = 0; i < columnCount; ++i){
             String columnName = header.get(i);
             if(StringUtils.isEmpty(columnName)){
                 columnName = "default" + missingCount;
@@ -105,7 +102,7 @@ public class CsvParser {
         header.clear();
         column2index.clear();
         metadata.clear();
-        dataCount = 0;
+        columnCount = 0;
     }
 
     public String getRowAt(List<String> row, int columnIndex){
@@ -114,6 +111,31 @@ public class CsvParser {
 
     public String getRowAt(List<String> row, String column){
         return row.get(column2index.get(column));
+    }
+
+    public void mergeDateTime(){
+        if(header.size() >= 2 && header.get(0).equalsIgnoreCase("date") && header.get(1).equalsIgnoreCase("time")){
+            String dateColumnName = header.get(0);
+            String timeColumnName = header.get(1);
+
+            List<String> dateColumn = columns.get(dateColumnName);
+            List<String> timeColumn = columns.get(timeColumnName);
+            int i = 0;
+            for(List<String> l : rows){
+                String merged = dateColumn.get(i) + " " + timeColumn.get(i);
+                timeColumn.set(i, merged);
+                l.set(1, merged);
+                l.remove(0);
+                ++i;
+            }
+
+            header.remove(0);
+            column2index.remove(dateColumnName);
+            columns.remove(dateColumnName);
+            for(String key : column2index.keySet()){
+                column2index.put(key, column2index.get(key) - 1);
+            }
+        }
     }
 
 }
