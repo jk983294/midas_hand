@@ -72,7 +72,7 @@
             "angular", "angular-route", "angular-animate", "ng-table", "angular-resource",
             "ui-bootstrap-tpls-0.11.2", "select",
             "jquery.flot", "jquery.flot.time", "jquery.flot.tooltip_0.5",
-            "d3", "nv.d3", "angular-nvd3", "ui-grid"
+            "d3", "nv.d3", "angular-nvd3", "ui-grid", "echarts.3.8.4"
         ],
         cssFiles = [
             "bootstrap.min", "bootstrap-theme.min", "ng-table.min", "select.min", "nv.d3.min", "mytheme", "ui-grid.min"
@@ -98,4 +98,6 @@
     //load controller
     loadJS("visual_app/controllers/chartController.js");
     loadJS("visual_app/controllers/tableController.js");
+    loadJS("visual_app/controllers/candleController.js");
+    loadJS("visual_app/controllers/lineController.js");
 })();

@@ -170,6 +170,15 @@ utilService.factory('Utils',
             }
         }
 
+        function date2hms(date) {
+            if (date instanceof Date) {
+                return date.getSeconds() + (date.getMinutes() + 1) * 100 + date.getHours() * 10000;
+            } else {
+                date = new Date(date);
+                return date.getSeconds() + (date.getMinutes() + 1) * 100 + date.getHours() * 10000;
+            }
+        }
+
         function toDateInts(dates) {
             var times = [];
             for (var i = 0, len = dates.length; i < len; ++i) {
@@ -178,10 +187,25 @@ utilService.factory('Utils',
             return times;
         }
 
+        function string2time(str) {
+            return new Date(str);
+        }
+
         function string2times(strings) {
+            if (!strings) return [];
             var times = [];
             for (var i = 0, len = strings.length; i < len; ++i) {
                 times[i] = new Date(strings[i]);
+            }
+            return times;
+        }
+
+        function string2timeFloats(strings) {
+            if (!strings) return [];
+            var times = [];
+            for (var i = 0, len = strings.length; i < len; ++i) {
+                var date = new Date(strings[i]);
+                times[i] = date2int(date) + 0.000001 * date2hms(date);
             }
             return times;
         }
@@ -248,7 +272,39 @@ utilService.factory('Utils',
             return !isNaN(parseFloat(n)) && isFinite(n);
         }
 
+        function subArrayOfObject(object, index1, index2) {
+            var result = {};
+            for (var key in object) {
+                if (object.hasOwnProperty(key)) {
+                    if (object[key] instanceof Array) {
+                        result[key] = object[key].slice(index1, index2);
+                    } else {
+                        result[key] = object[key];
+                    }
+                }
+            }
+            return result;
+        }
+
+        function extractNumericArrayOfObject(object) {
+            var result = {};
+            for (var key in object) {
+                if (object.hasOwnProperty(key)) {
+                    if (object[key] instanceof Array) {
+                        if (object[key].length > 0 && isNumeric(object[key][0])) {
+                            result[key] = object[key];
+                        }
+                    } else {
+                        result[key] = object[key];
+                    }
+                }
+            }
+            return result;
+        }
+
         return {
+            extractNumericArrayOfObject: extractNumericArrayOfObject,
+            subArrayOfObject: subArrayOfObject,
             array2object: array2object,
             object2array: object2array,
             object2PropArray: object2PropArray,
@@ -274,6 +330,8 @@ utilService.factory('Utils',
             toTime: toTime,
             date2int: date2int,
             string2times: string2times,
+            string2timeFloats: string2timeFloats,
+            string2time: string2time,
             toDateInts: toDateInts,
 
             deviateLevel: deviateLevel,

@@ -168,6 +168,129 @@ utilService.factory('StockUtils',
             return false;
         }
 
+        function row2column(rows, rowMeta, addSequence) {
+            var result = {};
+
+            if (rows && rows.length) {
+                for (var prop in rowMeta) {
+                    if (rowMeta.hasOwnProperty(prop)) {
+                        result[prop] = [];
+                    }
+                }
+                for (var i = 0, len = rows.length; i < len; ++i) {
+                    for (var key in rowMeta) {
+                        if (rowMeta.hasOwnProperty(key)) {
+                            result[key].push(rows[i][rowMeta[key]]);
+                        }
+                    }
+                }
+            }
+
+            if (result.time && result.time.length) {
+                result.times = result.time;
+                result.time = null;
+            } else if (result.date && result.date.length) {
+                result.times = result.date;
+                result.date = null;
+            }
+            if (result.start && result.start.length) {
+                result.open = result.start;
+                result.start = null;
+            }
+            if (result.end && result.end.length) {
+                result.close = result.end;
+                result.end = null;
+            }
+
+            if (addSequence && rows && rows.length) {
+                var sequences = [];
+                for (var j = 0; j < rows.length; j++) {
+                    sequences.push(j);
+                }
+                result.sequences = sequences;
+            }
+            return result;
+        }
+
+        function getAlpha(interval) {
+            if (interval > 3) {
+                return 2.0 / (interval + 1);
+            }
+            return 0.7;
+        }
+
+        function calculateSma(data, interval) {
+            var result = [];
+            var sum = 0;
+            for (var i = 0; i < data.length; i++) {
+                sum += data[i];
+                if (i < interval) {
+                    result.push((sum / (i + 1)).toFixed(4));
+                } else {
+                    sum -= data[i - interval];
+                    result.push((sum / interval).toFixed(4));
+                }
+            }
+            return result;
+        }
+
+        function calculateEma(data, interval) {
+            var alpha = getAlpha(interval);
+            var result = [];
+            result.push(data[0]);
+            for (var i = 1; i < data.length; i++) {
+                result.push((alpha * data[i] + (1 - alpha) * result[i - 1]).toFixed(4));
+            }
+            return result;
+        }
+
+        function calculateMacd(price) {
+            if (!price) return {
+                macd: [],
+                dif: [],
+                dea: []
+            };
+
+            var pMaFast = calculateEma(price, 12);
+            var pMaSlow = calculateEma(price, 26);
+            var dif = [];
+
+            for (var j = 0; j < price.length; j++) {
+                dif[j] = (pMaFast[j] - pMaSlow[j]).toFixed(4);
+            }
+
+            var dea = calculateEma(dif, 9);
+            var macd = [];
+            for (var k = 0; k < price.length; k++) {
+                macd[k] = ((dif[k] - dea[k]) * 2.0).toFixed(4);
+            }
+            return {
+                macd: macd,
+                dif: dif,
+                dea: dea
+            };
+        }
+
+        function formatData(rawData) {
+            var result = row2column(rawData.rows, rawData.rowMeta);
+
+            if (rawData.columns) {
+                result = Object.assign(result, rawData.columns);
+            }
+
+            var macdResult = calculateMacd(result.close);
+            result.macd = macdResult.macd;
+            result.dif = macdResult.dif;
+            result.dea = macdResult.dea;
+
+            result.oclh = [];
+            for (var i = 0; i < result.close.length; i++) {
+                result.oclh.push([result.open[i], result.close[i], result.low[i], result.high[i]]);
+            }
+            result.instrumentName = rawData.instrumentName;
+            return result;
+        }
+
         return {
             isStockCode: isStockCode,
             calcChangePctLevel: calcChangePctLevel,
@@ -176,7 +299,10 @@ utilService.factory('StockUtils',
             getDataByTwoValidDate: getDataByTwoValidDate,
             getStockIndexNameSet: getStockIndexNameSet,
             getStockIndexCmpNameSet: getStockIndexCmpNameSet,
-            calcYaxisSets: calcYaxisSets
+            calcYaxisSets: calcYaxisSets,
+            row2column: row2column,
+            calculateMacd: calculateMacd,
+            formatData: formatData
         };
     }
 );

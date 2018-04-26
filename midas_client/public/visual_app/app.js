@@ -14,6 +14,14 @@ visualApp.config(['$routeProvider',
                 controller: 'tableController',
                 templateUrl: urlBase + 'tableContent.html'
             })
+            .when('/Candle', {
+                controller: 'candleController',
+                templateUrl: urlBase + 'candleContent.html'
+            })
+            .when('/Line', {
+                controller: 'lineController',
+                templateUrl: urlBase + 'lineContent.html'
+            })
             .otherwise({
                 redirectTo: '/Table'
             });

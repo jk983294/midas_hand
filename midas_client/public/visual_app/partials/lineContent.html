@@ -1,0 +1,22 @@
+<div id="Line_Content" style="width: 100%; margin: 0 auto;">
+
+    <div class="col-lg-12">
+        <form class="navbar-form" role="search">
+            <div class="input-group" style="width: 100%; margin: 0 auto;">
+                <input type="text" ng-model="typeahead.queryStr" placeholder="type file path here..."
+                       typeahead="tip for tip in getTips($viewValue)"
+                       typeahead-loading="typeahead.loadingTips"
+                       typeahead-editable="true"
+                       ng-keydown="inputKeyPress($event)"
+                       class="form-control" >
+                <div class="input-group-btn">
+                    <button type="submit" class="btn btn-success" ng-click="getFileContent(typeahead.queryStr)">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="LineMain" style="height:800px;" class="col-lg-12"></div>
+</div>
