@@ -4,4 +4,5 @@ logs/
 node_modules/
 *.iml
 *.pyc
+log.txt
 package-lock.json
