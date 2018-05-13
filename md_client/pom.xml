@@ -45,6 +45,12 @@
             <version>8.1.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20140107</version>
+        </dependency>
+
         <!-- logger -->
         <dependency>
             <groupId>log4j</groupId>

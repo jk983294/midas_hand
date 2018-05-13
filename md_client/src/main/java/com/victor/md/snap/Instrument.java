@@ -7,8 +7,8 @@ import com.victor.md.consumer.MdDataType;
 import com.victor.md.consumer.MdSubscription;
 import org.apache.log4j.Logger;
 
-public class MySymbol {
-    private static final Logger logger = Logger.getLogger(MySymbol.class);
+public class Instrument {
+    private static final Logger logger = Logger.getLogger(Instrument.class);
 
     private String symbol;
     private short exchange;
@@ -16,7 +16,7 @@ public class MySymbol {
     private MdSubscription sub;
     private MdBook book;
 
-    public MySymbol(String symbol, short exchange) {
+    public Instrument(String symbol, short exchange) {
         this.symbol = symbol;
         this.exchange = exchange;
     }
@@ -31,6 +31,16 @@ public class MySymbol {
                 .append(book.bidBookLevels()[0].shares()).append(" ask: ").append(book.askBookLevels()[0].price())
                 .append(" ").append(book.askBookLevels()[0].shares());
         logger.info(sb.toString());
+    }
+
+    String getMsg() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("id ").append(symbol).append(" ,e ").append(exchange).append(" ,bbp ")
+                .append(book.bidBookLevels()[0].price()).append(" ,bbs ")
+                .append(book.bidBookLevels()[0].shares()).append(" ,bap ")
+                .append(book.askBookLevels()[0].price()).append(" ,bas ")
+                .append(book.askBookLevels()[0].shares()).append(" ,;");
+        return sb.toString();
     }
 
     public String getSymbol() {
