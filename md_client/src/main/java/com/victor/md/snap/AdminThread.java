@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -12,6 +13,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,11 +22,11 @@ import java.util.Set;
 public class AdminThread extends Thread {
 
     private static final Logger logger = Logger.getLogger(AdminThread.class);
-    private SnapService service;
+    private MonitorService service;
     private Selector selector;
     private int adminPort;
 
-    public AdminThread(SnapService service, int adminPort) throws IOException {
+    public AdminThread(MonitorService service, int adminPort) throws IOException {
         this.service = service;
         this.adminPort = adminPort;
 
@@ -115,25 +117,64 @@ public class AdminThread extends Thread {
     private String dispatchCommand(String cmd, List<String> arguments) {
         StringBuilder sb = new StringBuilder();
         if (cmd.equalsIgnoreCase("meters")) {
-            return "server running...";
+            return service.meters();
         } else if (cmd.equalsIgnoreCase("help")) {
-            sb.append("meters\t\t\t\tdisplay server meters\n")
-                    .append("help\t\t\t\tdisplay available commands\n")
-                    .append("subscribe <symbol> <exchange>\t\tsubscribe given symbol\n");
+            sb.append("meters\t\t\t\t\tdisplay server meters\n")
+                    .append("help\t\t\t\t\tdisplay available commands\n")
+                    .append("subscribe <symbol> <exchange>\t\tsubscribe given symbol\n")
+                    .append("subscribe.file <path>\t\t\tsubscribe given symbols in given file\n");
             return sb.toString();
         } else if (cmd.equalsIgnoreCase("subscribe")) {
             if (arguments.size() == 2) {
-                String symbol = arguments.get(0);
-                short exchange = Short.valueOf(arguments.get(1));
-                if (service.subscribe(symbol, exchange)) {
-                    return "subscribe for " + symbol + " success.";
-                } else {
-                    return "subscribe for " + symbol + " failed.";
-                }
+                subscribe(arguments.get(0), arguments.get(1), sb);
+                return sb.toString();
             } else {
                 return "subscribe <symbol> <exchange>";
             }
+        } else if (cmd.equalsIgnoreCase("subscribe.file")) {
+            if (arguments.size() == 1) {
+                subscribeFile(arguments.get(0), sb);
+                return sb.toString();
+            } else {
+                return "subscribe.file <file>";
+            }
         }
         return "no such command found!";
+    }
+
+    private boolean subscribeFile(String path, StringBuilder sb) {
+        boolean success = true;
+        try {
+            List<String> symbols = Files.readAllLines(new File(path).toPath());
+            for (String str : symbols) {
+                String line = str.trim().replace(".", " ");
+                if (line.length() > 0) {
+                    String[] lets = line.split("");
+                    if (lets.length == 2) {
+                        if (!subscribe(lets[0], lets[1], sb)) {
+                            success = false;
+                        }
+                        sb.append("\n");
+                    } else {
+                        sb.append("invalid line: ").append(line).append("\n");
+                    }
+                }
+            }
+        } catch (IOException e) {
+            sb.append(e.toString());
+            return false;
+        }
+        return success;
+    }
+
+    private boolean subscribe(String symbol, String exchangeStr, StringBuilder sb) {
+        short exchange = Short.valueOf(exchangeStr);
+        if (service.subscribe(symbol, exchange)) {
+            sb.append("subscribe for ").append(symbol).append(" success.");
+            return true;
+        } else {
+            sb.append("subscribe for ").append(symbol).append(" failed.");
+            return false;
+        }
     }
 }

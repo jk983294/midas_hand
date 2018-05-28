@@ -12,16 +12,20 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.sql.Timestamp;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class DataThread extends Thread {
 
     private static final Logger logger = Logger.getLogger(DataThread.class);
     private Selector selector;
     private int dataPort;
-    private ConcurrentHashMap<String, SocketChannel> channels = new ConcurrentHashMap<>();
-
+    private ConcurrentHashMap<String, SelectionKey> channels = new ConcurrentHashMap<>();
+    private ConcurrentSkipListSet<String> closedConnections = new ConcurrentSkipListSet<>();
+    private LinkedBlockingDeque<String> queue = new LinkedBlockingDeque<>();
 
     public DataThread(int dataPort) throws IOException {
         this.dataPort = dataPort;
@@ -38,6 +42,12 @@ public class DataThread extends Thread {
 
     @Override
     public void run() {
+        new Thread() {
+            public void run() {
+                publish();
+            }
+        }.start();
+
         logger.info("data thread start at port " + dataPort + " ...");
         while (true) {
             try {
@@ -60,7 +70,7 @@ public class DataThread extends Thread {
                         SelectionKey clientKey = client.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ);
                         ByteBuffer buffer = ByteBuffer.allocate(1024);
                         clientKey.attach(buffer);
-                        channels.put(client.toString(), client);
+                        channels.put(client.toString(), clientKey);
                     } else if (key.isReadable()) {
                         SocketChannel client = (SocketChannel) key.channel();
                         ByteBuffer output = (ByteBuffer) key.attachment();
@@ -75,15 +85,6 @@ public class DataThread extends Thread {
                 } catch (IOException ex) {
                     key.cancel();
                     try {
-
-                        if (key.channel() instanceof SocketChannel) {
-                            SocketChannel channel = (SocketChannel) key.channel();
-                            if (channels.containsKey(channel.toString())) {
-                                logger.info("remove channel " + channel.toString() + " " + ex.getMessage());
-                                channels.remove(channel.toString());
-                            }
-                        }
-
                         key.channel().close();
                     } catch (IOException cex) {
                         logger.error("channel close error: " + cex.getMessage());
@@ -93,16 +94,51 @@ public class DataThread extends Thread {
         }
     }
 
-    public void sendMsg(String msg) {
-        if (msg != null && msg.length() > 0) {
+    private void publish() {
+        while (true) {
+            try {
+                String msg = queue.take();
+                sendMsg(msg);
+            } catch (InterruptedException e) {
+                logger.error("publish error: " + e);
+            }
+        }
+    }
+
+    public void add2publishQueue(String msg) {
+        queue.add(msg);
+    }
+
+    private void sendMsg(String msg) {
+        if (msg != null && msg.length() > 0 && channels.size() > 0) {
             ByteBuffer buffer = buildMsg(msg);
-            for (SocketChannel channel : channels.values()) {
+            byte[] mf = buffer.array();
+            for (Map.Entry<String, SelectionKey> entry : channels.entrySet()) {
+                SelectionKey key = entry.getValue();
+                SocketChannel channel = (SocketChannel) key.channel();
                 try {
-                    logger.info("send data to " + channel + " with content: " + msg);
-                    channel.write(buffer);
+//                    logger.info("send data to " + channel + " with content: " + msg);
+                    channel.write(ByteBuffer.wrap(mf));
                 } catch (IOException e) {
                     logger.error("channel write error: " + e.getMessage());
+                    closedConnections.add(entry.getKey());
                 }
+            }
+
+            if (closedConnections.size() > 0) {
+                for (String name : closedConnections) {
+                    SelectionKey key = channels.get(name);
+                    SocketChannel channel = (SocketChannel) key.channel();
+                    logger.info("channel " + channel + " leave...");
+                    channels.remove(name);
+                    try {
+                        channel.close();
+                    } catch (IOException cex) {
+                        logger.error("channel close error: " + cex.getMessage());
+                    }
+                }
+
+                closedConnections.clear();
             }
         }
     }

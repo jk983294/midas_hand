@@ -9,15 +9,18 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
-public class SnapService {
+public class MonitorService {
 
-    private static final Logger logger = Logger.getLogger(BookSnapMain.class);
+    private static final Logger logger = Logger.getLogger(MonitorMain.class);
     private String fileConfig;
     private String configKey = "publisher";
     private ConcurrentHashMap<String, Instrument> instruments;
     private MdConsumer consumer;
     private DataThread dataThread;
+    private AtomicLong bookUpdatedCount = new AtomicLong(0);
+    private AtomicLong bookRefreshedCount = new AtomicLong(0);
 
     void start(String[] args) throws KeyNotExistException, IOException, InterruptedException {
         this.instruments = new ConcurrentHashMap<>();
@@ -73,7 +76,6 @@ public class SnapService {
 
         for (; ; ) {
             consumer.dataPoll();
-            Thread.sleep(500);
         }
     }
 
@@ -117,6 +119,7 @@ public class SnapService {
     }
 
     void handleBookChanged(String symbol, short exchange, BookChanged bc) {
+        bookUpdatedCount.getAndIncrement();
         if (!instruments.containsKey(symbol)) {
             return;
         }
@@ -126,24 +129,39 @@ public class SnapService {
         if (status != ConsumerStatus.OK) {
             logger.error("Snap failed due to: " + status);
         } else {
-            ms.print_book();
-            dataThread.sendMsg(ms.getMsg());
+            String mf = ms.getDeltaMf();
+            if (mf.length() > 0) {
+                dataThread.add2publishQueue(mf);
+            }
         }
     }
 
     void handleBookRefreshed(String symbol, short exchange) {
+        bookRefreshedCount.getAndIncrement();
         if (!instruments.containsKey(symbol)) {
             return;
         }
 
-        Instrument ms = instruments.get(symbol);
-        ConsumerStatus status = consumer.snap(ms.getSub(), MdDataType.BOOK_SIDE_BOTH, ms.getBook());
+        Instrument instrument = instruments.get(symbol);
+        ConsumerStatus status = consumer.snap(instrument.getSub(), MdDataType.BOOK_SIDE_BOTH, instrument.getBook());
         if (status != ConsumerStatus.OK) {
             logger.error("Snap failed due to: " + status);
         } else {
-            ms.print_book();
-            dataThread.sendMsg(ms.getMsg());
+            String mf = instrument.getDeltaMf();
+            if (mf.length() > 0) {
+                dataThread.add2publishQueue(mf);
+            }
         }
+    }
+
+    public String meters() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("updated: ").append(bookUpdatedCount.get()).append("\t\trefreshed: ").append(bookRefreshedCount.get())
+                .append("\n").append("subscribed: ");
+        for (String s : instruments.keySet()) {
+            sb.append(s).append(", ");
+        }
+        return sb.toString();
     }
 
     static void help() {

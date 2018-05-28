@@ -144,14 +144,12 @@ public class DataChannel implements Runnable {
                                     onTradingActionFunctor.accept(header, tradingAction);
                                     break;
                                 case MdDataType.DATA_BOOK_CHANGED_TYPE:
-                                    logger.info("DATA_BOOK_CHANGED_TYPE");
                                     bookChanged.loadBuf(buf.getBuffer(), dataOffset);
                                     dataOffset += DataBookChanged.sizeOfDataBookChanged();
                                     onBookChangedFunctor.accept(header, bookChanged);
                                     callbacks.onBookChanged(new String(bookChanged.symbol()), bookChanged.exchange(), bookChanged.bookChanged());
                                     break;
                                 case MdDataType.DATA_BOOK_REFRESHED_TYPE:
-                                    logger.info("DATA_BOOK_REFRESHED_TYPE");
                                     bookRefreshed.loadBuf(buf.getBuffer(), dataOffset);
                                     dataOffset += DataBookRefreshed.sizeOfDataBookRefreshed();
                                     onBookRefreshedFunctor.accept(header, bookRefreshed);
@@ -162,7 +160,6 @@ public class DataChannel implements Runnable {
                         }
                         buf.consume(header.size);
                     } else if (header.size == 0) { // heartbeat
-                        logger.info("DATA_HEARTBEAT_TYPE");
                         heartbeat.hb.loadHeartbeat(header.session, header.streamId, header.transmitTimestamp);
                         callbacks.onHeartbeat(header, heartbeat);
                     } else {

@@ -34,12 +34,20 @@ public class MdBook {
         this.myAlloc = myAlloc;
     }
 
-    public BidBookLevel[] bidBookLevels() {
+    public BidBookLevel[] getBidBookLevels() {
         return bidBookLevels;
     }
 
-    public AskBookLevel[] askBookLevels() {
+    public void setBidBookLevels(BidBookLevel[] bidBookLevels) {
+        this.bidBookLevels = bidBookLevels;
+    }
+
+    public AskBookLevel[] getAskBookLevels() {
         return askBookLevels;
+    }
+
+    public void setAskBookLevels(AskBookLevel[] askBookLevels) {
+        this.askBookLevels = askBookLevels;
     }
 
     public ByteBuffer getThunk() {
